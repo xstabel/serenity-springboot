@@ -1,0 +1,100 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+
+#######################
+# JSP Tag Library Configuration
+# ================
+# This list identifies classes which should be traced as
+# JSP tag libraries.  If you are using tag libraries which
+# are not identified by the directives listed here, you will
+# need to add them to this list.
+#
+# Use the "IdentifyClassAs" directive to add a single tag library
+# Use the "IdentifyInheritedAs" directive to track all direct subclasses of an parent tag library class
+IdentifyInheritedAs: javax.servlet.jsp.tagext.Tag JSPTagLibraryTracing
+IdentifyInheritedAs: javax.servlet.jsp.tagext.TagSupport JSPTagLibraryTracing
+IdentifyInheritedAs: javax.servlet.jsp.tagext.BodyTag JSPTagLibraryTracing
+IdentifyInheritedAs: javax.servlet.jsp.tagext.BodyTagSupport JSPTagLibraryTracing
+
+
+#########################
+# Jakarta I/O Tag Library Configuration
+# =======================
+# The following will trace the standard Jakarta I/O tag libraries
+
+IdentifyClassAs: org.apache.taglibs.io.AbstractTag JSPIOTagLibraryTracing
+IdentifyInheritedAs: org.apache.taglibs.io.AbstractTag JSPIOTagLibraryTracing
+IdentifyClassAs: org.apache.taglibs.io.AbstractBodyTag JSPIOTagLibraryTracing
+IdentifyInheritedAs: org.apache.taglibs.io.AbstractBodyTag JSPIOTagLibraryTracing
+IdentifyClassAs: org.apache.taglibs.io.HttpTag JSPIOTagLibraryTracing
+IdentifyInheritedAs: org.apache.taglibs.io.HttpTag JSPIOTagLibraryTracing
+
+
+############################
+# Jakarta DBTags Tag library Configuration
+# ==========================
+# The following will trace the DGTags tag libraries
+
+IdentifyClassAs: org.apache.taglibs.dbtags.connection.ConnectionTag JSPDBTagsTagLibraryTracing
+IdentifyClassAs: org.apache.taglibs.dbtags.connection.CloseConnectionTag JSPDBTagsTagLibraryTracing
+IdentifyClassAs: org.apache.taglibs.dbtags.resultset.ResultSetTag JSPDBTagsTagLibraryTracing
+IdentifyClassAs: org.apache.taglibs.dbtags.statement.ExecuteTag JSPDBTagsTagLibraryTracing
+IdentifyInheritedAs: org.apache.taglibs.dbtags.statement.StatementTag JSPDBTagsTagLibraryTracing
+
+
+#########################################################
+# The following section of the file contains directives #
+# which implement the tracer groups listed above.       #
+# Do not make changes to any of the directives below    #
+# this line or Introscope will not work correctly.      #
+#########################################################
+
+#######################
+# JSP Tag Library Tracer Group
+# ================
+# Defines the directives necessary for JSP tag library tracing.
+
+SetFlag: JSPTagLibraryTracing
+
+SetFlag: JSPIOTagLibraryTracing
+IdentifyFlagAs: JSPIOTagLibraryTracing JSPTagLibraryTracing
+
+SetFlag: JSPDBTagsTagLibraryTracing
+IdentifyFlagAs: JSPDBTagsTagLibraryTracing JSPTagLibraryTracing
+
+SetFlag: JSPIOTagLibraryAggregateTracing
+IdentifyTwoFlagUnionAsAggregateFlag: JSPTagLibraryTracing JSPIOTagLibraryTracing JSPIOTagLibraryAggregateTracing
+
+SetFlag: JSPDBTagsTagLibraryAggregateTracing
+IdentifyTwoFlagUnionAsAggregateFlag: JSPTagLibraryTracing JSPDBTagsTagLibraryTracing JSPDBTagsTagLibraryAggregateTracing
+
+SetFlag: JSPIOAndDBTagsAggregateTracing
+IdentifyTwoFlagUnionAsAggregateFlag: JSPIOTagLibraryAggregateTracing JSPDBTagsTagLibraryTracing JSPIOAndDBTagsAggregateTracing
+
+SetFlag: JSPTagLibRateTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JSPIOAndDBTagsAggregateTracing DefaultRateTracing JSPTagLibRateTracing
+
+SetFlag: JSPTagLibStalledTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JSPIOAndDBTagsAggregateTracing DefaultStalledMethodTracing JSPTagLibStalledTracing
+
+SetFlag: JSPTagLibConcurrentInvocationTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JSPIOAndDBTagsAggregateTracing DefaultConcurrentInvocationTracing JSPTagLibConcurrentInvocationTracing
+
+# I/O specific metrics
+TraceOneMethodIfFlagged: JSPIOTagLibraryAggregateTracing warn PerIntervalCounter "JSP TagLib|{classname}:Warning Count"
+TraceOneMethodIfFlagged: JSPIOTagLibraryAggregateTracing handleException PerIntervalCounter "JSP TagLib|{classname}:Exception Count"
+
+# doStartTag metrics
+TraceOneMethodIfFlagged: JSPIOAndDBTagsAggregateTracing doStartTag BlamePointTracerDifferentInstances "JSP TagLib|{classname}|{method}"
+
+# doEndTag metrics
+TraceOneMethodIfFlagged: JSPIOAndDBTagsAggregateTracing doEndTag BlamePointTracerDifferentInstances "JSP TagLib|{classname}|{method}"

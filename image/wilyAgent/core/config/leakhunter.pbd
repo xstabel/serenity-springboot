@@ -1,0 +1,95 @@
+########################################################################
+# Introscope LeakHunter ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                     
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file provides instrumentation settings for
+# Introscope LeakHunter, a low overhead leak detection
+# utility.  In most cases you will not need to modify
+# the contents of this file.
+#############################################################
+
+
+TurnOn: LeakHunter
+
+
+#######################
+# Collection support
+# ================
+# Lists the supported implementations of java.util.Collection
+#
+# All implementations must be identified directly.
+# The IdentifyInheritedAs directive can not be used.
+#
+# Other implementations of this interface can be added as
+# long as the size() method can be called from any thread
+
+IdentifyClassAs: java.util.ArrayList LeakHunter
+IdentifyClassAs: java.util.HashSet LeakHunter
+IdentifyClassAs: java.util.LinkedHashSet LeakHunter
+IdentifyClassAs: java.util.LinkedList LeakHunter
+IdentifyClassAs: java.util.Stack LeakHunter
+IdentifyClassAs: java.util.TreeSet LeakHunter
+IdentifyClassAs: java.util.Vector LeakHunter
+# Interfaces should be specified too so that field assignment can
+# work properly
+IdentifyClassAs: java.util.Collection LeakHunter
+IdentifyClassAs: java.util.List LeakHunter
+IdentifyClassAs: java.util.Set LeakHunter
+IdentifyClassAs: java.util.SortedSet LeakHunter
+
+
+#######################
+# Map support
+# ================
+# Lists the supported implementations of java.util.Map
+#
+# All implementations must be identified directly.
+# The IdentifyInheritedAs directive can not be used.
+#
+# Other implementations of this interface can be added as
+# long as the size() method can be called from any thread
+
+IdentifyClassAs: java.util.HashMap LeakHunter
+IdentifyClassAs: java.util.Hashtable LeakHunter
+IdentifyClassAs: java.util.IdentityHashMap LeakHunter
+IdentifyClassAs: java.util.LinkedHashMap LeakHunter
+IdentifyClassAs: java.util.Properties LeakHunter
+IdentifyClassAs: java.util.TreeMap LeakHunter
+# Interfaces should be specified too so that field assignment can
+# work properly
+IdentifyClassAs: java.util.Map LeakHunter
+IdentifyClassAs: java.util.SortedMap LeakHunter
+
+
+#######################
+# LeakHunter scope
+# ================
+# Defines the set of classes where LeakHunter will
+# look for potential leaks.  This must cover the
+# class that creates or tracks the collection for
+# a leak to be identified.
+
+IdentifyAllClassesAs: LeakHunterScope
+
+
+#########################################################
+# The following section of the file contains directives #
+# which implement the LeakHunter tracer group.  Do not  #
+# make changes to any of the directives below this line #
+# or Introscope LeakHunter will not work correctly.     #
+#########################################################
+
+SetFlag: LeakHunter
+TurnOn: LeakHunterScope
+SetFlag: LeakHunterScope
+
+NoticeScopedFieldAssignmentIfFlagged: LeakHunter com.wily.introscope.agent.leakhunter.FieldAssignmentEventNoticer LeakHunterScope
+NoticeScopedObjectCreationIfFlagged: LeakHunter com.wily.introscope.agent.leakhunter.ObjectCreationEventNoticer LeakHunterScope

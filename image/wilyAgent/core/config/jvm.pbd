@@ -1,0 +1,111 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                       
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#########################################################
+# This file provides directives which implement support 
+# for various Java Virtual Machines.  It is intended to 
+# be used with the Introscope default files.            
+#########################################################
+
+#######################
+# Reentrancy Avoidance
+# ================
+# Don't want to trace bootstrapping elements of the virtual machines.
+
+# Sun JVM 1.1, 1.2, 1.3
+SkipPackage: sun.io
+
+# Sun JVM 1.2, 1.3
+SkipPackage: sun.misc
+SkipPackage: sun.net
+SkipPackage: sun.net.www
+SkipPackage: sun.net.www.protocol.file
+SkipPackage: sun.net.www.protocol.jar
+SkipPackage: sun.security.acl
+SkipPackage: sun.security.action
+SkipPackage: sun.security.pkcs
+SkipPackage: sun.security.provider
+SkipPackage: sun.security.tools
+SkipPackage: sun.security.util
+SkipPackage: sun.security.x509
+SkipClass: sun.rmi.server.LoaderHandler
+SkipClass: sun.rmi.server.LoaderHandler$1
+SkipClass: sun.rmi.server.LoaderHandler$2
+SkipClass: sun.rmi.server.LoaderHandler$3
+SkipClass: sun.rmi.server.LoaderHandler$Loader
+SkipClass: sun.rmi.server.LoaderHandler$LoaderEntry
+SkipClass: sun.rmi.server.LoaderHandler$LoaderKey
+
+# Sun JVM 1.3
+SkipPackage: com.sun.rsajca
+
+# Sun JVM 1.4
+SkipPackagePrefix: javax.crypto.
+SkipPackagePrefix: com.sun.crypto.
+SkipPackagePrefix: com.sun.security.
+
+# IBM JVM 1.2
+# Also uses all of the "Sun JVM 1.2" packages listed above
+SkipPackage: javax.rmi
+SkipPackage: javax.rmi.CORBA
+SkipPackage: org.omg.CORBA
+SkipPackage: org.omg.CORBA.DynAnyPackage
+SkipPackage: org.omg.CORBA.ORBPackage
+SkipPackage: org.omg.CORBA.portable
+SkipPackage: org.omg.CORBA.TypeCodePackage
+SkipPackage: org.omg.CORBA_2_3
+SkipPackage: org.omg.CORBA_2_3.portable
+SkipPackage: org.omg.CosNaming
+SkipPackage: org.omg.CosNaming.NamingContextPackage
+SkipPackage: org.omg.SendingContext
+SkipPackage: org.omg.stub.java.rmi
+SkipPackage: com.ibm.CosNaming
+SkipPackage: com.ibm.org.omg.CORBA
+SkipPackage: com.ibm.rmi
+SkipPackage: com.ibm.rmi.corba
+SkipPackage: com.ibm.rmi.corba.util
+SkipPackage: com.ibm.rmi.iiop
+SkipPackage: com.ibm.rmi.io
+SkipPackage: com.ibm.rmi.util
+SkipPackage: com.ibm.jvm
+SkipPackage: com.ibm.jvm.format
+SkipPackage: com.ibm.jvm.io
+SkipPackage: com.sun.CORBA
+SkipPackage: com.sun.CORBA.idl
+SkipPackage: com.sun.CORBA.iiop
+SkipPackage: com.sun.CORBA.util
+SkipPackage: com.sun.naming.internal
+
+# IBM JVM 1.3
+SkipPackagePrefix: javax.security.
+SkipPackagePrefix: com.ibm.crypto.
+SkipPackagePrefix: com.ibm.security.
+SkipPackage: com.ibm.jsse
+
+# JRockit 1.4
+SkipPackagePrefix: javax.xml.
+SkipPackagePrefix: COM.jrockit.
+SkipPackagePrefix: javax.naming.
+SkipPackagePrefix: javax.net.ssl.
+SkipPackagePrefix: com.bea.jvm.
+SkipPackagePrefix: com.jrockit.
+SkipPackagePrefix: jrockit.
+
+# Oracle
+SkipPackagePrefix: oracle.security.o5logon.
+
+#######################
+# RMI Support
+# ================
+
+# Sun JVM 1.2.x
+IdentifyClassAs: sun.rmi.server.UnicastServerRef RMIServerTracing
+IdentifyClassAs: sun.rmi.server.ActivatableServerRef RMIServerTracing

@@ -1,0 +1,14 @@
+################################################
+# Spring Monitoring Addon
+# The instrumentation is an addition to the product solution
+# for monitoring multiple areas of Spring
+#
+# Andreas Reiss - APM Global SWAT Team
+# June 2014
+#################################################
+
+spring-bean.pbd
+spring-jms.pbd
+spring-mvc.pbd
+spring-ws.pbd
+spring-toggles.pbd

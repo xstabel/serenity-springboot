@@ -1,0 +1,345 @@
+###############################################################################
+#
+# CA Wily Introscope(R)
+# PowerPack for WebSphere MQ Connectors and Messaging System(R)
+# Version: 10.1.0.15
+# Build: 990014
+#
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#                                                                  
+# Introscope ProbeBuilder Directives File for Error Detector
+#
+###############################################################################
+
+
+###############################################################################
+### This file configures Error Detector by specifying what 
+### code-level events constitute serious errors.  By default,
+### only jms and connector classes and their method will be
+### monitored for exceptions
+###############################################################################
+
+### Set Error tracer for connector and jms ###
+## Error Tracer ordering has been defined on the basis of other MQ tracers, Error Tracers should be executed as last tracers.
+
+SetTracerClassMapping: 	MQErrorTracer com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: 	MQErrorTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQErrorTracer 10000
+SetTracerParameter: 	MQErrorTracer reentrancy instance
+
+### Removing Defaut Error Tracer as its already there in errors.pbd that comes with Introscope Agent
+
+#SkipMethodForFlag: JMSPublisherTracing publish
+#SkipMethodForFlag: JMSSenderTracing send
+#SkipMethodForFlag: JMSListenerTracing onMessage
+#SkipMethodForFlag: JMSConsumerTracing receive
+
+
+### START Error Tracer For Connector ###
+
+## MQ6.x
+SetFlag: MQQueue
+IdentifyClassAs: com/ibm/mq/MQQueue MQQueue
+
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQErrorTracer "MQErrorTrace"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue putMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "MQErrorTrace"
+
+
+## MQ7.x
+SetFlag: MQQueue6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQQueue MQQueue6
+
+TraceOneMethodWithParametersIfFlagged: MQQueue6 put(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 putMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)I MQErrorTracer "MQErrorTrace"
+
+
+## MQ7.x
+SetFlag: MQDestination
+IdentifyClassAs: com/ibm/mq/MQDestination MQDestination
+
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQQueueManager
+IdentifyClassAs: com/ibm/mq/MQQueueManager MQQueueManager
+
+TraceOneMethodWithParametersIfFlagged: MQQueueManager begin()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessProcess(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQProcess; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQQueue; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessDistributionList([Lcom/ibm/mq/MQDistributionListItem;ILjava/lang/String;)Lcom/ibm/mq/MQDistributionList; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterQueue(Lcom/ibm/mq/MQQueue;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterDistributionList(Lcom/ibm/mq/MQDistributionList;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterProcess(Lcom/ibm/mq/MQProcess;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager commit()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager disconnect()V MQErrorTracer "MQErrorTrace"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQErrorTracer "MQErrorTrace"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQErrorTracer "MQErrorTrace"
+
+
+
+## MQ7.x
+SetFlag: MQQueueManager6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQQueueManager MQQueueManager6
+
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 unregisterQueue(Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 commit()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 disconnect()V MQErrorTracer "MQErrorTrace"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQErrorTracer "MQErrorTrace"
+
+## MQ6.x and MQ7.x
+SetFlag: MQManagedConnectionJ11
+IdentifyClassAs: com/ibm/mq/MQManagedConnectionJ11 MQManagedConnectionJ11
+
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 getConnection(Ljavax/resource/spi/ConnectionRequestInfo;)Ljava/lang/Object; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 cleanup()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 destroy()V MQErrorTracer "MQErrorTrace"
+
+
+## MQ7.x
+SetFlag: MQManagedConnectionJ116
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQManagedConnectionJ11 MQManagedConnectionJ116
+
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 getConnection(Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionRequestInfo;)Ljava/lang/Object; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 destroy()V MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQDistributionList
+IdentifyClassAs: com/ibm/mq/MQDistributionList MQDistributionList
+
+TraceOneMethodWithParametersIfFlagged: MQDistributionList put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList close()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getFirstDistributionListItem()Lcom/ibm/mq/MQDistributionListItem; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getInvalidDestinationCount()I MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x
+SetFlag: MQSESSIONClient
+IdentifyClassAs: com/ibm/mq/MQSESSIONClient MQSESSIONClient
+
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCONNX(Ljava/lang/String;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pthrowable;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQDISC(Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQOPEN(ILcom/ibm/mq/MQOD;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCLOSE(ILcom/ibm/mq/Pint;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQBACK(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCMIT(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAOPEN(Ljava/lang/String;II)I  MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACLOSE(Ljava/lang/String;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XASTART(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XARECOVER([Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+
+
+## MQ7.x
+SetFlag: MQSESSION6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQSESSION MQSESSION6
+
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/msg/client/wmq/v6/base/internal/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAOPEN(Ljava/lang/String;II)I  MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACLOSE(Ljava/lang/String;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XASTART(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XARECOVER([Ljavax/transaction/xa/Xid;II)I MQErrorTracer "MQErrorTrace"
+
+
+## MQ7.x
+SetFlag: MQSESSION
+IdentifyClassAs: com/ibm/mq/MQSESSION MQSESSION
+
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQprocess
+IdentifyClassAs: com/ibm/mq/MQProcess MQprocess
+
+TraceOneMethodWithParametersIfFlagged: MQprocess close()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQprocess getApplicationType()I MQErrorTracer "MQErrorTrace"
+
+### FINISH Error Tracer For Connector ###
+
+
+### START Error Tracer For JMS ###
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqSession
+IdentifyClassAs: com/ibm/mq/jms/MQSession MQJMSmqSession  
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDestination(Ljava/lang/String;)Lcom/ibm/jms/JMSDestination; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession stop()V MQErrorTracer "MQErrorTrace"
+## Added for MDB processing for MQ v6.x
+## Comment this line for MQ7.x to avoid double metric reporting for Async Receive (one is due to onMessage)
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQErrorTracer "MQErrorTrace"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createQueue(Ljava/lang/String;)Ljavax/jms/Queue; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTopic(Ljava/lang/String;)Ljavax/jms/Topic; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryQueue()Ljavax/jms/TemporaryQueue; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryTopic()Ljavax/jms/TemporaryTopic; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;)Ljavax/jms/TopicSubscriber; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;)Ljavax/jms/QueueBrowser; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueBrowser; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage()Ljavax/jms/TextMessage; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage(Ljava/lang/String;)Ljavax/jms/TextMessage; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession unsubscribe(Ljava/lang/String;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession commit()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession recover()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession rollback()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession close()V MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqQueueSession
+IdentifyClassAs: com/ibm/mq/jms/MQQueueSession MQJMSmqQueueSession  
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createSender(Ljavax/jms/Queue;)Ljavax/jms/QueueSender; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;)Ljavax/jms/QueueReceiver; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueReceiver; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqTopicSession
+IdentifyClassAs: com/ibm/mq/jms/MQTopicSession MQJMSmqTopicSession  
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createPublisher(Ljavax/jms/Topic;)Ljavax/jms/TopicPublisher; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;)Ljavax/jms/TopicSubscriber; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqMessageProducer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageProducer MQJMSmqMessageProducer
+
+## MQ6.x 
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQErrorTracer "MQErrorTrace"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQErrorTracer "MQErrorTrace"
+
+
+## MQ7.x
+SetFlag: MQJMSmqQueueSender
+IdentifyClassAs: com/ibm/mq/jms/MQQueueSender MQJMSmqQueueSender
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqTopicSender
+IdentifyClassAs: com/ibm/mq/jms/MQTopicPublisher MQJMSmqTopicSender
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;IIJ)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;)V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;IIJ)V MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqMessageConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageConsumer MQJMSmqMessageConsumer
+
+## MQ7.x
+IdentifyClassAs: com/ibm/mq/jms/MQSession$FacadeMessageListener MQJMSmqMessageConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageConsumer$FacadeMessageListener MQJMSmqMessageConsumer
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer getTopic()Ljavax/jms/Topic; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveAsync(J)Z MQErrorTracer "MQErrorTrace"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQErrorTracer "MQErrorTrace"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQErrorTracer "MQErrorTrace"
+
+## MQ7.x
+SetFlag: WMQConsumerShadow
+IdentifyClassAs: com/ibm/msg/client/wmq/internal/WMQConsumerShadow  WMQConsumerShadow
+
+TraceOneMethodWithParametersIfFlagged: WMQConsumerShadow getMsg(Lcom/ibm/mq/jmqi/MQGMO;IZ)Lcom/ibm/msg/client/provider/ProviderMessage; MQErrorTracer "MQErrorTrace"
+
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqConnectionConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQConnectionConsumer MQJMSmqConnectionConsumer
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer close()V MQErrorTracer "MQErrorTrace"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer getServerSessionPool()Ljavax/jms/ServerSessionPool; MQErrorTracer "MQErrorTrace"
+
+
+## MQ6.x
+SetFlag: MQJMSmqQueueAgentThread
+IdentifyClassAs: com/ibm/mq/jms/MQQueueAgentThread MQJMSmqQueueAgentThread
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueAgentThread run()V MQErrorTracer "MQErrorTrace"
+
+### FINISH Error Tracer For JMS ###
+
+###

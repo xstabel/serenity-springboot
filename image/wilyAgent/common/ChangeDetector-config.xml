@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<change-detector>
+<!--
+################################################################                                                                     
+# Introscope ChangeDetector Configuration                         
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+################################################################
+-->
+
+    <!-- ========================================================== -->
+    <!-- FILE CHANGE MONITORING                                     -->
+    <!-- ========================================================== -->
+    <!--
+    Scan Directory configuration:
+    The only configuration element that _must_ be modified is the
+    'name' attribute of the <scan-directory> element, which is
+    located near the bottom of this <datasource-instance> element.
+    For this 'name' attribute you must provide the path to the
+    directory which you wish the ChangeDetector to scan. Typically
+    this would be your Application Server's web application
+    deployment directory and configuration directory.
+
+    File type customization:
+    By default, scans the the current working directory for the
+    file types defined by the <fileset> elements below.
+    These file types represent elements that are most likely to
+    cause a change to an application's performance when changed.
+    There is no need to modify these elements unless you require
+    specialized files types to be scanned. -->
+	<datasource-instance name="Application Files" type="file" version="8.0">
+
+		<property name="explodeArchiveFiles" value="false" />
+
+		<!-- Accepted units are hour, min, sec -->
+		<property name="delayBetweenIterations" value="3" unit="sec" />
+
+		<property name="filesPerIteration" value="5" />
+
+		<property name="delayBetweenArchiveIterations" value="10" unit="sec" />
+
+		<property name="archiveFilesPerIteration" value="1" />
+
+		<!-- Accepted units are bytes, KBytes, MBytes -->
+		<property name="maxFileSizeToUpload" value="50" unit="KB" />
+		
+		<property name="useDigest" value="needed" />
+
+		<!-- Scans typical files used for web application config -->
+		<fileset name="config">
+			<exclude pattern="(.*)">
+				<include pattern="(.*)\.xml$"/>
+				<include pattern="(.*)\.cmd$"/>
+				<include pattern="(.*)\.sh$"/>
+				<include pattern="(.*)\.bat$"/>
+			</exclude>
+		</fileset>
+
+		<!-- Scans typical files that contain web application code -->
+		<fileset name="webElements">
+			<exclude pattern="(.*)">
+				<include pattern="(.*)\.jsp$"/>
+				<include pattern="(.*)\.cfm$"/>
+				<include pattern="(.*)\.js$"/>
+				<include pattern="(.*)\.html$"/>
+			</exclude>
+		</fileset>
+
+		<!-- Scans java archives -->
+		<fileset name="archives">
+			<exclude pattern="(.*)">
+				<include pattern="(.*)\.zip$"/>
+				<include pattern="(.*)\.jar$"/>
+				<include pattern="(.*)\.ear$"/>
+				<include pattern="(.*)\.war$"/>
+			</exclude>
+		</fileset>
+
+		<!-- Scans only the types of files defined in config, webElements, and archive filesets -->
+		<fileset name="default">
+			<exclude pattern="(.*)">
+				<include pattern="(.*)\.xml$" />
+				<include pattern="(.*)\.cmd$" />
+				<include pattern="(.*)\.sh$" />
+				<include pattern="(.*)\.bat$" />
+				<include pattern="(.*)\.jsp$" />
+				<include pattern="(.*)\.cfm$" />
+				<include pattern="(.*)\.js$" />
+				<include pattern="(.*)\.html$" />
+				<include pattern="(.*)\.zip$" />
+				<include pattern="(.*)\.jar$" />
+				<include pattern="(.*)\.ear$" />
+				<include pattern="(.*)\.war$" />
+			</exclude>
+		</fileset>
+
+		<!-- Scans only the types of files defined in config and webElements -->
+		<fileset name="defaultNoArchives">
+			<exclude pattern="(.*)">
+				<include pattern="(.*)\.xml$" />
+				<include pattern="(.*)\.cmd$" />
+				<include pattern="(.*)\.sh$" />
+				<include pattern="(.*)\.bat$" />
+				<include pattern="(.*)\.jsp$" />
+				<include pattern="(.*)\.cfm$" />
+				<include pattern="(.*)\.js$" />
+				<include pattern="(.*)\.html$" />
+			</exclude>
+		</fileset>
+
+		<!-- Scans everything except log files -->
+		<fileset name="noLogs">
+			<exclude pattern="(.*)\.err$" />
+			<exclude pattern="(.*)\.log$" />
+			<exclude pattern="(.*)\.lok$" />
+			<exclude pattern="(.*)\.tlog$" />
+			<exclude pattern="(.*)\.log0(.*)" />
+		</fileset>
+
+        <!--
+        Changes the value for the name attribute to point to the directory you wish to monitor
+        Note: out-of-the-box configuration uses the "default" fileset.  If you do not wish to monitor java archive files,
+        use the "defaultNoArchive" fileset instead.  Alternatively, you can customize a fileset element
+        to monitor the files of your choice and either replace the scan-directory element below or add a new one. 
+        It is also possible to use a Java System property or Introscope Agent property value in the name attribute
+        (or any other attribute) value (e.g. name="${MY_APP_HOME}/filesICareAbout/"-->
+		<scan-directory recursive="true" name="." fileset="default"
+			enabled="true">
+		</scan-directory>
+	</datasource-instance>
+
+
+    <!-- ========================================================== -->
+    <!-- DATABASE CHANGE MONITORING                                 -->
+    <!-- ========================================================== -->
+    <!--
+    The example setup below for the DB Monitor scans name/value 
+    pairs from the Oracle v$parameter table every 10 minutes.
+
+    NOTE: This datasource instance is commented out by default
+    since it requires connection parameters specific to your
+    environment. Please enter in the values specific for your
+    database setup. -->
+    <!--
+    <datasource-instance name="Oracle DB" type="database" driver="oracle.jdbc.driver.OracleDriver" driverClasspath="C:\\somePathTo\\yourOracleDriver.zip"
+			url="jdbc:oracle:thin:@yourdbserver:1521:orcl" username="username"
+			password="password" version="8.0">
+		<sql>
+			SELECT name, value FROM v$parameter
+		</sql>
+		<schedule type="repetitive" interval="10" unit="min"/>
+	</datasource-instance>
+	-->
+
+
+    <!-- ========================================================== -->
+    <!-- JAVA SYSTEM PROPERTIES MONITORING                          -->
+    <!-- ========================================================== -->
+    <!--
+	By default all properties are included and monitored by the
+    Java System Properties Monitor.      
+    
+    To exclude properties an exclude node must be added. If you wish to 
+    override any exclusions, an include element must be nested within 
+    the specific exclude element.  The example below excludes all 
+    properties with the exception of properties that start with "java.".
+	  	 <exclude pattern=".*">
+	  	 	<include pattern="java\.*"/>
+	  	 </exclude> -->
+	<datasource-instance name="Java System Properties" type="javaenv" version="8.0">
+	</datasource-instance>
+
+
+    <!-- ========================================================== -->
+    <!-- JAVA CLASS MONITOR                                         -->
+    <!-- ========================================================== -->
+    <!-- 
+    By default app server classes are excluded using the exclude elements below.  
+    The exclude elements' pattern attribute defines a regular expression that
+    is used to match against the class name, including the package name.  
+    
+    If you wish to override any exclusions, an include element must be nested
+    within the specific exclude element.  The example below excludes all classes
+    with the exception of classes within the java package.
+		<exclude pattern=".*">
+			<include pattern="java\.*"/>
+		</exclude> 
+		
+	NOTE:   ChangeDetector currently only supports 1 instance of a classmonitor 
+			datasource per JVM.  
+		
+	NOTE: 	Any classes that do not match any of the exclude patterns will be 
+			included and monitored by the Java Class Monitor
+
+	-->
+	<datasource-instance name="Java Class Monitor" type="classmonitor" version="8.0">
+		<!-- Accepted units are hour, min, sec -->
+		<property name="delayBetweenIterations" value="2" unit="sec" />
+		<property name="classesPerIteration" value="100" />
+		
+		<!-- exclude classes from Wily -->
+		<exclude pattern="com\.wily\.(.*)"/>
+		
+		<!-- 
+			The following will skip classes from some app servers.  
+			Including these classes may result in a large number of
+			classes being tracked which seldom change and may be 
+			irrelevant to the performance of your application.  
+		-->
+		
+		<!-- exclude classes from BEA -->
+		<exclude pattern="weblogic\.(.*)"/>
+		<exclude pattern="com\.bea\.(.*)"/>
+		
+		<!-- exclude classes from IBM -->
+		<exclude pattern="com\.ibm\.(.*)">
+			<include pattern="com\.ibm\.(.*)jdbc(.*)"/>
+		</exclude>
+		
+		<!-- exclude classes from SAP -->
+		<exclude pattern="com\.sap\.(.*)"/>
+		
+		<!-- exclude classes from Oracle -->
+		<exclude pattern="oracle\.*">
+			<include pattern="oracle\.jdbc\.(.*)"/>
+		</exclude>
+		
+		<!-- exclude classes from Sun -->
+		<exclude pattern="com\.sun\.enterprise\.(.*)"/>
+		
+		<!-- exclude proxy classes -->
+		<exclude pattern="\$Proxy(.*)"/>
+	</datasource-instance>
+	
+	<!-- ========================================================== -->
+    <!-- CONFIGURATION PROPERTIES - do not modify datasource-type's -->
+    <!-- ========================================================== -->
+	<datasource-type name="file" class="com.wily.rave.agent.ds.file.FileDataSourceConfig" />
+	<datasource-type name="database" class="com.wily.rave.agent.ds.db.DBDataSourceConfig" />
+	<datasource-type name="javaenv" class="com.wily.rave.agent.ds.sysprop.SysPropDataSourceConfig" />
+	<datasource-type name="classmonitor" class="com.wily.rave.agent.ds.classmonitor.RuntimeClassMonitorConfig" />
+
+</change-detector>

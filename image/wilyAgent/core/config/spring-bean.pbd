@@ -1,0 +1,10 @@
+################################################
+# Custom detection of Spring Beans
+################################################
+
+SetTracerClassMapping: SpringBeanDetectionTracer com.wily.field.spring.beans.BeanDetectionTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetFlag: BeanFactoryTracing
+
+IdentifyInheritedAs: org.springframework.beans.factory.support.BeanDefinitionRegistry BeanFactoryTracing
+TraceOneMethodWithParametersIfFlagged: BeanFactoryTracing registerBeanDefinition SpringBeanDetectionTracer "BeanDetection"

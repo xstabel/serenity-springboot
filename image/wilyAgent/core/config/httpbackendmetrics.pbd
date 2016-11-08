@@ -1,0 +1,181 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+########################################################################
+# This file provides directives which implement
+# backend metric support for Apache HTTP Client,
+# Spring HTTP Client and 
+# Java HTTP URLConnection.
+########################################################################
+
+###This flag controls overall HTTP Backends and App Map feature across the http clients (Apache/URLConnection/Spring)
+SetFlag: HTTPBackend
+TurnOn: HTTPBackend
+
+#####################################################
+#
+# ApacheHTTPCommonsClient
+#####################################################
+
+
+
+# Backend
+#=================================
+SetFlag: ApacheHTTPClientBackendTracing
+SetFlag: ApacheHTTPClientBackend
+IdentifyTwoFlagIntersectionAsAggregateFlag: ApacheHTTPClientBackendTracing HTTPBackend ApacheHTTPClientBackend
+
+IdentifyClassAs: org.apache.commons.httpclient.HttpClient ApacheHTTPClientBackend
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend executeMethod(Lorg/apache/commons/httpclient/HostConfiguration;Lorg/apache/commons/httpclient/HttpMethod;Lorg/apache/commons/httpclient/HttpState;)I; ApacheHTTPCommonsClientBackendTracer "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend executeMethod(Lorg/apache/commons/httpclient/HostConfiguration;Lorg/apache/commons/httpclient/HttpMethod;Lorg/apache/commons/httpclient/HttpState;)I; ApacheHTTPCommonsClientDetailTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend executeMethod(Lorg/apache/commons/httpclient/HostConfiguration;Lorg/apache/commons/httpclient/HttpMethod;Lorg/apache/commons/httpclient/HttpState;)I; ApacheHTTPCommonsClientDetailErrorTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}:Errors Per Interval"
+
+SetTracerClassMapping: ApacheHTTPCommonsClientBackendTracer com.wily.introscope.agent.trace.backend.http.tracer.ApacheHttpCommonsBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheHTTPCommonsClientBackendTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpCommonsClientNameFormatter
+SetTracerOrdering: ApacheHTTPCommonsClientBackendTracer 100
+
+SetTracerClassMapping: ApacheHTTPCommonsClientDetailTracer com.wily.introscope.agent.trace.backend.http.tracer.BaseAggregatorHttpBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheHTTPCommonsClientDetailTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpCommonsClientNameFormatter
+SetTracerOrdering: ApacheHTTPCommonsClientDetailTracer 200
+
+SetTracerClassMapping:  ApacheHTTPCommonsClientDetailErrorTracer com.wily.introscope.agent.trace.backend.http.tracer.HttpClientMethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ApacheHTTPCommonsClientDetailErrorTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpCommonsClientNameFormatter
+SetTracerOrdering: ApacheHTTPCommonsClientDetailErrorTracer 201
+
+#####################################################
+#
+# ApacheHTTPComponentClient 4.0 to 4.2
+#####################################################
+
+# Backend
+#=================================
+
+IdentifyClassAs: org.apache.http.impl.client.AbstractHttpClient ApacheHTTPClientBackend
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/HttpResponse; ApacheHTTPComponentsClientBackendTracer "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/HttpResponse; ApacheHTTPComponentsClientDetailTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/HttpResponse; ApacheHTTPComponentsClientDetailTracerErrorTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}:Errors Per Interval"
+
+SetTracerClassMapping: ApacheHTTPComponentsClientBackendTracer com.wily.introscope.agent.trace.backend.http.tracer.ApacheHttpComponentsBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerParameter: ApacheHTTPComponentsClientBackendTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpComponentsClientNameFormatter
+SetTracerOrdering: ApacheHTTPComponentsClientBackendTracer 100
+
+SetTracerClassMapping: ApacheHTTPComponentsClientDetailTracer com.wily.introscope.agent.trace.backend.http.tracer.BaseAggregatorHttpBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheHTTPComponentsClientDetailTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpComponentsClientNameFormatter
+SetTracerOrdering: ApacheHTTPComponentsClientDetailTracer 200
+
+SetTracerClassMapping: ApacheHTTPComponentsClientDetailTracerErrorTracer com.wily.introscope.agent.trace.backend.http.tracer.HttpClientMethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ApacheHTTPComponentsClientDetailTracerErrorTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpComponentsClientNameFormatter
+SetTracerOrdering: ApacheHTTPComponentsClientDetailTracerErrorTracer 201
+
+#####################################################
+#
+# ApacheHTTPComponentClient 4.3
+#####################################################
+
+# Backend
+#=================================
+
+IdentifyClassAs: org.apache.http.impl.client.CloseableHttpClient ApacheHTTPClientBackend
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientBackendTracer "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientBackendTracer "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/client/methods/HttpUriRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientBackendTracer "WebService at {protocol}_//{host}_{port}"
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientDetailTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientDetailTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/client/methods/HttpUriRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientDetailTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}"
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientDetailTracerErrorTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientDetailTracerErrorTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/client/methods/HttpUriRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientDetailTracerErrorTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}:Errors Per Interval"
+
+
+# Toggles
+#=================================
+
+TurnOn: ApacheHTTPClientBackendTracing
+
+
+#####################################################
+#
+# Http URL Connection (Sun)
+#####################################################
+
+# Backend :: CLIENT
+#=================================
+
+SetFlag: HttpURLConnectionBackendTracing
+SetFlag: HttpURLConnectionBackend
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpURLConnectionBackendTracing HTTPBackend HttpURLConnectionBackend
+
+InstrumentBootstrapClass: java.net.HttpURLConnection true
+IdentifyInheritedAs: java.net.HttpURLConnection HttpURLConnectionBackend
+InstrumentBootstrapClass: sun.net.www.protocol.http.HttpURLConnection true
+
+SetTracerClassMapping: HttpURLConnectionClientBackendTracer com.wily.introscope.agent.trace.backend.http.tracer.HttpURLConnectionBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: HttpURLConnectionClientBackendTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.HttpURLConnectionNameFormatter
+SetTracerOrdering: HttpURLConnectionClientBackendTracer 100
+
+SetTracerClassMapping: HttpURLConnectionClientDetailTracer com.wily.introscope.agent.trace.backend.http.tracer.HttpURLConnectionBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: HttpURLConnectionClientDetailTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.HttpURLConnectionNameFormatter
+SetTracerOrdering: HttpURLConnectionClientDetailTracer 200
+
+SetTracerClassMapping: HttpURLConnectionClientBackendErrorTracer com.wily.introscope.agent.trace.backend.http.tracer.HttpClientMethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: HttpURLConnectionClientBackendErrorTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.HttpURLConnectionNameFormatter
+SetTracerOrdering: HttpURLConnectionClientBackendErrorTracer 201
+
+TraceOneMethodIfFlagged: HttpURLConnectionBackend getInputStream()Ljava/io/InputStream; HttpURLConnectionClientBackendTracer "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodIfFlagged: HttpURLConnectionBackend getInputStream()Ljava/io/InputStream; HttpURLConnectionClientDetailTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}"
+TraceOneMethodWithParametersIfFlagged: HttpURLConnectionBackend getInputStream()Ljava/io/InputStream; HttpURLConnectionClientBackendErrorTracer "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}:Errors Per Interval"
+
+# Toggles
+#=================================
+
+TurnOn: HttpURLConnectionBackendTracing
+
+
+#####################################################
+#
+# Spring Http Client
+#####################################################
+# Backend :: CLIENT
+#=================================
+SetFlag: SpringHTTPClientBackend
+
+IdentifyDeepInheritedAs: org.springframework.http.client.ClientHttpRequest  SpringHTTPClientBackend
+IdentifyClassAs: org.springframework.http.client.ClientHttpRequest SpringHTTPClientBackend
+
+SetTracerClassMapping: SpringSimpleClientBackendTracer com.wily.introscope.agent.trace.backend.http.tracer.SpringBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringSimpleClientBackendTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.SpringHttpClientNameFormatter
+SetTracerOrdering: SpringSimpleClientBackendTracer 100
+
+SetTracerClassMapping: SpringHTTPComponentsClientDetailTracer com.wily.introscope.agent.trace.backend.http.tracer.SpringBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringHTTPComponentsClientDetailTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.SpringHttpClientNameFormatter
+SetTracerOrdering: SpringHTTPComponentsClientDetailTracer 200
+
+SetTracerClassMapping:  SpringClientDetailErrorTracer com.wily.introscope.agent.trace.backend.http.tracer.HttpClientMethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringClientDetailErrorTracer nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpCommonsClientNameFormatter
+SetTracerOrdering: SpringClientDetailErrorTracer 201
+
+
+TraceOneMethodWithParametersIfFlagged: SpringHTTPClientBackend execute SpringSimpleClientBackendTracer  "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodWithParametersIfFlagged: SpringHTTPClientBackend execute SpringHTTPComponentsClientDetailTracer  "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}"
+TraceOneMethodWithParametersIfFlagged: SpringHTTPClientBackend execute SpringClientDetailErrorTracer  "Backends|WebService at {protocol}_//{host}_{port}|Paths|{path}:Errors Per Interval"
+
+
+# Toggles
+#=================================
+
+TurnOn: SpringHTTPClientBackend
+
+#####################################################

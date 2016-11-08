@@ -1,0 +1,481 @@
+########################################################################
+# Introscope ProbeBuilder File for SOA Performance Manager                             
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0.15 Build 990014 
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+
+#############################################################
+# This file provides tracer directives for App Map Instrumentation (new configuration)
+#############################################################
+
+SetFlag: AppMapInstrumentNew
+
+SetFlag: Axis1ClientTracingMethodClassNew
+SetFlag: JaxRpcCallTracingMethodClassNew
+SetFlag: WL_JaxRpcCallTracingMethodClassNew
+SetFlag: WLS9WSClientTracingMethodClassNew
+SetFlag: WL_CLIENT_SYNC_JAXWS_TRACINGMethodClassNew
+SetFlag: WL_CLIENT_JAXWS_TRACINGMethodClassNew
+SetFlag: WASWSClientTracingMethodClassNew
+SetFlag: NWS71WSClientTracingMethodClassNew
+SetFlag: NWS71_JAXRPC_WSClientTracingMethodClassNew
+SetFlag: JBOSS_CLIENT_JAXWS_TRACINGMethodClassNew 
+SetFlag: ApacheCXFJaxWSClientTracingMethodClassNew 
+SetFlag: Axis2ClientTracingMethodClassNew 
+SetFlag: WLS8WSClientTracingMethodClassNew 
+
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis1ClientTracing AppMapInstrumentNew Axis1ClientTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: JaxRpcCallTracing AppMapInstrumentNew JaxRpcCallTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_JaxRpcCallTracing AppMapInstrumentNew WL_JaxRpcCallTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS9WSClientTracing AppMapInstrumentNew WLS9WSClientTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_CLIENT_SYNC_JAXWS_TRACING AppMapInstrumentNew WL_CLIENT_SYNC_JAXWS_TRACINGMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_CLIENT_JAXWS_TRACING AppMapInstrumentNew WL_CLIENT_JAXWS_TRACINGMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WASWSClientTracing AppMapInstrumentNew WASWSClientTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: NWS71WSClientTracing AppMapInstrumentNew NWS71WSClientTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: NWS71_JAXRPC_WSClientTracing AppMapInstrumentNew NWS71_JAXRPC_WSClientTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: JBOSS_CLIENT_JAXWS_TRACING AppMapInstrumentNew JBOSS_CLIENT_JAXWS_TRACINGMethodClassNew 
+IdentifyTwoFlagIntersectionAsAggregateFlag: ApacheCXFJaxWSClientTracing AppMapInstrumentNew ApacheCXFJaxWSClientTracingMethodClassNew 
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis2ClientTracing AppMapInstrumentNew Axis2ClientTracingMethodClassNew 
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS8WSClientTracing AppMapInstrumentNew WLS8WSClientTracingMethodClassNew 
+
+####################################################################################
+#	Delayed Correlation 
+#    When the correlation tracer is on a different method than the 
+#    WebserviceBlamepointTracer
+####################################################################################
+SetTracerClassMapping: DelayedCorrelation com.wily.introscope.agent.trace.hc2.DelayedCrossCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+####################################################################################
+#
+# Axis 1 client-side web service tracers
+#
+# Notes: Axis1ClientTracing will take care of Client Side Metrics
+# 
+# Supports: Axis 1
+#
+####################################################################################
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingMethodClassNew invokeEngine AppMapJaxRpcCallTracerNew "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingMethodClassNew invokeEngineOneWay AppMapJaxRpcCallTracerNew "{namespace}|{operationname}"
+
+#########################################################
+# 
+# Axis 1.x Webservices Server Tracing
+#
+#########################################################
+
+SetFlag: Axis1ServerTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis1ServerCorrelationTracing AppMapInstrumentNew Axis1ServerTracingMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracingMethodClassNew invoke(Lorg/apache/axis/MessageContext;)V AppMapWebServicesServerMarker "WebServices"
+
+#delayed Correlation
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracingMethodClassNew invoke DelayedCorrelation "WebServices|Server|{namespace}"
+
+
+####################################################################################
+#
+# JAX-RPC client-side web service tracers
+#
+# Notes: JaxRpcCallTracing will take care of Client Side Metrics
+# 
+# Supports: Axis 1.x
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingMethodClassNew invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerNew "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingMethodClassNew invokeOneWay AppMapJaxRpcCallTracerNew "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapJaxRpcCallTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJaxRpcCallTracerNew nodeType WebService
+SetTracerParameter: AppMapJaxRpcCallTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapJaxRpcCallTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: AppMapJaxRpcCallTracerNew ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapJaxRpcCallTracerNew boundaryType Backend
+SetTracerParameter: AppMapJaxRpcCallTracerNew isCrossProcess true
+SetTracerParameter: AppMapJaxRpcCallTracerNew useblame false
+
+#################################################################################################
+#
+# JAX-RPC client-side web service tracers
+#
+# Notes:
+# Tracers for implementations javax.xml.rpc.Call interface.
+# Supported platforms: Weblogic 9.0
+#
+# classe and its associated jar file:
+# ===============================================================================================
+# weblogic.wsee.jaxrpc.WLCall				  	         weblogic.jar (Weblogic 9.0)
+#
+#################################################################################################
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingMethodClassNew invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerNew "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingMethodClassNew invokeOneWay AppMapJaxRpcCallTracerNew "{namespace}|{operationname}"
+
+##################################################################
+#
+# Weblogic 9.0 client-side tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ==========================================================
+# weblogic.wsee.jaxrpc.StubImpl			weblogic.jar (9.0)
+#
+##################################################################
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracingMethodClassNew  _invoke AppMapWLS9WSClientTracerNew  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapWLS9WSClientTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS9WSClientTracerNew nodeType WebService
+SetTracerParameter: AppMapWLS9WSClientTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapWLS9WSClientTracerNew  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerParameter: AppMapWLS9WSClientTracerNew  ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapWLS9WSClientTracerNew  boundaryType Backend
+SetTracerParameter: AppMapWLS9WSClientTracerNew isCrossProcess true
+SetTracerParameter: AppMapAxis2CallTracerNew useblame false
+
+##################################################################
+#
+# Weblogic 10.0 client-side tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ==========================================================
+# com.sun.xml.ws.client.sei.SEIStub  			weblogic.jar (10.0)
+#
+##################################################################
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACINGMethodClassNew   invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object;  AppMapWLS10WSClientTracerNew  "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACINGMethodClassNew    doProcessAsync AppMapWLS10WSAsyncClientTracerNew  "{namespace}|{operationname}"
+
+
+SetTracerClassMapping: AppMapWLS10WSClientTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSClientTracerNew nodeType WebService
+SetTracerParameter: AppMapWLS10WSClientTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapWLS10WSClientTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerParameter: AppMapWLS10WSClientTracerNew ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapWLS10WSClientTracerNew boundaryType Backend
+SetTracerParameter: AppMapWLS10WSClientTracerNew isCrossProcess true
+SetTracerParameter: AppMapWLS10WSClientTracerNew useblame false
+
+SetTracerClassMapping: AppMapWLS10WSAsyncClientTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerNew nodeType WebService
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerNew  ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerNew  boundaryType Backend
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerNew isCrossProcess true
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerNew useblame false
+
+##########################################################
+## Weblogic 9, 10 and 10.3 Server Side Instrumentation Points
+##########################################################
+
+SetFlag: WLS9WSServerTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS9WSServerTracing AppMapInstrumentNew WLS9WSServerTracingMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracingMethodClassNew handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z AppMapWebServicesServerMarker "WebServices"
+
+# App Map Marker
+SetFlag: JAXWS_AXIS2_PRODUCERMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: JAXWS_AXIS2_PRODUCER AppMapInstrumentNew JAXWS_AXIS2_PRODUCERMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew invoke AppMapWebServicesServerMarker "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew invokeAsync AppMapWebServicesServerMarker "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew invokeOneWay AppMapWebServicesServerMarker "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew receive AppMapWebServicesServerMarker "WebServices"
+
+
+SetFlag: WLS8WSServerTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS8WSServerTracing AppMapInstrumentNew WLS8WSServerTracingMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSServerTracingMethodClassNew invoke(Ljava/lang/String;[Ljava/lang/Object;Lweblogic/webservice/WLMessageContext;)Ljava/lang/Object; AppMapWebServicesServerMarker "WebServices"
+
+SetFlag: WL_SERVER_JAXWS10_TRACINGMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_SERVER_JAXWS10_TRACING AppMapInstrumentNew WL_SERVER_JAXWS10_TRACINGMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACINGMethodClassNew process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; AppMapWebServicesServerMarker "WebServices"
+
+
+
+SetFlag: WL_SERVER_JAXWS_TRACINGMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_SERVER_JAXWS_TRACING AppMapInstrumentNew WL_SERVER_JAXWS_TRACINGMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACINGMethodClassNew runSync AppMapWebServicesServerMarker "WebServices"
+
+
+#Delayed Correlation 
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracingMethodClassNew handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z DelayedCorrelation "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew invoke DelayedCorrelation "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew invokeAsync DelayedCorrelation "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew invokeOneWay DelayedCorrelation "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCERMethodClassNew receive DelayedCorrelation "WebServices"
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACINGMethodClassNew process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; DelayedCorrelation "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACINGMethodClassNew runSync DelayedCorrelation "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSServerTracingMethodClassNew invoke(Ljava/lang/String;[Ljava/lang/Object;Lweblogic/webservice/WLMessageContext;)Ljava/lang/Object; DelayedCorrelation "WebServices|Server|{namespace}"
+
+
+#############################################################################
+#
+# Websphere 6.1 client-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ======================================================================
+# com.ibm.ws.webservices.engine.client.Connection	webservices.jar
+#
+#############################################################################
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracingMethodClassNew  invokeEngine AppMapWASWSClientTracerNew  "{namespace}|{operationname}"
+
+
+SetTracerClassMapping: AppMapWASWSClientTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWASWSClientTracerNew nodeType WebService
+SetTracerParameter: AppMapWASWSClientTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapWASWSClientTracerNew  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerParameter: AppMapWASWSClientTracerNew  ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapWASWSClientTracerNew  boundaryType Backend
+SetTracerParameter: AppMapWASWSClientTracerNew isCrossProcess true
+SetTracerParameter: AppMapWASWSClientTracerNew useblame false
+
+######################################################################################################
+#
+# SAP NetWeaver 7.1 client-side tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ===================================================================================================
+# com.sap.engine.services.webservices.espbase.client.bindings.impl.SOAPTransportBinding NWS71WSClientTracing
+#
+######################################################################################################
+
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracingMethodClassNew   call AppMapNWS7WSClientTracerNew  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapNWS7WSClientTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7WSClientTracerNew nodeType WebService
+SetTracerParameter: AppMapNWS7WSClientTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapNWS7WSClientTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerParameter: AppMapNWS7WSClientTracerNew  ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapNWS7WSClientTracerNew  boundaryType Backend
+SetTracerParameter: AppMapNWS7WSClientTracerNew isCrossProcess true
+SetTracerParameter: AppMapNWS7WSClientTracerNew useblame false
+
+
+######################################################################################################
+#
+# SAP NetWeaver 7.1 JAX RPC client-side tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ===================================================================================================
+# com.sap.engine.services.webservices.jaxrpc.wsdl2java.ClientTransportBinding NWS71_JAXRPC_WSClientTracing
+#
+######################################################################################################
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracingMethodClassNew  call AppMapNWS7JAXRPCClientTracerNew  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapNWS7JAXRPCClientTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerNew nodeType WebService
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerNew  ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerNew  boundaryType Backend
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerNew isCrossProcess true
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerNew useblame false
+
+####################################################################################
+#
+# Jboss client-side web service tracers
+#
+# 
+# Supports: JBoss 3.0 web services stack
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACINGMethodClassNew invoke AppMapJBOSSCallTracerNew "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapJBOSSCallTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJBOSSCallTracerNew nodeType WebService
+SetTracerParameter: AppMapJBOSSCallTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapJBOSSCallTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerParameter: AppMapJBOSSCallTracerNew ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapJBOSSCallTracerNew boundaryType Backend
+SetTracerParameter: AppMapJBOSSCallTracerNew isCrossProcess true
+SetTracerParameter: AppMapJBOSSCallTracerNew useblame false
+
+####################################################################################
+#
+# Apache CXF client-side web service tracers
+#
+# 
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingMethodClassNew invokeSync AppMapCXFCallTracerNew "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingMethodClassNew invokeASync AppMapCXFCallTracerNew "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapCXFCallTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapCXFCallTracerNew nodeType WebService
+SetTracerParameter: AppMapCXFCallTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapCXFCallTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerParameter: AppMapCXFCallTracerNew ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapCXFCallTracerNew boundaryType Backend
+SetTracerParameter: AppMapCXFCallTracerNew isCrossProcess true
+SetTracerParameter: AppMapCXFCallTracerNew useblame false
+
+###########################################################
+# 
+# Apache CXF Server JAX-WS Instrumentation
+# 
+############################################################
+
+# App Map Marker
+SetFlag: ApacheCXFJaxWSServerTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: ApacheCXFJaxWSServerTracing AppMapInstrumentNew ApacheCXFJaxWSServerTracingMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracingMethodClassNew invoke AppMapWebServicesServerMarker "WebServices"
+#delayed Correlation
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracingMethodClassNew invoke DelayedCorrelation "WebServices|Server|{namespace}|{operationname}"
+
+
+####################################################################################
+#
+# Axis 2 client-side web service tracers
+#
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracingMethodClassNew execute  AppMapAxis2CallTracerNew "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapAxis2CallTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapAxis2CallTracerNew nodeType WebService
+SetTracerParameter: AppMapAxis2CallTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapAxis2CallTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerParameter: AppMapAxis2CallTracerNew ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapAxis2CallTracerNew boundaryType Backend
+SetTracerParameter: AppMapAxis2CallTracerNew isCrossProcess true
+SetTracerParameter: AppMapAxis2CallTracerNew useblame false
+
+#########################################################
+# 
+# Axis2 Webservices HTTP Server Tracing
+#
+#########################################################
+
+# App Map Marker
+SetFlag: Axis2ServerTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis2ServerTracing AppMapInstrumentNew Axis2ServerTracingMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracingMethodClassNew doPost AppMapWebServicesServerMarker  "WebServices"
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracingMethodClassNew invokeBusinessLogic AppMapWebServicesServerMarker  "WebServices"
+
+# Delayed Correlation
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracingMethodClassNew invokeBusinessLogic DelayedCorrelation "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracingMethodClassNew doPost DelayedCorrelation "WebServices|Server|{namespace}|{operationname}"
+
+
+##################################################################################
+#
+# Weblogic 8.1 client-side web service tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ===============================================================
+# weblogic.webservice.core.rpc.StubImpl     webservices.jar (8.1)
+#
+##################################################################################
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracingMethodClassNew _invoke AppMapWLS8WSClientTracerNew  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapWLS8WSClientTracerNew com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS8WSClientTracerNew nodeType WebService
+SetTracerParameter: AppMapWLS8WSClientTracerNew nodeLevel MethodClass,Class
+SetTracerParameter: AppMapWLS8WSClientTracerNew nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS8Formatter
+SetTracerParameter: AppMapWLS8WSClientTracerNew ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapWLS8WSClientTracerNew boundaryType Backend
+SetTracerParameter: AppMapWLS8WSClientTracerNew isCrossProcess true
+SetTracerParameter: AppMapWLS8WSClientTracerNew useblame false
+
+##################################
+#
+#  WAS 6 Server
+#
+##################################
+SetFlag: WAS6WSServerTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: WAS6WSServerTracing AppMapInstrumentNew WAS6WSServerTracingMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracingMethodClassNew invoke AppMapWebServicesServerMarker "WebServices"
+
+##Delayed Correlation
+TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracingMethodClassNew invoke DelayedCorrelation "WebServices"
+
+
+#######################
+## NW 7.1 Server
+######################
+SetFlag: NWS6WSServerTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: NWS6WSServerTracing AppMapInstrumentNew NWS6WSServerTracingMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: NWS6WSServerTracingMethodClassNew invokeMethod AppMapWebServicesServerMarker "WebServices"
+
+##Delayed Correlation
+TraceOneMethodWithParametersIfFlagged: NWS6WSServerTracingMethodClassNew invokeMethod DelayedCorrelation "WebServices|Server|{namespace}|{operationname}"
+
+
+################################
+#
+# JBOSS JAX-WS
+#
+################################
+SetFlag: JBOSS_SERVER_JAXWS_TRACINGMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: JBOSS_SERVER_JAXWS_TRACING AppMapInstrumentNew JBOSS_SERVER_JAXWS_TRACINGMethodClassNew
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACINGMethodClassNew invoke AppMapWebServicesServerMarker "WebServices"
+
+##Delayed Correlation
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACINGMethodClassNew invoke DelayedCorrelation "WebServices"
+
+
+
+########################
+# App Map server side marker
+########################
+
+SetTracerClassMapping: AppMapWebServicesServerMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWebServicesServerMarker nodeType Servlet
+SetTracerParameter: AppMapWebServicesServerMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapWebServicesServerMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapWebServicesServerMarker isCrossProcess true
+SetTracerParameter: AppMapWebServicesServerMarker isForcedCrossProcess true
+SetTracerParameter: AppMapWebServicesServerMarker useblame false
+
+##################################################################
+
+SetTracerOrdering: AppMapJaxRpcCallTracerNew -4000
+SetTracerOrdering: AppMapWLS9WSClientTracerNew -4000
+SetTracerOrdering: AppMapWLS10WSClientTracerNew -4000
+SetTracerOrdering: AppMapWLS10WSAsyncClientTracerNew -4000
+SetTracerOrdering: AppMapWASWSClientTracerNew -4000
+SetTracerOrdering: AppMapNWS7WSClientTracerNew -4000
+SetTracerOrdering: AppMapJBOSSCallTracerNew -4000
+SetTracerOrdering: AppMapCXFCallTracerNew -4000
+SetTracerOrdering: AppMapAxis2CallTracerNew -4000
+
+

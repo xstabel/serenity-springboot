@@ -1,0 +1,28 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file is used to enable the Servlet Header Decorator
+# which is part of the integration solution with the CEM
+# product.
+#############################################################
+
+SetTracerClassMapping: ServletHeaderDecorator com.wily.introscope.agent.servletheaderdecorator.ServletHeaderDecorator com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ServletHeaderDecorator -900
+TraceOneMethodWithParametersIfFlagged: JSPTracing _jspService ServletHeaderDecorator JSP
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V ServletHeaderDecorator Servlets
+TraceOneMethodWithParametersIfFlagged: HttpServletTracing service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V ServletHeaderDecorator Servlets
+
+TurnOn: FileServletWrapperTracing
+SetFlag: FileServletWrapperTracing
+IdentifyClassAs: com.ibm.ws.webcontainer.servlet.FileServletWrapper FileServletWrapperTracing
+IdentifyInheritedAs: com.ibm.ws.webcontainer.servlet.FileServletWrapper FileServletWrapperTracing
+TraceOneMethodWithParametersIfFlagged: FileServletWrapperTracing handleRequest ServletHeaderDecorator Servlets

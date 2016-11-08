@@ -1,0 +1,111 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+########################################################################
+# This file provides directives which shows HTTP Backends in Triage Map. The entries are for :
+# Apache HTTP Client,
+# Spring HTTP Client and 
+# Java HTTP URLConnection.
+# It depends on the httpbackendmetrics.pbd
+########################################################################
+
+#####################################################
+#
+# ApacheHTTPCommonsClient App Map tracer definitions
+#####################################################
+
+SetTracerClassMapping: ApacheHTTPCommonsClientBackendAppMapMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheHTTPCommonsClientBackendAppMapMarker nodeType WebService
+SetTracerParameter: ApacheHTTPCommonsClientBackendAppMapMarker nodeLevel MethodClass,Class
+SetTracerParameter: ApacheHTTPCommonsClientBackendAppMapMarker nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpCommonsClientNameFormatter
+SetTracerParameter: ApacheHTTPCommonsClientBackendAppMapMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: ApacheHTTPCommonsClientBackendAppMapMarker boundaryType Backend
+SetTracerParameter: ApacheHTTPCommonsClientBackendAppMapMarker isCrossProcess true
+SetTracerParameter: ApacheHTTPCommonsClientBackendAppMapMarker useblame false
+SetTracerOrdering: ApacheHTTPCommonsClientBackendAppMapMarker -1000001
+
+#####################################################
+#
+# ApacheHTTPComponentsClient App Map tracer definitions
+#####################################################
+
+SetTracerClassMapping: ApacheHTTPComponentsClientBackendAppMapMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheHTTPComponentsClientBackendAppMapMarker nodeType WebService
+SetTracerParameter: ApacheHTTPComponentsClientBackendAppMapMarker nodeLevel MethodClass,Class
+SetTracerParameter: ApacheHTTPComponentsClientBackendAppMapMarker nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.ApacheHttpComponentsClientNameFormatter
+SetTracerParameter: ApacheHTTPComponentsClientBackendAppMapMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: ApacheHTTPComponentsClientBackendAppMapMarker boundaryType Backend
+SetTracerParameter: ApacheHTTPComponentsClientBackendAppMapMarker isCrossProcess true
+SetTracerParameter: ApacheHTTPComponentsClientBackendAppMapMarker useblame false
+SetTracerOrdering: ApacheHTTPComponentsClientBackendAppMapMarker -1000001
+
+#####################################################
+#
+# ApacheHTTPCommonsClient App Map Tracer probe points
+#####################################################
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend executeMethod(Lorg/apache/commons/httpclient/HostConfiguration;Lorg/apache/commons/httpclient/HttpMethod;Lorg/apache/commons/httpclient/HttpState;)I; ApacheHTTPCommonsClientBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"
+
+
+
+#####################################################
+#
+# ApacheHTTPComponentClient 4.0 to 4.2 App Map Tracer probe points
+#####################################################
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/HttpResponse; ApacheHTTPComponentsClientBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"
+
+#####################################################
+#
+# ApacheHTTPComponentClient 4.3 App Map Tracer probe points
+#####################################################
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientBackend execute(Lorg/apache/http/client/methods/HttpUriRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"
+
+
+#####################################################
+#
+# Spring Http App Map Tracer probe points
+#####################################################
+
+SetTracerClassMapping: SpringHTTPBackendAppMapMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringHTTPBackendAppMapMarker nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.SpringHttpClientNameFormatter
+SetTracerParameter: SpringHTTPBackendAppMapMarker nodeType WebService
+SetTracerParameter: SpringHTTPBackendAppMapMarker nodeLevel MethodClass,Class
+SetTracerParameter: SpringHTTPBackendAppMapMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: SpringHTTPBackendAppMapMarker boundaryType Backend
+SetTracerParameter: SpringHTTPBackendAppMapMarker isCrossProcess true
+SetTracerParameter: SpringHTTPBackendAppMapMarker useblame false
+SetTracerOrdering: SpringHTTPBackendAppMapMarker -1000001
+
+TraceOneMethodWithParametersIfFlagged: SpringHTTPClientBackend execute SpringHTTPBackendAppMapMarker  "WebService at {protocol}_//{host}_{port}"
+
+
+#####################################################
+#
+# HttpURLConnection App Map Tracer probe points
+#####################################################
+ 
+SetTracerClassMapping: HttpURLConnectionBackendAppMapMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: HttpURLConnectionBackendAppMapMarker nameformatter com.wily.introscope.agent.trace.backend.http.nameformatter.HttpURLConnectionNameFormatter
+SetTracerParameter: HttpURLConnectionBackendAppMapMarker nodeType WebService
+SetTracerParameter: HttpURLConnectionBackendAppMapMarker nodeLevel MethodClass,Class
+SetTracerParameter: HttpURLConnectionBackendAppMapMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: HttpURLConnectionBackendAppMapMarker boundaryType Backend
+SetTracerParameter: HttpURLConnectionBackendAppMapMarker isCrossProcess true
+SetTracerParameter: HttpURLConnectionBackendAppMapMarker useblame false
+SetTracerOrdering: HttpURLConnectionBackendAppMapMarker -1000001
+
+TraceOneMethodIfFlagged: HttpURLConnectionBackend connect()V HttpURLConnectionBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodIfFlagged: HttpURLConnectionBackend getInputStream HttpURLConnectionBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"
+TraceOneMethodIfFlagged: HttpURLConnectionBackend getOutputStream HttpURLConnectionBackendAppMapMarker "WebService at {protocol}_//{host}_{port}"

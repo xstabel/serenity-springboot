@@ -1,0 +1,7 @@
+
+######################################################
+# From java2.pbd SocketTracing ,Enable it for  java 7
+######################################################
+
+SubstituteClassIfFlagged: SocketTracing java.net.SocketOutputStream java.net.ManagedSocketOutputStreamAPSIHighPerformance
+SubstituteClassIfFlagged: SocketTracing java.net.SocketInputStream java.net.ManagedSocketInputStreamAPSIHighPerformance

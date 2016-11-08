@@ -1,0 +1,735 @@
+###############################################################################
+#
+# CA Wily Introscope(R)
+# PowerPack for WebSphere MQ Connectors and Messaging System(R)
+# Version: 10.1.0.15
+# Build: 990014
+#
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#                                                                  
+# Introscope ProbeBuilder Directives File for Error Detector
+#
+###############################################################################
+
+
+###############################################################################
+### This file configures Error Detector by specifying what 
+### code-level events constitute serious errors.  By default,
+### only jms and connector classes and their method will be
+### monitored for exceptions
+###############################################################################
+
+### Set Error tracer for connector and jms ###
+## Error Tracer ordering has been defined on the basis of other MQ tracers, Error Tracers should be executed as last tracers.
+
+SetTracerClassMapping: 	MQErrorTracer com.wily.introscope.agent.errors.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: 	MQErrorTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQErrorTracer 10000
+SetTracerParameter: 	MQErrorTracer reentrancy instance
+
+SetTracerClassMapping: 	MQOperationErrorTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.MethodThrewErrorFlagReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: 	MQOperationErrorTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQOperationErrorTracer 10000
+SetTracerParameter: 	MQOperationErrorTracer reentrancy instance
+
+## Error Tracer
+
+SetTracerClassMapping: 	MQBackendsErrorTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.MethodThrewErrorFlagReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: 	MQBackendsErrorTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQBackendsErrorTracer 10000
+SetTracerParameter: 	MQBackendsErrorTracer reentrancy instance
+
+### Removing Defaut Error Tracer as its already there in errors.pbd that comes with Introscope Agent
+
+SkipMethodForFlag: JMSPublisherTracing publish
+SkipMethodForFlag: JMSSenderTracing send
+SkipMethodForFlag: JMSListenerTracing onMessage
+SkipMethodForFlag: JMSConsumerTracing receive
+
+
+### START Error Tracer For Connector ###
+
+## MQ6.x
+SetFlag: MQQueue
+IdentifyClassAs: com/ibm/mq/MQQueue MQQueue
+
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue putMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+
+## MQ7.x
+SetFlag: MQQueue6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQQueue MQQueue6
+
+TraceOneMethodWithParametersIfFlagged: MQQueue6 put(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 putMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+
+
+## MQ7.x
+SetFlag: MQDestination
+IdentifyClassAs: com/ibm/mq/MQDestination MQDestination
+
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQQueueManager
+IdentifyClassAs: com/ibm/mq/MQQueueManager MQQueueManager
+
+TraceOneMethodWithParametersIfFlagged: MQQueueManager begin()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Begin:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessProcess(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQProcess; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Access Process:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQQueue; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Access Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessDistributionList([Lcom/ibm/mq/MQDistributionListItem;ILjava/lang/String;)Lcom/ibm/mq/MQDistributionList; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Access Distribution List:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterQueue(Lcom/ibm/mq/MQQueue;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterDistributionList(Lcom/ibm/mq/MQDistributionList;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Distribution List:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterProcess(Lcom/ibm/mq/MQProcess;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Process:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager commit()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Manager Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager disconnect()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Manager Disconnect:Errors Per Interval"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQOperationErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+## MQ6.x
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQOperationErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQOperationErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+
+## MQ7.x
+SetFlag: MQQueueManager6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQQueueManager MQQueueManager6
+
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Access Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 unregisterQueue(Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 commit()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Manager Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 disconnect()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Manager Disconnect:Errors Per Interval"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQOperationErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQManagedConnectionJ11
+IdentifyClassAs: com/ibm/mq/MQManagedConnectionJ11 MQManagedConnectionJ11
+
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 getConnection(Ljavax/resource/spi/ConnectionRequestInfo;)Ljava/lang/Object; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Get Connection:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 cleanup()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Cleanup:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 destroy()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Destroy:Errors Per Interval"
+
+
+## MQ7.x
+SetFlag: MQManagedConnectionJ116
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQManagedConnectionJ11 MQManagedConnectionJ116
+
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 getConnection(Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionRequestInfo;)Ljava/lang/Object; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Get Connection:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 destroy()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Destroy:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQDistributionList
+IdentifyClassAs: com/ibm/mq/MQDistributionList MQDistributionList
+
+TraceOneMethodWithParametersIfFlagged: MQDistributionList put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Distribution List Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList close()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Distribution List Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getFirstDistributionListItem()Lcom/ibm/mq/MQDistributionListItem; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Distribution List Get Item:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getInvalidDestinationCount()I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Get Count:Errors Per Interval"
+
+
+## MQ6.x
+SetFlag: MQSESSIONClient
+IdentifyClassAs: com/ibm/mq/MQSESSIONClient MQSESSIONClient
+
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCONNX(Ljava/lang/String;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pthrowable;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Session Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQDISC(Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Session Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQOPEN(ILcom/ibm/mq/MQOD;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCLOSE(ILcom/ibm/mq/Pint;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQBACK(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCMIT(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAOPEN(Ljava/lang/String;II)I  MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|XA Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACLOSE(Ljava/lang/String;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|XA Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XASTART(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Start:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Prepare:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|XA Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XARECOVER([Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Recover:Errors Per Interval"
+
+
+## MQ7.x
+SetFlag: MQSESSION6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQSESSION MQSESSION6
+
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Session Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Session Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/msg/client/wmq/v6/base/internal/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAOPEN(Ljava/lang/String;II)I  MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|XA Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACLOSE(Ljava/lang/String;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|XA Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XASTART(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Start:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Prepare:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|XA Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XARECOVER([Ljavax/transaction/xa/Xid;II)I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Recover:Errors Per Interval"
+
+
+## MQ7.x
+SetFlag: MQSESSION
+IdentifyClassAs: com/ibm/mq/MQSESSION MQSESSION
+
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Session Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Session Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Session Commit:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQprocess
+IdentifyClassAs: com/ibm/mq/MQProcess MQprocess
+
+TraceOneMethodWithParametersIfFlagged: MQprocess close()V MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Process Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQprocess getApplicationType()I MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Queue Process Get Type:Errors Per Interval"
+
+### FINISH Error Tracer For Connector ###
+
+
+### START Error Tracer For JMS ###
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqSession
+IdentifyClassAs: com/ibm/mq/jms/MQSession MQJMSmqSession  
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDestination(Ljava/lang/String;)Lcom/ibm/jms/JMSDestination; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Destination:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession stop()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Disconnect|Stop Session:Errors Per Interval"
+## Added for MDB processing for MQ v6.x
+## Comment this line for MQ7.x to avoid double metric reporting for Async Receive (one is due to onMessage)
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Queues|{queue}|Receive|Async Receive:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createQueue(Ljava/lang/String;)Ljavax/jms/Queue; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTopic(Ljava/lang/String;)Ljavax/jms/Topic; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Topic:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryQueue()Ljavax/jms/TemporaryQueue; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryTopic()Ljavax/jms/TemporaryTopic; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Topic:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;)Ljavax/jms/TopicSubscriber; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;)Ljavax/jms/QueueBrowser; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Browser:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueBrowser; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Browser:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage()Ljavax/jms/TextMessage; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Message:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage(Ljava/lang/String;)Ljavax/jms/TextMessage; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Message:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Process Message:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession unsubscribe(Ljava/lang/String;)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Disconnect|Unsubscribe:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession commit()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Commit|Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession recover()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Rollback|Session Recover:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession rollback()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession close()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Disconnect|Session Close:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqQueueSession
+IdentifyClassAs: com/ibm/mq/jms/MQQueueSession MQJMSmqQueueSession  
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createSender(Ljavax/jms/Queue;)Ljavax/jms/QueueSender; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Sender:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;)Ljavax/jms/QueueReceiver; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Receiver:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueReceiver; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Receiver:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Producer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqTopicSession
+IdentifyClassAs: com/ibm/mq/jms/MQTopicSession MQJMSmqTopicSession  
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createPublisher(Ljavax/jms/Topic;)Ljavax/jms/TopicPublisher; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Publisher:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;)Ljavax/jms/TopicSubscriber; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Producer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqMessageProducer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageProducer MQJMSmqMessageProducer
+
+## MQ6.x 
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send:Errors Per Interval"
+
+
+## MQ7.x
+SetFlag: MQJMSmqQueueSender
+IdentifyClassAs: com/ibm/mq/jms/MQQueueSender MQJMSmqQueueSender
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqTopicSender
+IdentifyClassAs: com/ibm/mq/jms/MQTopicPublisher MQJMSmqTopicSender
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;IIJ)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;IIJ)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqMessageConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageConsumer MQJMSmqMessageConsumer
+
+## MQ7.x
+IdentifyClassAs: com/ibm/mq/jms/MQSession$FacadeMessageListener MQJMSmqMessageConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageConsumer$FacadeMessageListener MQJMSmqMessageConsumer
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer getTopic()Ljavax/jms/Topic; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Get Topic:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveAsync(J)Z MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Async Receive:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Receive No Wait:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Consumer Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Consumer Receive:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Async Receive:Errors Per Interval"
+
+## MQ7.x
+SetFlag: WMQConsumerShadow
+IdentifyClassAs: com/ibm/msg/client/wmq/internal/WMQConsumerShadow  WMQConsumerShadow
+
+TraceOneMethodWithParametersIfFlagged: WMQConsumerShadow getMsg(Lcom/ibm/mq/jmqi/MQGMO;IZ)Lcom/ibm/msg/client/provider/ProviderMessage; MQErrorTracer "WebSphereMQ|Connector|{hostname}|{queuemanager}|{queue}|Get|Queue Get:Errors Per Interval"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqConnectionConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQConnectionConsumer MQJMSmqConnectionConsumer
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer close()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Disconnect|Close Connection:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer getServerSessionPool()Ljavax/jms/ServerSessionPool; MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Connect|Get Server Session Pool:Errors Per Interval"
+
+
+## MQ6.x
+SetFlag: MQJMSmqQueueAgentThread
+IdentifyClassAs: com/ibm/mq/jms/MQQueueAgentThread MQJMSmqQueueAgentThread
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueAgentThread run()V MQErrorTracer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Queues|{queue}|Receive|Process Message:Errors Per Interval"
+
+### FINISH Error Tracer For JMS ###
+
+
+### START Boundary Blame Error Backend Tracer and Nameformatter For JMS ###
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDestination(Ljava/lang/String;)Lcom/ibm/jms/JMSDestination; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDestination(Ljava/lang/String;)Lcom/ibm/jms/JMSDestination; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Destination:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession stop()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession stop()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect|Stop Session:Errors Per Interval"
+## Added for MDB processing for MQ v6.x
+## Comment this line for MQ7.x to avoid double metric reporting for Async Receive (one is due to onMessage)
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Queues|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Queues|{queue}|Receive|Async Receive:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createQueue(Ljava/lang/String;)Ljavax/jms/Queue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createQueue(Ljava/lang/String;)Ljavax/jms/Queue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTopic(Ljava/lang/String;)Ljavax/jms/Topic; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTopic(Ljava/lang/String;)Ljavax/jms/Topic; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Topic:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryQueue()Ljavax/jms/TemporaryQueue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryQueue()Ljavax/jms/TemporaryQueue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryTopic()Ljavax/jms/TemporaryTopic; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryTopic()Ljavax/jms/TemporaryTopic; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Topic:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;)Ljavax/jms/QueueBrowser; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;)Ljavax/jms/QueueBrowser; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Browser:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueBrowser; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueBrowser; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Browser:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage()Ljavax/jms/TextMessage; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage()Ljavax/jms/TextMessage; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Message:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage(Ljava/lang/String;)Ljavax/jms/TextMessage; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage(Ljava/lang/String;)Ljavax/jms/TextMessage; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Message:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Process Message:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession unsubscribe(Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession unsubscribe(Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect|Unsubscribe:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession commit()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession commit()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Commit|Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession recover()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession recover()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Rollback|Session Recover:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession rollback()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession rollback()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect|Session Close:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createSender(Ljavax/jms/Queue;)Ljavax/jms/QueueSender; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createSender(Ljavax/jms/Queue;)Ljavax/jms/QueueSender; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Sender:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;)Ljavax/jms/QueueReceiver; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;)Ljavax/jms/QueueReceiver; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Receiver:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueReceiver; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueReceiver; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Receiver:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Producer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createPublisher(Ljavax/jms/Topic;)Ljavax/jms/TopicPublisher; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createPublisher(Ljavax/jms/Topic;)Ljavax/jms/TopicPublisher; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Publisher:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Producer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer:Errors Per Interval"
+
+## MQ6.x 
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;IIJ)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish:Errors Per Interval"
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer getTopic()Ljavax/jms/Topic; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer getTopic()Ljavax/jms/Topic; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Get Topic:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveAsync(J)Z MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveAsync(J)Z MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Async Receive:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Receive No Wait:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Consumer Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Consumer Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Async Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: WMQConsumerShadow getMsg(Lcom/ibm/mq/jmqi/MQGMO;IZ)Lcom/ibm/msg/client/provider/ProviderMessage; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WMQConsumerShadow getMsg(Lcom/ibm/mq/jmqi/MQGMO;IZ)Lcom/ibm/msg/client/provider/ProviderMessage; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|{queue}|Get|Queue Get:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Disconnect|Close Connection:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer getServerSessionPool()Ljavax/jms/ServerSessionPool; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer getServerSessionPool()Ljavax/jms/ServerSessionPool; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Connect|Get Server Session Pool:Errors Per Interval"
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueAgentThread run()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Queues|{queue}|Receive:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueAgentThread run()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Queues|{queue}|Receive|Process Message:Errors Per Interval"
+
+### FINISH Boundary Blame Error Backend Tracer and Nameformatter For JMS ###
+
+
+### START Boundary Error Backend Tracer and Nameformatter For Connector ### 
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue putMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue putMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue6 put(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 put(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 putMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 putMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager begin()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager begin()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Begin:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessProcess(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQProcess; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessProcess(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQProcess; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Access Process:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQQueue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQQueue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Access Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessDistributionList([Lcom/ibm/mq/MQDistributionListItem;ILjava/lang/String;)Lcom/ibm/mq/MQDistributionList; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessDistributionList([Lcom/ibm/mq/MQDistributionListItem;ILjava/lang/String;)Lcom/ibm/mq/MQDistributionList; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Access Distribution List:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterQueue(Lcom/ibm/mq/MQQueue;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterQueue(Lcom/ibm/mq/MQQueue;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterDistributionList(Lcom/ibm/mq/MQDistributionList;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterDistributionList(Lcom/ibm/mq/MQDistributionList;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Distribution List:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterProcess(Lcom/ibm/mq/MQProcess;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterProcess(Lcom/ibm/mq/MQProcess;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Process:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager commit()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager commit()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Manager Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager disconnect()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager disconnect()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Manager Disconnect:Errors Per Interval"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+## MQ6.x
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Access Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 unregisterQueue(Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 unregisterQueue(Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Queue:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 commit()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 commit()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Manager Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 disconnect()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 disconnect()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Manager Disconnect:Errors Per Interval"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 getConnection(Ljavax/resource/spi/ConnectionRequestInfo;)Ljava/lang/Object; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 getConnection(Ljavax/resource/spi/ConnectionRequestInfo;)Ljava/lang/Object; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Get Connection:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 cleanup()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 cleanup()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Cleanup:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 destroy()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 destroy()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Destroy:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 getConnection(Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionRequestInfo;)Ljava/lang/Object; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 getConnection(Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionRequestInfo;)Ljava/lang/Object; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Get Connection:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 destroy()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 destroy()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Destroy:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQDistributionList put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Distribution List Put:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Distribution List Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getFirstDistributionListItem()Lcom/ibm/mq/MQDistributionListItem; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getFirstDistributionListItem()Lcom/ibm/mq/MQDistributionListItem; MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Distribution List Get Item:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getInvalidDestinationCount()I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Get Count:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getInvalidDestinationCount()I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Get Count:Errors Per Interval"
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCONNX(Ljava/lang/String;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pthrowable;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCONNX(Ljava/lang/String;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pthrowable;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Session Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQDISC(Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQDISC(Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Session Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQOPEN(ILcom/ibm/mq/MQOD;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQOPEN(ILcom/ibm/mq/MQOD;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCLOSE(ILcom/ibm/mq/Pint;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCLOSE(ILcom/ibm/mq/Pint;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQBACK(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQBACK(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCMIT(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCMIT(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAOPEN(Ljava/lang/String;II)I  MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAOPEN(Ljava/lang/String;II)I  MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|XA Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACLOSE(Ljava/lang/String;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACLOSE(Ljava/lang/String;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|XA Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XASTART(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XASTART(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Start:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Prepare:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|XA Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XARECOVER([Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XARECOVER([Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Recover:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Session Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Session Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/msg/client/wmq/v6/base/internal/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/msg/client/wmq/v6/base/internal/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAOPEN(Ljava/lang/String;II)I  MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAOPEN(Ljava/lang/String;II)I  MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|XA Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACLOSE(Ljava/lang/String;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACLOSE(Ljava/lang/String;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|XA Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XASTART(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XASTART(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Start:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Prepare:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|XA Session Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XARECOVER([Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XARECOVER([Ljavax/transaction/xa/Xid;II)I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Recover:Errors Per Interval"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Session Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Session Disconnect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|Session Open:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Session Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|Session Rollback:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Session Commit:Errors Per Interval"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQprocess close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQprocess close()V MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Process Close:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQprocess getApplicationType()I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: MQprocess getApplicationType()I MQBackendsErrorTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Queue Process Get Type:Errors Per Interval"
+
+### FINISH Boundary Error Backend Tracer and Nameformatter For Connector ###
+
+###

@@ -1,0 +1,180 @@
+########################################################################
+# Introscope ProbeBuilder List File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                       
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+
+########################################################################
+# This file contains a list of directives that are common tracer class #
+# mappings and tracer parameter settings shared by other ootb pbd/pbl  # 
+# files in 'pre-9.1 agent' mode					       #	
+########################################################################
+
+
+
+
+
+######################################
+# From SQLAgent.pbd
+#######################################
+
+SetTracerClassMapping: StatementToConnectionMappingTracer com.wily.introscope.agent.sqlagent.StatementToConnectionMappingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: StatementToConnectionMappingTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+SetTracerParameter: StatementToConnectionMappingTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: OracleWrappedStatementToConnectionMappingTracer com.wily.introscope.agent.sqlagent.StatementToConnectionMappingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: OracleWrappedStatementToConnectionMappingTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+SetTracerParameter: OracleWrappedStatementToConnectionMappingTracer statementtype 1
+SetTracerParameter: OracleWrappedStatementToConnectionMappingTracer agentcomponent "SQL Agent"
+
+SetTracerClassMapping: ConnectionCloseTrackerTracer com.wily.introscope.agent.sqlagent.ConnectionCloseTrackerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerClassMapping: ResultSetCloseTimer com.wily.introscope.agent.sqlagent.ResultSetCloseTimer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ResultSetCloseTimer nameformatter com.wily.introscope.agent.sqlagent.ResultSetNameFormatter
+SetTracerParameter: ResultSetCloseTimer agentcomponent "SQL Agent"
+
+SetTracerClassMapping: SQLBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SQLBackendTracer nameformatter com.wily.introscope.agent.trace.jdbc.SQLBackendNameFormatter
+SetTracerParameter: SQLBackendTracer agentcomponent "SQL Agent"
+
+SetTracerOrdering: SQLBackendTracer	 -1000
+
+SetTracerClassMapping: StatementBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: StatementBackendTracer nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: StatementBackendTracer reentrancy instance
+SetTracerParameter: StatementBackendTracer forcestandardmetrics false
+SetTracerOrdering: StatementBackendTracer -1000001
+SetTracerParameter: StatementBackendTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: ConnectionBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ConnectionBackendTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+SetTracerParameter: ConnectionBackendTracer reentrancy instance
+SetTracerParameter: ConnectionBackendTracer forcestandardmetrics false
+SetTracerOrdering: ConnectionBackendTracer -1000003
+SetTracerParameter: ConnectionBackendTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: DbCommandTracer com.wily.introscope.agent.sqlagent.ExecuteCommandTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: DbCommandTracer nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: DbCommandTracer reentrancy instance
+SetTracerParameter: DbCommandTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: DbTransactionTracer com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: DbTransactionTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+SetTracerParameter: DbTransactionTracer reentrancy instance
+SetTracerParameter: DbTransactionTracer agentcomponent "SQL Agent"
+
+###########################
+# From j2ee.pbd  specific tracer for JSP
+################
+
+SetTracerClassMapping: JSPBlamePointTracer com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+#adding the new correlation tracer for http servlet.
+
+TraceOneMethodIfFlagged: HttpServletTypeSpecificServiceTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V CorTracer "CorId"
+TraceOneMethodIfFlagged: HTTPServletTracing service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V CorTracer "CorId"
+
+###########################
+# From biz-trx-http.pbd  specific tracer filters
+################
+
+SetFlag: ServletFilterTracing
+IdentifyInheritedAs: javax.servlet.Filter ServletFilterTracing
+
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracing doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V BizTrxHttpTracer "{Business Definition}"
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracing doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V BlamePointTracer "ServletFilters|{classname}"
+
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracing service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V BizTrxHttpTracer "{Business Definition}"
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V BizTrxHttpTracer "{Business Definition}"
+TraceOneMethodWithParametersIfFlagged: HTTPServletClassOnly service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V BizTrxHttpTracer "{Business Definition}"
+
+TraceOneMethodWithParametersIfFlagged: JSPTracing _jspService BizTrxHttpTracer "{Business Definition}"
+
+SetTracerClassMapping: BizTrxHttpTracer com.wily.introscope.agent.biztrxhttp.trace.BizTrxHttpTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: BizTrxHttpTracer -2005
+SetTracerParameter: BizTrxHttpTracer nameformatter com.wily.introscope.agent.trace.biz.trx.BizTrxNameFormatter
+SetTracerParameter: BizTrxHttpTracer errorTracing true
+
+#######################################
+# From j2ee.pbd for EJB
+#######################################
+
+SetTracerClassMapping: EJB2BlamePointTracerDifferentInstances com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB2BlamePointTracerDifferentInstances manageejbcontext true
+SetTracerParameter: EJB2BlamePointTracerDifferentInstances reentrancy instance
+#SetTracerParameter: EJB2BlamePointTracerDifferentInstances nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+
+SetTracerClassMapping: EJB2BlamePointTracerDifferentMethods com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB2BlamePointTracerDifferentMethods manageejbcontext true
+SetTracerParameter: EJB2BlamePointTracerDifferentMethods reentrancy methodname
+#SetTracerParameter: EJB2BlamePointTracerDifferentMethods nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+
+SetTracerClassMapping: EJB3BlamePointTracerDifferentInstances com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB3BlamePointTracerDifferentInstances manageejbcontext true
+SetTracerParameter: EJB3BlamePointTracerDifferentInstances reentrancy instance
+#SetTracerParameter: EJB3BlamePointTracerDifferentInstances nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+
+SetTracerClassMapping: EJB3BlamePointTracerDifferentMethods com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB3BlamePointTracerDifferentMethods manageejbcontext true
+SetTracerParameter: EJB3BlamePointTracerDifferentMethods reentrancy methodname
+#SetTracerParameter: EJB3BlamePointTracerDifferentMethods nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+
+
+###################################
+# From Appmap-ejb.pbd
+##################################
+
+#################################
+# EJBs as front ends and backends
+#################################
+
+
+TraceComplexMethodsIfFlagged: EJB2StubTracing EJB2BackendTracer "{interface}"
+TraceComplexMethodsIfFlagged: SessionBeanTracing EJB2FrontEndMarker "Apps|{bean}"
+TraceComplexMethodsIfFlagged: EntityBeanTracing EJB2FrontEndMarker "Apps|{bean}"
+#TraceComplexMethodsIfFlagged: MessageDrivenBeanTracing EJB2FrontEndMarker "Apps|{bean}"
+
+TraceComplexMethodsIfFlagged: EJB3StubTracing EJB3BackendTracer "{interface}"
+TraceComplexMethodsIfFlagged: SessionBean3Tracing EJB3FrontEndMarker "Apps|{bean}"
+#TraceComplexMethodsIfFlagged: MessageDrivenBean3Tracing EJB3FrontEndMarker "Apps|{bean}"
+
+TraceOneMethodWithParametersIfFlagged: SessionBeanTracing setSessionContext(Ljavax/ejb/SessionContext;)V EJB2ContextMapper "SessionBean"
+TraceOneMethodWithParametersIfFlagged: EntityBeanTracing setEntityContext(Ljavax/ejb/EntityContext;)V EJB2ContextMapper "EntityBean"
+#TraceOneMethodWithParametersIfFlagged: MessageDrivenBeanTracing setMessageDrivenContext(Ljavax/ejb/MessageDrivenContext;)V EJB2ContextMapper "MessageDrivenBean"
+
+SetTracerClassMapping: EJB2ContextMapper com.wily.introscope.agent.trace.ejb.EjbContextTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB2ContextMapper nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+
+
+SetTracerClassMapping: EJB2BackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB2BackendTracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb2StubNameFormatter
+
+SetTracerClassMapping: EJB3BackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB3BackendTracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb3StubNameFormatter
+
+SetTracerClassMapping: EJB2FrontEndMarker com.wily.introscope.agent.trace.FrontendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB2FrontEndMarker nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+
+SetTracerClassMapping: EJB3FrontEndMarker com.wily.introscope.agent.trace.FrontendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: EJB3FrontEndMarker nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+
+
+##################################
+# Summary metrics
+##################################
+
+# turn on summary-metrics-6.1.pbd tracers
+TurnOn: SummaryOldConfig
+
+
+################################################
+# SQLAgent Flags.
+# Added here for ease of config. Should find a better place for these flags
+################################################
+
+SetFlag: SQLAgentCommands
+SetFlag: SQLAgentDataReaders
+SetFlag: SQLAgentConnections
+SetFlag: SQLAgentTransactions

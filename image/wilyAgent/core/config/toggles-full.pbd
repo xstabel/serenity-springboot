@@ -1,0 +1,293 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+#
+# This toggles-full.pbd file provides TurnOn toggle switches
+#   to determine honoring of other directives
+#   in subsequent *.pbd files
+#
+# Comment or uncomment the "TurnOn" directives 
+#   to alter the set of J2EE components that are traced.      
+#
+# toggles-full.pbd
+#   by default, turns on all available flags
+#   for QA/testing/Staging use.
+#
+#############################################################
+
+
+#######################
+# Agent Initialization Configuration
+# ================
+
+InstrumentPoint: AgentInitialization
+
+
+#######################
+# EJB 2.0 Configuration
+# ================
+
+TurnOn: EJB2StubTracing
+TurnOn: SessionBeanTracing
+TurnOn: EntityBeanTracing
+TurnOn: MessageDrivenBeanTracing
+TurnOn: EJBMethodLevelTracing
+
+#######################
+# EJB 3.0 Configuration
+# ================
+
+TurnOn: EJB3StubTracing
+TurnOn: SessionBean3Tracing
+TurnOn: EntityBean3Tracing
+TurnOn: MessageDrivenBean3Tracing
+TurnOn: EJB3MethodLevelTracing
+
+#######################
+# HTTP Servlets Configuration
+# ================
+
+TurnOn: HTTPServletTracing
+TurnOn: ServletFilterTracing
+
+# Only use this servlet option when installing
+# with the Application Server AutoProbe
+# configuration option.  Do not use both
+# servlet options at the same time.
+#TurnOn: HTTPAppServerAutoProbeServletTracing
+
+
+#######################
+# XML Configuration
+# ================
+
+TurnOn: XMLSAXTracing
+TurnOn: XSLTTracing
+
+
+#######################
+# JTA Configuration
+# ================
+
+TurnOn: JTACommitTracing
+
+
+#######################
+# JNDI Configuration
+# ================
+
+TurnOn: JNDITracing
+
+
+#######################
+# JMS Configuration
+# ================
+
+TurnOn: JMSListenerTracing
+TurnOn: JMSConsumerTracing
+TurnOn: JMSPublisherTracing
+TurnOn: JMSSenderTracing
+
+
+#######################
+# JavaMail configuration
+# ================
+
+TurnOn: JavaMailTransportTracing
+
+
+#######################
+# JAXM configuration
+# ================
+
+TurnOn: JAXMListenerTracing
+
+
+#######################
+# J2EE Connector configuration
+# ================
+
+TurnOn: J2eeConnectorTracing
+
+#######################
+# RMI Configuration
+# ================
+
+TurnOn: RMIClientTracing
+TurnOn: RMIServerTracing
+
+#######################
+# JDBC Configuration
+# ================
+# Be sure to instrument the actual JDBC driver for this to work correctly.
+
+TurnOn: JDBCQueryTracing
+TurnOn: JDBCUpdateTracing
+
+#######################
+# Network Configuration
+# ================
+
+TurnOn: SocketTracing
+# NOTE: Only one of SocketTracing and ManagedSocketTracing should be 'on'.  ManagedSocketTracing is provided to
+# enable pre 9.0 socket tracing. 
+#TurnOn: ManagedSocketTracing
+TurnOn: UDPTracing
+
+#######################
+# File System Configuration
+# ================
+
+TurnOn: FileSystemTracing
+
+
+#######################
+# NIO Socket Tracer Group
+# ================
+TurnOn: NIOSocketTracing
+TurnOn: NIOSocketSummaryTracing
+TurnOn: NIOSelectorTracing
+
+
+#######################
+# NIO Datagram Tracer Group
+# ================
+TurnOn: NIODatagramTracing
+TurnOn: NIODatagramSummaryTracing
+
+
+#######################
+# Threads Configuration
+# ================
+
+TurnOn: ThreadTracing
+
+
+#######################
+# Corba Configuration
+# ================
+
+TurnOn: CorbaTracing
+
+
+#######################
+# JSP Configuration
+# ================
+
+TurnOn: JSPTracing
+TurnOn: JSPServletTracing
+
+
+#######################
+# JSP Tag Library Configuration
+# ================
+
+# TurnOn: JSPTagLibraryTracing
+
+
+#######################
+# JSP IO Tag Library Configuration
+# ================
+
+TurnOn: JSPIOTagLibraryTracing
+
+
+#######################
+# JSP DB Tags Tag Library Configuration
+# ================
+
+TurnOn: JSPDBTagsTagLibraryTracing
+
+
+#######################
+# Struts Configuration
+# ================
+
+TurnOn: StrutsTracing
+
+
+#######################
+# Instance Counts Configuration
+# ================
+
+TurnOn: InstanceCounts
+
+
+#######################
+# Exception Configuration
+# ================
+# Introscope can trace all locations where exceptions are either
+# thrown or caught.  This can cause performance degredation so
+# it is not traced by default.  Uncomment the following lines
+# if you wish to turn on this tracing.
+
+# InstrumentPoint: ThrowException
+# InstrumentPoint: CatchException
+
+
+#######################
+# HTTP Session Configuration
+# ================
+
+TurnOn: PersistentSessionTracing
+
+## Use either FormattedSessionTracing or UnformattedSessionTracing 
+## but not both. FormattedSessionTracing will produce metrics with 
+## better readability, but may not work on all Tomcat installs. 
+#TurnOn: FormattedSessionTracing
+TurnOn: UnformattedSessionTracing
+
+## Use these two session options together when 
+## org.apache.catalina.session.StandardSession is used.
+## If these two session options are commented in, 
+## the HTTPSessionTracing option below should be 
+## commented out.
+TurnOn: ApacheStandardSessionTracing
+TurnOn: SuperpagesSessionTracing
+
+## Only use this session option when 
+## org.apache.catalina.session.StandardSession is not used.
+## If the above two session options (ApacheStandardSessionTracing  
+## and SuperpagesSessionTracing) are commented in, this option
+## should be commented out. 
+#TurnOn: HTTPSessionTracing
+
+
+#######################
+# Authentication Configuration
+# ================
+
+TurnOn: AuthenticationTracing
+
+
+#######################
+# DBCP Configuration
+# ================
+
+TurnOn: DBCPv55Tracing
+TurnOn: DBCPTracing
+
+
+#######################
+# Server Info Configuration
+# ================
+
+TurnOn: ServerInfoTracing
+
+
+#######################
+# Thread Pool Configuration
+# ================
+
+TurnOn: ThreadPoolTracing
+
+

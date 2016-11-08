@@ -1,0 +1,471 @@
+########################################################################
+# Introscope SQL Agent ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This is the configuration file for SQL Agent instrumentation.
+# Instrument your JDBC vendor's .zip/.jar with it, possibly
+# updating the Connection, Statement, and ResultSet configuration
+# below to indicate your vendor-specific types.  In most cases
+# you will not need to edit this file.
+#############################################################
+
+
+
+#######################
+# Connection configuration
+# ================
+
+SetFlag: SQLAgentConnections
+
+# This list identifies classes which should be traced as
+# Connections.  If you are using Connections which
+# are not identified by the directives listed here, you will
+# need to add them to this list.
+
+IdentifyInheritedAs: java.sql.Connection 				SQLAgentConnections
+IdentifyInheritedAs: com.sybase.jdbcx.SybConnection 	SQLAgentConnections
+IdentifyInheritedAs: com.sybase.jdbc2.jdbc.SybConnection 	SQLAgentConnections
+IdentifyInheritedAs: oracle.jdbc.OracleConnection 		SQLAgentConnections
+IdentifyInheritedAs: oracle.jdbc.internal.OracleConnection   SQLAgentConnections
+IdentifyInheritedAs: oracle.jdbc.driver.OracleConnection 	SQLAgentConnections
+IdentifyInheritedAs: oracle.jdbc.driver.OracleDriverExtension 	SQLAgentConnections
+IdentifyClassAs: weblogic.jdbc.mssqlserver4.MicrosoftConnection SQLAgentConnections
+IdentifyClassAs: weblogic.jdbc.mssqlserver4.TdsConnection SQLAgentConnections
+IdentifyInheritedAs: weblogic.jdbc.base.BaseConnection SQLAgentConnections
+IdentifyInheritedAs: com.microsoft.sqlserver.jdbc.ISQLServerConnection SQLAgentConnections
+
+#######################
+# Statement configuration
+# ================
+
+
+# This list identifies classes which should be traced as
+# Statements.  If you are using Statements which
+# are not identified by the directives listed here, you will
+# need to add them to this list.
+
+IdentifyInheritedAs: java.sql.Statement  		 			SQLAgentStatements
+IdentifyInheritedAs: java.sql.PreparedStatement  			SQLAgentStatements
+IdentifyInheritedAs: java.sql.CallableStatement  			SQLAgentStatements
+IdentifyInheritedAs: com.sybase.jdbcx.SybStatement 			SQLAgentStatements
+IdentifyInheritedAs: com.sybase.jdbcx.SybPreparedStatement		SQLAgentStatements
+IdentifyInheritedAs: com.sybase.jdbcx.SybCallableStatement 	SQLAgentStatements
+IdentifyInheritedAs: com.sybase.jdbc2.jdbc.SybStatement			SQLAgentStatements
+IdentifyInheritedAs: com.sybase.jdbc2.jdbc.SybPreparedStatement		SQLAgentStatements
+IdentifyInheritedAs: com.sybase.jdbc2.jdbc.SybCallableStatement 	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.OracleStatement 			SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.OraclePreparedStatement  	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.OracleCallableStatement  	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.internal.OracleStatement  	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.internal.OraclePreparedStatement  	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.internal.OracleCallableStatement  	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.driver.OracleCallableStatement  	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.driver.OraclePreparedStatement  	SQLAgentStatements
+IdentifyInheritedAs: oracle.jdbc.driver.OracleStatement  		SQLAgentStatements
+SkipClass: oracle.jdbc.driver.OracleCallableStatementWrapper
+SkipClass: oracle.jdbc.driver.OraclePreparedStatementWrapper
+SkipClass: oracle.jdbc.driver.OracleStatementWrapper
+IdentifyInheritedAs: weblogic.jdbc.mssqlserver4.ITdsStatement SQLAgentStatements
+IdentifyClassAs: weblogic.jdbc.mssqlserver4.TdsStatement SQLAgentStatements
+IdentifyClassAs: weblogic.jdbc.mssqlserver4.TdsPreparedStatement SQLAgentStatements
+IdentifyClassAs: weblogic.jdbc.mssqlserver4.TdsCallableStatement SQLAgentStatements
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJPreparedStatement SQLAgentStatements
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJCallableStatement SQLAgentStatements
+IdentifyInheritedAs: com.microsoft.sqlserver.jdbc.ISQLServerCallableStatement SQLAgentStatements
+IdentifyInheritedAs: com.microsoft.sqlserver.jdbc.ISQLServerPreparedStatement SQLAgentStatements
+IdentifyInheritedAs: com.microsoft.sqlserver.jdbc.ISQLServerStatement SQLAgentStatements
+
+#######################
+# ResultSet configuration
+# ================
+
+SetFlag: SQLAgentResultSets
+
+# This list identifies classes which should be traced as
+# ResultSets.  If you are using ResultSets which
+# are not identified by the directives listed here, you will
+# need to add them to this list.
+
+IdentifyInheritedAs: java.sql.ResultSet			SQLAgentResultSets
+IdentifyInheritedAs: oracle.jdbc.OracleResultSet		SQLAgentResultSets
+IdentifyInheritedAs: com.sybase.jdbcx.SybResultSet		SQLAgentResultSets
+IdentifyInheritedAs: com.sybase.jdbc2.jdbc.SybResultSet		SQLAgentResultSets
+IdentifyInheritedAs: oracle.jdbc.internal.OracleResultSet	SQLAgentResultSets
+IdentifyInheritedAs: oracle.jdbc.driver.BaseResultSet		SQLAgentResultSets
+IdentifyInheritedAs: oracle.jdbc.driver.OracleResultSet		SQLAgentResultSets
+IdentifyInheritedAs: weblogic.jdbc.mssqlserver4.ITdsResultSet SQLAgentResultSets
+IdentifyClassAs: weblogic.jdbc.wrapper.ResultSet_weblogic_jdbc_mssqlserver4_TdsResultSet SQLAgentResultSets
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJResultSet SQLAgentResultSets
+IdentifyInheritedAs: com.microsoft.sqlserver.jdbc.ISQLServerResultSet SQLAgentResultSets
+IdentifyInheritedAs: oracle.jdbc.driver.GeneratedScrollableResultSet SQLAgentResultSets
+IdentifyInheritedAs: oracle.jdbc.driver.GeneratedUpdatableResultSet SQLAgentResultSets
+
+#########################################################
+# The following section of the file should not need to  #
+# be edited for most installations.  If you do edit it, #
+# read the following comment block for some details.    #
+#########################################################
+
+# Statement timers will not work unless the Connections are instrumented with the 
+# StatementToSQLMappingTracer.  ResultSet processing times won't work unless both
+# the StatementToSQLMappingTracers are present on the Connections *and* the 
+# ResultSetTo{Dynamic}SQLMappingTracers are on the Statements.  However,
+# you may choose to only get one or the other sets of timing metrics (via the
+# {Dynamic}SQLExecuteTimer or ResultSetCloseTimer.  The {Dynamic} variants of all
+# tracers should only be used on methods where the SQL is provided as the parameter.
+# The metric names cannot be controlled at this time as they are assembled at runtime
+# by the SQL Agent.
+
+#######################
+# Connection instrumentation
+# ================
+
+TurnOn: SQLAgentConnections
+
+TraceOneMethodIfFlagged: SQLAgentConnections commit()V DbTransactionTracer "Backends|{database}|Commits"
+TraceOneMethodIfFlagged: SQLAgentConnections rollback()V DbTransactionTracer "Backends|{database}|Rollbacks"
+
+#########################################################
+# ConnectionNoticer no longer used --                   #
+# StatementToConnectionMappingTracer now contains the   #
+# connection noticing functionality.                    #
+#########################################################
+
+#########################################################
+# The following section of the file should not need to  #
+# be edited for most installations.  If you do edit it, #
+# read the following comment block for some details.    #
+#########################################################
+
+# Statement timers will not work unless the Connections are instrumented with the 
+# StatementToSQLMappingTracer.  ResultSet processing times won't work unless both
+# the StatementToSQLMappingTracers are present on the Connections *and* the 
+# ResultSetTo{Dynamic}SQLMappingTracers are on the Statements.  However,
+# you may choose to only get one or the other sets of timing metrics (via the
+# {Dynamic}SQLExecuteTimer or ResultSetCloseTimer.  The {Dynamic} variants of all
+# tracers should only be used on methods where the SQL is provided as the parameter.
+# The metric names cannot be controlled at this time as they are assembled at runtime
+# by the SQL Agent.
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement(Ljava/lang/String;)Ljava/sql/PreparedStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareCall(Ljava/lang/String;)Ljava/sql/CallableStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement(Ljava/lang/String;II)Ljava/sql/PreparedStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareCall(Ljava/lang/String;II)Ljava/sql/CallableStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement(Ljava/lang/String;III)Ljava/sql/PreparedStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareCall(Ljava/lang/String;III)Ljava/sql/CallableStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement(Ljava/lang/String;I)Ljava/sql/PreparedStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement(Ljava/lang/String;[I)Ljava/sql/PreparedStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement(Ljava/lang/String;[Ljava/lang/String;)Ljava/sql/PreparedStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement(Ljava/lang/String;Z)Ljava/sql/PreparedStatement; StatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections allocateCallableStatement(Loracle/jdbc/driver/PhysicalConnection;Ljava/lang/String;II)Loracle/jdbc/driver/OracleCallableStatement; OracleWrappedStatementToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections allocatePreparedStatement(Loracle/jdbc/driver/PhysicalConnection;Ljava/lang/String;II)Loracle/jdbc/driver/OraclePreparedStatement; OracleWrappedStatementToSQLMappingTracer SQLAgent
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections allocateCallableStatement(Loracle/jdbc/driver/PhysicalConnection;Ljava/lang/String;II)Loracle/jdbc/driver/OracleCallableStatement; OracleWrappedStatementToConnectionMappingTracer "Backends|{database}:Active Connection Object Count"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections allocatePreparedStatement(Loracle/jdbc/driver/PhysicalConnection;Ljava/lang/String;II)Loracle/jdbc/driver/OraclePreparedStatement; OracleWrappedStatementToConnectionMappingTracer "Backends|{database}:Active Connection Object Count"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections allocateStatement(Loracle/jdbc/driver/PhysicalConnection;II)Loracle/jdbc/driver/OracleStatement; OracleWrappedStatementToConnectionMappingTracer "Backends|{database}:Active Connection Object Count"
+
+# Statement timers will have a much higher likelihood of getting mapped to
+# the correct database name if the Connections are instrumented with the 
+# StatementToConnectionMappingTracer.  Some drivers don't support
+# Statement.getConnection() and will throw when attempting to get
+# a JDBC URL by that method.  The StatementToConnectionMappingTracer
+# provides an alternate way of getting the data.
+# Connection counts also depend on the StatementToConnectionMappingTracer.
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections createStatement StatementToConnectionMappingTracer "Backends|{database}:Active Connection Object Count"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareStatement StatementToConnectionMappingTracer "Backends|{database}:Active Connection Object Count"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnections prepareCall StatementToConnectionMappingTracer "Backends|{database}:Active Connection Object Count"
+
+# Connection close trackers will not work unless the Connections are instrumented with the 
+# StatementToConnectionMappingTracer.
+TraceOneMethodIfFlagged: SQLAgentConnections close()V ConnectionCloseTrackerTracer "SQL Agent"
+
+#######################
+# Statement instrumentation
+# ================
+
+TurnOn: SQLAgentStatements
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute()Z StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeQuery()Ljava/sql/ResultSet; StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeQuery(Ljava/lang/String;)Ljava/sql/ResultSet; StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;I)Z StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;[I)Z StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;[Ljava/lang/String;)Z StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;)Z StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate()I StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;)I StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;I)I StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;[I)I StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;[Ljava/lang/String;)I StatementBackendTracer "Backends|{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeBatch()[I StatementBackendTracer "Backends|{database}"
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute()Z DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeQuery()Ljava/sql/ResultSet; DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeQuery()Ljava/sql/ResultSet; ResultSetToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeQuery(Ljava/lang/String;)Ljava/sql/ResultSet; DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeQuery(Ljava/lang/String;)Ljava/sql/ResultSet; ResultSetToDynamicSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;)Z DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;I)Z DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;[I)Z DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute(Ljava/lang/String;[Ljava/lang/String;)Z DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate()I DbCommandTracer "Backends|{database}|SQL|{commandtype}|Update|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;)I DbCommandTracer "Backends|{database}|SQL|{commandtype}|Update|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;I)I DbCommandTracer "Backends|{database}|SQL|{commandtype}|Update|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;[I)I DbCommandTracer "Backends|{database}|SQL|{commandtype}|Update|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate(Ljava/lang/String;[Ljava/lang/String;)I DbCommandTracer "Backends|{database}|SQL|{commandtype}|Update|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeBatch()[I DbCommandTracer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements getResultSet()Ljava/sql/ResultSet; ResultSetToSQLMappingTracer SQLAgent
+
+#######################
+# ResultSet instrumentation
+# ================
+
+TurnOn: SQLAgentResultSets
+
+TraceOneMethodIfFlagged: SQLAgentResultSets close()V ResultSetCloseTimer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+
+#######################
+# Special tracer configuration
+# ================
+# These lines inform the ProbeBuilder about the existence and configuration of
+# the special tracers used by the SQL Agent.  Do not modify them.
+
+SetTracerClassMapping: StatementToSQLMappingTracer com.wily.introscope.agent.sqlagent.StatementToSQLMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: StatementToSQLMappingTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: OracleWrappedStatementToSQLMappingTracer com.wily.introscope.agent.sqlagent.StatementToSQLMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: OracleWrappedStatementToSQLMappingTracer sqlparameterindex 1
+SetTracerParameter: OracleWrappedStatementToSQLMappingTracer agentcomponent "SQL Agent"
+
+#SetTracerClassMapping: StatementToConnectionMappingTracer com.wily.introscope.agent.sqlagent.StatementToConnectionMappingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+#SetTracerParameter: StatementToConnectionMappingTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+#SetTracerParameter: StatementToConnectionMappingTracer agentcomponent "SQL Agent"
+#SetTracerClassMapping: OracleWrappedStatementToConnectionMappingTracer com.wily.introscope.agent.sqlagent.StatementToConnectionMappingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+#SetTracerParameter: OracleWrappedStatementToConnectionMappingTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+#SetTracerParameter: OracleWrappedStatementToConnectionMappingTracer statementtype 1
+SetTracerParameter: OracleWrappedStatementToConnectionMappingTracer agentcomponent "SQL Agent"
+
+SetTracerClassMapping: ResultSetToSQLMappingTracer com.wily.introscope.agent.sqlagent.ResultSetToSQLMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ResultSetToSQLMappingTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: ResultSetToDynamicSQLMappingTracer com.wily.introscope.agent.sqlagent.ResultSetToDynamicSQLMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ResultSetToDynamicSQLMappingTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: SQLExecuteBatchTimer com.wily.introscope.agent.sqlagent.SQLExecuteBatchTimer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SQLExecuteBatchTimer agentcomponent "SQL Agent"
+SetTracerClassMapping: SQLExecuteTimer com.wily.introscope.agent.sqlagent.SQLExecuteTimer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SQLExecuteTimer agentcomponent "SQL Agent"
+SetTracerClassMapping: DynamicSQLExecuteTimer com.wily.introscope.agent.sqlagent.DynamicSQLExecuteTimer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: DynamicSQLExecuteTimer agentcomponent "SQL Agent"
+
+#SetTracerClassMapping: ResultSetCloseTimer com.wily.introscope.agent.sqlagent.ResultSetCloseTimer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter: ResultSetCloseTimer nameformatter com.wily.introscope.agent.sqlagent.ResultSetNameFormatter
+
+SetTracerClassMapping: RTStatementToSQLMappingTracer com.wily.introscope.agent.sqlagent.SQLJRTStatementToSQLMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: RTStatementToSQLMappingTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: RTResultSetToSQLMappingTracer com.wily.introscope.agent.sqlagent.SQLJRTResultSetToSQLMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: RTResultSetToSQLMappingTracer agentcomponent "SQL Agent"
+SetTracerClassMapping: RTSQLExecuteTimer com.wily.introscope.agent.sqlagent.SQLJRTSQLExecuteTimer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: RTSQLExecuteTimer agentcomponent "SQL Agent"
+SetTracerClassMapping: RTResultSetCloseTimer com.wily.introscope.agent.sqlagent.SQLJRTResultSetCloseTimer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: RTResultSetCloseTimer nameformatter com.wily.introscope.agent.sqlagent.ResultSetNameFormatter
+SetTracerParameter: RTResultSetCloseTimer agentcomponent "SQL Agent"
+SetTracerClassMapping: ConnectionNoticer com.wily.introscope.agent.sqlagent.ConnectionNoticer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ConnectionNoticer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+SetTracerParameter: ConnectionNoticer agentcomponent "SQL Agent"
+
+# Removed temporarely, added to required.pbd
+
+#SetTracerClassMapping: SQLBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+#SetTracerParameter: SQLBackendTracer nameformatter com.wily.introscope.agent.trace.jdbc.SQLBackendNameFormatter
+
+
+#SetTracerOrdering: SQLBackendTracer	 -1000
+# Make sure SQLExecuteTimer and DynamicSQLExecuteTimer have the same ordering,
+# and make sure they are executed later than default, no-configuration tracers.
+SetTracerOrdering: SQLExecuteTimer	 5000
+SetTracerOrdering: DynamicSQLExecuteTimer	 5000
+
+#SetTracerClassMapping: StatementBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter: StatementBackendTracer nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+#SetTracerParameter: StatementBackendTracer reentrancy instance
+#SetTracerParameter: StatementBackendTracer forcestandardmetrics false
+#SetTracerOrdering: StatementBackendTracer -1000001
+#SetTracerClassMapping: ConnectionBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter: ConnectionBackendTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+#SetTracerParameter: ConnectionBackendTracer reentrancy instance
+#SetTracerParameter: ConnectionBackendTracer forcestandardmetrics false
+#SetTracerOrdering: ConnectionBackendTracer -1000003
+#SetTracerClassMapping: DbCommandTracer com.wily.introscope.agent.sqlagent.ExecuteCommandTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter: DbCommandTracer nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+#SetTracerParameter: DbCommandTracer reentrancy instance
+#SetTracerClassMapping: DbTransactionTracer com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter: DbTransactionTracer nameformatter com.wily.introscope.agent.sqlagent.ConnectionNameFormatter
+#SetTracerParameter: DbTransactionTracer reentrancy instance
+
+
+# End Removed temporarely, added to required.new.pbd
+
+############################################
+# Skips for Sybase JConnect 5.x, 4.x drivers
+# This class implements Statement but its impementation is dummy. 
+# We will see Unknown Driver node if this class is instrumented
+SkipClassForFlag: com.sybase.jdbc2.jdbc.SybLiteral SQLAgentStatements
+SkipClassForFlag: com.sybase.jdbc3.jdbc.SybLiteral SQLAgentStatements
+SkipClassForFlag: com.sybase.jdbc4.jdbc.SybLiteral SQLAgentStatements
+
+# 
+# This list identifies classes that are IBM os390 SQLJ specific
+# This is for the db2j2classes.zip from RBC.
+#
+SetFlag: SQLJSQLAgentConnectedProfile
+IdentifyClassAs: COM.ibm.db2os390.sqlj.runtime.DB2SQLJConnectedProfile   SQLJSQLAgentConnectedProfile
+
+SetFlag: SQLJSQLAgentRTStatements
+IdentifyClassAs: COM.ibm.db2os390.sqlj.runtime.DB2SQLJRTStatement   SQLJSQLAgentRTStatements
+
+SetFlag: SQLJSQLAgentRTResultSets
+IdentifyClassAs: COM.ibm.db2os390.sqlj.runtime.DB2SQLJRTResultSet   SQLJSQLAgentRTResultSets
+
+TurnOn: SQLJSQLAgentConnectedProfile
+TurnOn: SQLJSQLAgentRTStatements
+TurnOn: SQLJSQLAgentRTResultSets
+
+# DB2SQLJConnectedProfile instrumentation
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentConnectedProfile getStatement(I)Lsqlj/runtime/profile/RTStatement; RTStatementToSQLMappingTracer SQLAgent
+
+# DB2SQLJRTStatement instrumentation
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements executeRTQuery()Lsqlj/runtime/profile/RTResultSet; RTResultSetToSQLMappingTracer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements executeRTQuery()Lsqlj/runtime/profile/RTResultSet; RTSQLExecuteTimer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements execute()Z RTSQLExecuteTimer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements executeUpdate()I RTSQLExecuteTimer SQLAgent
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements setObject(ILjava/lang/Object;)V RTResultSetToSQLMappingTracer SQLAgent
+
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements executeRTQuery()Lsqlj/runtime/profile/RTResultSet; SQLBackendTracer "Unknown Driver"
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements execute()Z SQLBackendTracer "Unknown Driver"
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements executeUpdate()I SQLBackendTracer "Unknown Driver"
+TraceOneMethodWithParametersIfFlagged: SQLJSQLAgentRTStatements setObject(ILjava/lang/Object;)V SQLBackendTracer "Unknown Driver"
+
+# DB2SQLJRTResultSet instrumentation
+TraceOneMethodIfFlagged: SQLJSQLAgentRTResultSets close()V RTResultSetCloseTimer "Backends|{database}|SQL|{commandtype}|Query|{sql}"
+
+
+##########################################################################
+# Support for UDB - Added by Steve Hudson 9/7/2005
+#
+# JDBCTracing
+
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2ConnectionPoolDataSource JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2BaseDataSource JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2JccDataSource JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2Connection JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJConnection JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2ResultSet JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJResultSet JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2Statement JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2PreparedStatement JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2CallableStatement JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJPreparedStatement JDBCTracing
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJCallableStatement JDBCTracing
+
+IdentifyClassAs: com.ibm.db2.jcc.DB2ConnectionPoolDataSource JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.DB2BaseDataSource JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.DB2JccDataSource JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.DB2Connection JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.SQLJConnection JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.DB2ResultSet JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.SQLJResultSet JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.DB2Statement JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.DB2PreparedStatement JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.DB2CallableStatement JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.SQLJPreparedStatement JDBCTracing
+IdentifyClassAs: com.ibm.db2.jcc.SQLJCallableStatement JDBCTracing
+
+# The directives below are sometimes problematic.  For example, on
+# some systems the DB2PooledConnection class fails the
+# (instanceof java.sql.Connection) test.  Uncomment if you
+# think it helps, but buyer beware.
+#IdentifyClassAs: com.ibm.db2.jcc.DB2PooledConnection JDBCTracing
+#IdentifyInheritedAs: com.ibm.db2.jcc.DB2PooledConnection JDBCTracing
+#IdentifyInheritedAs: com.ibm.db2.jcc.DB2PooledConnection SQLAgentConnections
+#IdentifyClassAs: com.ibm.db2.jcc.DB2PooledConnection SQLAgentConnections
+
+#####################
+# SQLAgent Tracing
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2ResultSet SQLAgentResultSets
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJResultSet SQLAgentResultSets
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2Statement SQLAgentStatements
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2PreparedStatement SQLAgentStatements
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2CallableStatement SQLAgentStatements
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJPreparedStatement SQLAgentStatements
+IdentifyInheritedAs: com.ibm.db2.jcc.SQLJCallableStatement SQLAgentStatements
+
+IdentifyClassAs: com.ibm.db2.jcc.DB2Connection SQLAgentConnections
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2Connection SQLAgentConnections
+IdentifyClassAs: com.ibm.db2.jcc.a.dc SQLAgentConnections
+IdentifyClassAs: com.ibm.db2.jcc.a.p SQLAgentConnections
+IdentifyClassAs: com.ibm.db2.jcc.SQLJConnection SQLAgentConnections
+
+IdentifyClassAs: com.ibm.db2.jcc.DB2Connection SQLAgentConnections
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2Connection SQLAgentConnections
+IdentifyClassAs: com.ibm.db2.jcc.SQLJConnection SQLAgentConnections
+
+IdentifyClassAs: com.ibm.db2.jcc.DB2ResultSet SQLAgentResultSets
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2ResultSet SQLAgentResultSets
+IdentifyClassAs: com.ibm.db2.jcc.a.zc SQLAgentResultSets
+IdentifyClassAs: com.ibm.db2.jcc.SQLJResultSet SQLAgentResultSets
+IdentifyClassAs: com.ibm.db2.jcc.DB2Statement SQLAgentStatements
+IdentifyInheritedAs: com.ibm.db2.jcc.DB2Statement SQLAgentStatements
+IdentifyClassAs: com.ibm.db2.jcc.a.hd SQLAgentStatements
+IdentifyClassAs: com.ibm.db2.jcc.DB2PreparedStatement SQLAgentStatements
+IdentifyClassAs: com.ibm.db2.jcc.DB2CallableStatement SQLAgentStatements
+IdentifyClassAs: com.ibm.db2.jcc.SQLJPreparedStatement SQLAgentStatements
+IdentifyClassAs: com.ibm.db2.jcc.SQLJCallableStatement SQLAgentStatements
+
+
+############################################################
+# These Wesbphere framework classes cause Unknown SQLs to appear
+# for DB2 drivers
+SkipClass: com.ibm.ejs.cm.cache.CachedStatement
+SkipClass: com.ibm.ws.rsadapter.jdbc.WSJccPreparedStatement
+SkipClass: com.ibm.ws.rsadapter.jdbc.WSJdbcPreparedStatement
+SkipClass: com.ibm.ws.rsadapter.jdbc.WSJdbcStatement
+
+
+###########################################################
+# Skipping JBoss specific wrappers which cause duplicate 
+# metrics for Database calls
+SkipClass: org.jboss.resource.adapter.jdbc.WrappedStatement
+
+
+# DB2JCC Version 2
+
+IdentifyClassAs: com.ibm.db2.jcc.c.cw SQLAgentStatements
+IdentifyClassAs: com.ibm.db2.jcc.c.cx SQLAgentStatements
+IdentifyClassAs: com.ibm.db2.jcc.c.cy SQLAgentStatements
+
+
+# The below list identifies Informix driver classes
+# JDBC driver version 3.00.JC3
+IdentifyClassAs: com.informix.jdbc.IfxSqliConnect SQLAgentConnections
+IdentifyInheritedAs: com.informix.jdbc.Connection2 SQLAgentConnections
+IdentifyInheritedAs: com.informix.jdbc.IfmxConnection SQLAgentConnections
+IdentifyInheritedAs: com.informix.jdbc.IfxConnection SQLAgentConnections
+
+IdentifyClassAs: com.informix.jdbc.IfxStatement SQLAgentStatements
+IdentifyClassAs: com.informix.jdbc.IfxPreparedStatement SQLAgentStatements
+IdentifyClassAs: com.informix.jdbc.IfxCallableStatement SQLAgentStatements
+IdentifyInheritedAs: com.informix.jdbc.IfmxStatement SQLAgentStatements
+
+IdentifyClassAs: com.informix.jdbc.IfxScrollableResultSet SQLAgentResultSets
+IdentifyClassAs: com.informix.jdbc.IfxClientResultSet SQLAgentResultSets
+IdentifyClassAs: com.informix.jdbc.IfxUpdateResultSet SQLAgentResultSets
+IdentifyClassAs: com.informix.jdbc.IfxResultSet SQLAgentResultSets
+IdentifyInheritedAs: com.informix.jdbc.IfmxResultSet SQLAgentResultSets
+IdentifyInheritedAs: com.informix.jdbc.ResultSet2 SQLAgentResultSets

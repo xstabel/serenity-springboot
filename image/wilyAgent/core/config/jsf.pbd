@@ -1,0 +1,286 @@
+########################################################################
+# Introscope ProbeBuilder Directives File
+# 
+# Version: 10.1.0.15
+# Build: 990014
+# 
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file provides tracer groups for Java Server Face components.
+#############################################################
+
+
+#######################
+# Servlet Configuration
+# ================
+
+IdentifyInheritedAs: javax.faces.webapp.FacesServlet HTTPServletTracing
+IdentifyClassAs: javax.faces.webapp.FacesServlet HTTPServletTracing 
+
+#######################
+# Application Configuration
+# ================
+
+# APIs that are used to link an application's business logic objects to JavaServer Faces, as well
+# as convenient pluggable mechanisms to manage the execution of an application that is based on JavaServer Faces.
+SetFlag: JSF_ApplicationTracing
+
+# A NavigationHandler is passed the outcome string returned by an application action invoked for this application,
+# and will use this (along with related state information) to choose the view to be displayed next.
+SetFlag: JSF_Application_NavigationHandlerTracing
+IdentifyFlagAs: JSF_ApplicationTracing JSF_Application_NavigationHandlerTracing
+
+TraceOneMethodIfFlagged: JSF_Application_NavigationHandlerTracing handleNavigation BlamePointTracerDifferentInstances "JSF|Application|{classname}|handleNavigation"
+TraceOneMethodIfFlagged: JSF_Application_NavigationHandlerTracing handleNavigation ExceptionErrorReporter "JSF|Application|{classname}|handleNavigation:Errors Per Interval"
+
+IdentifyInheritedAs: javax.faces.application.NavigationHandler JSF_Application_NavigationHandlerTracing
+
+# StateManager directs the process of saving and restoring the view between requests.
+SetFlag: JSF_Application_StateManagerTracing
+IdentifyFlagAs: JSF_ApplicationTracing JSF_Application_StateManagerTracing
+
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreComponentState MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreComponentState PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreComponentState ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreTreeStructure MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreTreeStructure PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreTreeStructure ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreView MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreView PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreView ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveSerializedView MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveSerializedView PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveSerializedView ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveView MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveView PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveView ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing writeState MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing writeState PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing writeState ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreComponentState BlamePointTracerDifferentInstances "JSF|Application|{classname}|restoreComponentState"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreComponentState ExceptionErrorReporter "JSF|Application|{classname}|restoreComponentState:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreTreeStructure BlamePointTracerDifferentInstances "JSF|Application|{classname}|restoreTreeStructure"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreTreeStructure ExceptionErrorReporter "JSF|Application|{classname}|restoreTreeStructure:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreView BlamePointTracerDifferentInstances "JSF|Application|{classname}|restoreView"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing restoreView ExceptionErrorReporter "JSF|Application|{classname}|restoreView:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveSerializedView BlamePointTracerDifferentInstances "JSF|Application|{classname}|saveSerializedView"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveSerializedView ExceptionErrorReporter "JSF|Application|{classname}|saveSerializedView:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveView BlamePointTracerDifferentInstances "JSF|Application|{classname}|saveView"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing saveView ExceptionErrorReporter "JSF|Application|{classname}|saveView:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing writeState BlamePointTracerDifferentInstances "JSF|Application|{classname}|writeState"
+TraceOneMethodIfFlagged: JSF_Application_StateManagerTracing writeState ExceptionErrorReporter "JSF|Application|{classname}|writeState:Errors Per Interval"
+
+IdentifyInheritedAs: javax.faces.application.StateManager JSF_Application_StateManagerTracing
+
+# Provides a simple implementation of StateManager that can be subclassed by developers wishing to provide specialized
+# behavior to an existing StateManager instance.
+IdentifyInheritedAs: javax.faces.application.StateManagerWrapper JSF_Application_StateManagerTracing
+
+# ViewHandler is the pluggablity mechanism for allowing implementations of or applications using the JavaServer Faces
+# specification to provide their own handling of the activities in the Render Response and Restore View phases of the
+# request processing lifecycle.
+SetFlag: JSF_Application_ViewHandlerTracing
+IdentifyFlagAs: JSF_ApplicationTracing JSF_Application_ViewHandlerTracing
+
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing createView MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing createView ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing createView PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing renderView MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing renderView PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing renderView ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing restoreView MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing restoreView PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing restoreView ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing writeState MethodTimerDifferentInstances "JSF|Application|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing writeState PerIntervalCounterDifferentInstances "JSF|Application|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing writeState ExceptionErrorReporter "JSF|Application|{classname}:Errors Per Interval"
+
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing createView BlamePointTracerDifferentInstances "JSF|Application|{classname}|createView"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing createView ExceptionErrorReporter "JSF|Application|{classname}|createView:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing renderView BlamePointTracerDifferentInstances "JSF|Application|{classname}|renderView"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing renderView ExceptionErrorReporter "JSF|Application|{classname}|renderView:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing restoreView BlamePointTracerDifferentInstances "JSF|Application|{classname}|restoreView"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing restoreView ExceptionErrorReporter "JSF|Application|{classname}|restoreView:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing writeState BlamePointTracerDifferentInstances "JSF|Application|{classname}|writeState"
+TraceOneMethodIfFlagged: JSF_Application_ViewHandlerTracing writeState ExceptionErrorReporter "JSF|Application|{classname}|writeState:Errors Per Interval"
+
+IdentifyInheritedAs: javax.faces.application.ViewHandler JSF_Application_ViewHandlerTracing
+
+# Provides a simple implementation of ViewHandler that can be subclassed by developers wishing to provide specialized
+# behavior to an existing ViewHandler instance.
+IdentifyInheritedAs: javax.faces.application.ViewHandlerWrapper JSF_Application_ViewHandlerTracing
+
+
+#######################
+# Components Configuration
+# ================
+
+# Fundamental APIs for user interface components.
+SetFlag: JSF_ComponentTracing
+
+SetFlag: JSF_Component_HolderTracing
+IdentifyFlagAs: JSF_ComponentTracing JSF_Component_HolderTracing 
+
+TraceOneMethodIfFlagged: JSF_Component_HolderTracing restoreState BlamePointTracerDifferentInstances "JSF|Component|{classname}|{method}"
+TraceOneMethodIfFlagged: JSF_Component_HolderTracing restoreState ExceptionErrorReporter "JSF|Component|{classname}|{method}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_HolderTracing saveState BlamePointTracerDifferentInstances "JSF|Component|{classname}|{method}"
+TraceOneMethodIfFlagged: JSF_Component_HolderTracing saveState ExceptionErrorReporter "JSF|Component|{classname}|{method}:Errors Per Interval"
+
+# This interface is implemented by classes that need to save their state between requests.
+IdentifyInheritedAs: javax.faces.component.StateHolder JSF_Component_HolderTracing
+
+SetFlag: JSF_Component_UIComponentTracing
+IdentifyFlagAs: JSF_ComponentTracing JSF_Component_UIComponentTracing
+
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing decode MethodTimerDifferentInstances "JSF|Component|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing decode PerIntervalCounterDifferentInstances "JSF|Component|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing decode ExceptionErrorReporter "JSF|Component|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing encodeAll MethodTimerDifferentInstances "JSF|Component|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing encodeAll PerIntervalCounterDifferentInstances "JSF|Component|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing encodeAll ExceptionErrorReporter "JSF|Component|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processDecodes MethodTimerDifferentInstances "JSF|Component|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processDecodes PerIntervalCounterDifferentInstances "JSF|Component|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processDecodes ExceptionErrorReporter "JSF|Component|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processRestoreState MethodTimerDifferentInstances "JSF|Component|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processRestoreState PerIntervalCounterDifferentInstances "JSF|Component|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processRestoreState ExceptionErrorReporter "JSF|Component|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processSaveState MethodTimerDifferentInstances "JSF|Component|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processSaveState PerIntervalCounterDifferentInstances "JSF|Component|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processSaveState ExceptionErrorReporter "JSF|Component|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processUpdates MethodTimerDifferentInstances "JSF|Component|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processUpdates PerIntervalCounterDifferentInstances "JSF|Component|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processUpdates ExceptionErrorReporter "JSF|Component|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processValidators MethodTimerDifferentInstances "JSF|Component|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processValidators PerIntervalCounterDifferentInstances "JSF|Component|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processValidators ExceptionErrorReporter "JSF|Component|{classname}:Errors Per Interval"
+
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing decode BlamePointTracerDifferentInstances "JSF|Component|{classname}|decode"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing decode ExceptionErrorReporter "JSF|Component|{classname}|decode:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing encodeAll BlamePointTracerDifferentInstances "JSF|Component|{classname}|encodeAll"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing encodeAll ExceptionErrorReporter "JSF|Component|{classname}|encodeAll:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processDecodes BlamePointTracerDifferentInstances "JSF|Component|{classname}|processDecodes"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processDecodes ExceptionErrorReporter "JSF|Component|{classname}|processDecodes:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processRestoreState BlamePointTracerDifferentInstances "JSF|Component|{classname}|processRestoreState"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processRestoreState ExceptionErrorReporter "JSF|Component|{classname}|processRestoreState:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processSaveState BlamePointTracerDifferentInstances "JSF|Component|{classname}|processSaveState"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processSaveState ExceptionErrorReporter "JSF|Component|{classname}|processSaveState:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processUpdates BlamePointTracerDifferentInstances "JSF|Component|{classname}|processUpdates"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processUpdates ExceptionErrorReporter "JSF|Component|{classname}|processUpdates:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processValidators BlamePointTracerDifferentInstances "JSF|Component|{classname}|processValidators"
+TraceOneMethodIfFlagged: JSF_Component_UIComponentTracing processValidators ExceptionErrorReporter "JSF|Component|{classname}|processValidators:Errors Per Interval"
+
+# UIComponent is the base class for all user components in JavaServer Faces.
+IdentifyInheritedAs: javax.faces.component.UIComponent JSF_Component_UIComponentTracing
+
+# UIComponentBase is a convenience base class that implements the default
+# concrete behavior of all methods defined by UIComponent.
+IdentifyInheritedAs: javax.faces.component.UIComponentBase JSF_Component_UIComponentTracing
+
+
+#######################
+# Lifecycle Configuration
+# ================
+
+# Classes and interfaces defining lifecycle management for the JavaServer Faces implementation.
+SetFlag: JSF_LifecycleTracing
+
+TraceOneMethodIfFlagged: JSF_LifecycleTracing execute MethodTimerDifferentInstances "JSF|Lifecycle|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing execute PerIntervalCounterDifferentInstances "JSF|Lifecycle|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing execute ExceptionErrorReporter "JSF|Lifecycle|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing render MethodTimerDifferentInstances "JSF|Lifecycle|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing render PerIntervalCounterDifferentInstances "JSF|Lifecycle|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing render ExceptionErrorReporter "JSF|Lifecycle|{classname}:Errors Per Interval"
+
+TraceOneMethodIfFlagged: JSF_LifecycleTracing execute BlamePointTracerDifferentInstances "JSF|Lifecycle|{classname}|execute"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing execute ExceptionErrorReporter "JSF|Lifecycle|{classname}|execute:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing render BlamePointTracerDifferentInstances "JSF|Lifecycle|{classname}|render"
+TraceOneMethodIfFlagged: JSF_LifecycleTracing render ExceptionErrorReporter "JSF|Lifecycle|{classname}|render:Errors Per Interval"
+
+# Lifecycle manages the processing of the entire lifecycle of a particular JavaServer Faces request.
+IdentifyInheritedAs: javax.faces.lifecycle.Lifecycle JSF_LifecycleTracing
+
+
+#######################
+# Event Configuration
+# ================
+
+# Interfaces describing events and event listeners, and concrete event implementation classes.
+SetFlag: JSF_EventTracing
+
+TraceOneMethodIfFlagged: JSF_EventTracing processAction MethodTimerDifferentInstances "JSF|Event|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_EventTracing processAction PerIntervalCounterDifferentInstances "JSF|Event|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing processAction ExceptionErrorReporter "JSF|Event|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing afterPhase MethodTimerDifferentInstances "JSF|Event|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_EventTracing afterPhase PerIntervalCounterDifferentInstances "JSF|Event|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing afterPhase ExceptionErrorReporter "JSF|Event|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing beforePhase MethodTimerDifferentInstances "JSF|Event|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_EventTracing beforePhase PerIntervalCounterDifferentInstances "JSF|Event|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing beforePhase ExceptionErrorReporter "JSF|Event|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing processValueChange MethodTimerDifferentInstances "JSF|Event|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_EventTracing processValueChange PerIntervalCounterDifferentInstances "JSF|Event|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing processValueChange ExceptionErrorReporter "JSF|Event|{classname}:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing processListener MethodTimerDifferentInstances "JSF|Event|{classname}:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSF_EventTracing processListener PerIntervalCounterDifferentInstances "JSF|Event|{classname}:Responses Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing processListener ExceptionErrorReporter "JSF|Event|{classname}:Errors Per Interval"
+
+TraceOneMethodIfFlagged: JSF_EventTracing processAction BlamePointTracerDifferentInstances "JSF|Event|{classname}|processAction"
+TraceOneMethodIfFlagged: JSF_EventTracing processAction ExceptionErrorReporter "JSF|Event|{classname}|processAction:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing afterPhase BlamePointTracerDifferentInstances "JSF|Event|{classname}|afterPhase"
+TraceOneMethodIfFlagged: JSF_EventTracing afterPhase ExceptionErrorReporter "JSF|Event|{classname}|afterPhase:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing beforePhase BlamePointTracerDifferentInstances "JSF|Event|{classname}|beforePhase"
+TraceOneMethodIfFlagged: JSF_EventTracing beforePhase ExceptionErrorReporter "JSF|Event|{classname}|beforePhase:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing processValueChange BlamePointTracerDifferentInstances "JSF|Event|{classname}|processValueChange"
+TraceOneMethodIfFlagged: JSF_EventTracing processValueChange ExceptionErrorReporter "JSF|Event|{classname}|processValueChange:Errors Per Interval"
+TraceOneMethodIfFlagged: JSF_EventTracing processListener BlamePointTracerDifferentInstances "JSF|Event|{classname}|processListener"
+TraceOneMethodIfFlagged: JSF_EventTracing processListener ExceptionErrorReporter "JSF|Event|{classname}|processListener:Errors Per Interval"
+
+# A listener for receiving ActionEvents.
+IdentifyInheritedAs: javax.faces.event.ActionListener JSF_EventTracing
+
+# A listener for receiving ValueChangeEvents.
+IdentifyInheritedAs: javax.faces.event.ValueChangeListener JSF_EventTracing
+
+# An implemented by objects that wish to be notified at the beginning
+# and ending of processing for each standard phase of the request processing lifecycle.
+IdentifyInheritedAs: javax.faces.event.PhaseListener JSF_EventTracing
+
+# An ActionEvent represents the activation of a user component (such as a UICommand).
+IdentifyInheritedAs: javax.faces.event.ActionEvent JSF_EventTracing
+
+# FacesEvent is the base class for user and application events that can be fired by UIComponents.
+IdentifyInheritedAs: javax.faces.event.FacesEvent JSF_EventTracing
+
+# A ValueChangeEvent is a notification that the local value of the source component has been changed
+# as a result of user activity.
+IdentifyInheritedAs: javax.faces.event.ValueChangeEvent JSF_EventTracing
+
+
+#######################
+# Validators Configuration
+# ================
+
+# Interface defining the validator model, and concrete validator implementation classes.
+SetFlag: JSF_ValidatorTracing
+
+TraceOneMethodIfFlagged: JSF_ValidatorTracing validate BlamePointTracerDifferentInstances "JSF|Validator|{classname}|validate"
+TraceOneMethodIfFlagged: JSF_ValidatorTracing validate ExceptionErrorReporter "JSF|Validator|{classname}|validate:Errors Per Interval"
+
+# A Validator implementation is a class that can perform validation (correctness checks) on a EditableValueHolder.
+IdentifyInheritedAs: javax.faces.validator.Validator JSF_ValidatorTracing
+
+
+#######################
+# Exceptions Configuration
+# ================
+
+# This class encapsulates general JavaServer Faces exceptions.
+SetFlag: JSF_ExceptionTracing
+
+TraceOneMethodIfFlagged: JSF_ExceptionTracing getCause ExceptionErrorReporter "JSF:Errors Per Interval"
+
+IdentifyInheritedAs: javax.faces.FacesException JSF_ExceptionTracing

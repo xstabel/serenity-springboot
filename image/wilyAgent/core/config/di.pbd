@@ -1,0 +1,32 @@
+########################################################################
+# Introscope ProbeBuilder List File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                   
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#######################
+# Derby base class skip
+# ====================
+# These directives tell the ProbeBuilder to not instrument
+# the derby implementation classes
+
+SkipPackage: org.apache.derby.authentication
+SkipPackage: org.apache.derby.catalog
+SkipPackage: org.apache.derby.database
+SkipPackage: org.apache.derby.diag
+SkipPackage: org.apache.derby.iapi
+SkipPackage: org.apache.derby.impl
+SkipPackage: org.apache.derby.info
+SkipPackage: org.apache.derby.io
+SkipPackage: org.apache.derby.loc
+SkipPackage: org.apache.derby.mbeans
+SkipPackage: org.apache.derby.osgi
+SkipPackage: org.apache.derby.security
+SkipPackage: org.apache.derby.shared
+SkipPackage: org.apache.derby.tools
+SkipPackage: org.apache.derby.vti

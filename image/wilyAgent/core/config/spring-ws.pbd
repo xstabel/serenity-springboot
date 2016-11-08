@@ -1,0 +1,225 @@
+################################################
+# WebService Monitoring Addon for Spring
+# The instrumentation is an addition to the product solution
+# merged on the most common fieldpacks.
+#
+# Andreas Reiss - APM Global SWAT Team
+# June 2014
+#################################################
+
+
+
+####################################################
+# 
+# WebService Client Metrics
+
+SetTracerClassMapping: SpringClientBlamePointTracer1 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringClientBlamePointTracer1 nameformatter com.wily.field.spring.ws.nameformatter.SpringClientFormatter
+SetTracerOrdering: SpringClientBlamePointTracer1 100
+
+SetTracerClassMapping: SpringClientBlamePointTracer2 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringClientBlamePointTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringClientFormatter
+SetTracerOrdering: SpringClientBlamePointTracer2 200
+
+SetTracerClassMapping: SpringClientBackendTracer com.wily.introscope.agent.trace.hc2.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringClientBackendTracer nameformatter com.wily.field.spring.ws.nameformatter.SpringClientFormatter
+
+SetTracerClassMapping: SpringClientBlamedFaultTracer1 com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringClientBlamedFaultTracer1 nameformatter com.wily.field.spring.ws.nameformatter.SpringClientFormatter
+SetTracerOrdering: SpringClientBlamedFaultTracer1 1000
+
+SetTracerClassMapping: SpringClientBlamedFaultTracer2 com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringClientBlamedFaultTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringClientFormatter
+SetTracerOrdering: SpringClientBlamedFaultTracer2 201
+
+
+SetFlag: SpringClientTracing
+
+IdentifyInheritedAs: org.springframework.remoting.httpinvoker.HttpInvokerRequestExecutor SpringClientTracing
+IdentifyClassAs: org.springframework.remoting.httpinvoker.SimpleHttpInvokerRequestExecutor SpringClientTracing
+IdentifyClassAs: org.springframework.remoting.httpinvoker.AbstractHttpInvokerRequestExecutor SpringClientTracing
+IdentifyInheritedAs: org.springframework.remoting.httpinvoker.AbstractHttpInvokerRequestExecutor SpringClientTracing
+
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing executeRequest(Lorg/springframework/remoting/httpinvoker/HttpInvokerClientConfiguration;Lorg/springframework/remoting/support/RemoteInvocation;)Lorg/springframework/remoting/support/RemoteInvocationResult; SpringClientBackendTracer "WebService at {namespace}"
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing executeRequest(Lorg/springframework/remoting/httpinvoker/HttpInvokerClientConfiguration;Lorg/springframework/remoting/support/RemoteInvocation;)Lorg/springframework/remoting/support/RemoteInvocationResult; SpringClientBlamePointTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing executeRequest(Lorg/springframework/remoting/httpinvoker/HttpInvokerClientConfiguration;Lorg/springframework/remoting/support/RemoteInvocation;)Lorg/springframework/remoting/support/RemoteInvocationResult; SpringClientBlamedFaultTracer1 "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing executeRequest(Lorg/springframework/remoting/httpinvoker/HttpInvokerClientConfiguration;Lorg/springframework/remoting/support/RemoteInvocation;)Lorg/springframework/remoting/support/RemoteInvocationResult; SpringClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing executeRequest(Lorg/springframework/remoting/httpinvoker/HttpInvokerClientConfiguration;Lorg/springframework/remoting/support/RemoteInvocation;)Lorg/springframework/remoting/support/RemoteInvocationResult; SpringClientBlamedFaultTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+#Specific correlation on HTTP connections not using WebService Template - These connections use HTTPClient
+
+# Support CommonsHttpInvokerRequestExecuter - org.apache.commons.httpclient.HttpClient executeMethod
+SetTracerClassMapping: PostMethodCorrelationTracer com.wily.field.spring.ws.correlation.PostMethodCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing executePostMethod PostMethodCorrelationTracer "Correlation"
+
+# Support HttpComponentsHttpInvokerRequestExecutor -  org.apache.http.client.HttpClient executeHttpPost
+SetTracerClassMapping: HTTPPostCorrelationTracer com.wily.field.spring.ws.correlation.HttpPostCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing executeHttpPost HTTPPostCorrelationTracer "Correlation"
+
+# Support SimpleHttpInvokerRequestExecutor - java.net.HttpURLConnection
+SetTracerClassMapping: HTTPURLConnectionCorrelationTracer com.wily.field.spring.ws.correlation.HttpUrlConnectionCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+TraceOneMethodWithParametersIfFlagged: SpringClientTracing writeRequestBody HTTPURLConnectionCorrelationTracer "Correlation"
+
+
+
+
+#####################################
+#
+# Spring Remoting
+#
+SetTracerClassMapping: SpringRemotingCorrelationTracer com.wily.field.spring.ws.correlation.SpringRemotingCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetFlag: SpringRemotingCorrelationTracing
+
+IdentifyInheritedAs: org.springframework.remoting.support.RemoteInvocationExecutor SpringRemotingCorrelationTracing
+TraceOneMethodWithParametersIfFlagged: SpringRemotingCorrelationTracing invoke SpringRemotingCorrelationTracer "WEBSERVICE"
+
+
+
+#####################################
+#
+# WebService Client
+#
+
+SetTracerClassMapping: SpringWSClientTracer1 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringWSClientTracer1 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsClientNameFormatter
+SetTracerOrdering: SpringWSClientTracer1 100
+
+SetTracerClassMapping: SpringWSClientTracer2 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringWSClientTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsClientNameFormatter
+SetTracerOrdering: SpringWSClientTracer2 200
+
+SetTracerClassMapping: SpringWSBackendTracer com.wily.introscope.agent.trace.hc2.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringWSBackendTracer nameformatter com.wily.field.spring.ws.nameformatter.SpringWsClientNameFormatter
+SetTracerOrdering: SpringWSBackendTracer 99
+
+#Fault Handling on Client Web Service
+SetTracerClassMapping: SpringWSFaultTracerSummary com.wily.field.spring.ws.SpringWsFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSFaultTracerSummary nameformatter com.wily.field.spring.ws.nameformatter.SpringWsFaultNameFormatter
+SetTracerOrdering: SpringWSFaultTracerSummary 10001
+SetTracerParameter: SpringWSFaultTracerSummary summary true
+
+SetTracerClassMapping: SpringWSFaultTracer2 com.wily.field.spring.ws.SpringWsFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSFaultTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsFaultNameFormatter
+SetTracerOrdering: SpringWSFaultTracer2 2001
+
+#Exceptions on Client Web Service
+SetTracerClassMapping: SpringWSExcErrorTracerSummary com.wily.field.spring.ws.SpringWSCliExcErrorTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSExcErrorTracerSummary nameformatter com.wily.field.spring.ws.nameformatter.SpringWSErrorNameFormatter
+SetTracerOrdering: SpringWSExcErrorTracerSummary 10002
+SetTracerParameter: SpringWSExcErrorTracerSummary summary true
+
+SetTracerClassMapping: SpringWSExcErrorTracer2 com.wily.field.spring.ws.SpringWSCliExcErrorTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSExcErrorTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringWSErrorNameFormatter
+SetTracerOrdering: SpringWSExcErrorTracer2 2002
+
+SetTracerClassMapping: SpringWSClientTemplateCorTracer com.wily.field.spring.ws.correlation.SpringWsCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: SpringWSClientTemplateCorTracer 500
+
+SetFlag: SpringWSClientTemplateTracing
+IdentifyClassAs: org.springframework.ws.client.core.WebServiceTemplate SpringWSClientTemplateTracing
+
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing sendRequest(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)V SpringWSClientTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing sendRequest(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)V SpringWSExcErrorTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing sendRequest(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)V SpringWSClientTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing sendRequest(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)V SpringWSExcErrorTracerSummary "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing sendRequest(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)V SpringWSBackendTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing sendRequest(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)V SpringWSClientTemplateCorTracer "WEBSERVICE"
+
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing handleError(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)Ljava/lang/Object; SpringWSExcErrorTracerSummary "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing handleError(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/WebServiceMessage;)Ljava/lang/Object; SpringWSExcErrorTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing handleFault(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/context/MessageContext;)Ljava/lang/Object; SpringWSFaultTracerSummary "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: SpringWSClientTemplateTracing handleFault(Lorg/springframework/ws/transport/WebServiceConnection;Lorg/springframework/ws/context/MessageContext;)Ljava/lang/Object; SpringWSFaultTracer2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+SetFlag: SpringWSConnectionTracing
+IdentifyClassAs: org.springframework.ws.transport.WebServiceConnection SpringWSConnectionTracing
+IdentifyInheritedAs: org.springframework.ws.transport.WebServiceConnection SpringWSConnectionTracing
+TraceOneMethodIfFlagged: SpringWSConnectionTracing receive BlamePointTracer "Spring|Transport|{classname}|Client Receive"
+TraceOneMethodIfFlagged: SpringWSConnectionTracing send BlamePointTracer "Spring|Transport|{classname}|Client Send"
+
+#########################################################
+#Server Side Tracing - WebService Server metrics
+
+SetTracerClassMapping: SpringWSServerTracer1 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringWSServerTracer1 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsServerNameFormatter
+SetTracerOrdering: SpringWSServerTracer1 100
+
+SetTracerClassMapping: SpringWSServerTracer2 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringWSServerTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsServerNameFormatter
+SetTracerOrdering: SpringWSServerTracer2 200
+
+SetTracerClassMapping: SpringWSServerCorTracer com.wily.field.spring.ws.correlation.SpringWsServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: SpringWSServerCorTracer 99
+
+SetTracerClassMapping: SpringWSServerErrorTracer1 com.wily.field.spring.ws.SpringWsServerExceptionTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSServerErrorTracer1 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsServerNameFormatter
+SetTracerOrdering: SpringWSServerErrorTracer1 10002
+
+SetTracerClassMapping: SpringWSServerErrorTracer2 com.wily.field.spring.ws.SpringWsServerExceptionTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSServerErrorTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsServerNameFormatter
+SetTracerOrdering: SpringWSServerErrorTracer2 2002
+
+SetTracerClassMapping: SpringWSServerExceptionThrownTracer1 com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSServerExceptionThrownTracer1 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsServerNameFormatter
+SetTracerOrdering: SpringWSServerExceptionThrownTracer1 10001
+
+SetTracerClassMapping: SpringWSServerExceptionThrownTracer2 com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringWSServerExceptionThrownTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringWsServerNameFormatter
+SetTracerOrdering: SpringWSServerExceptionThrownTracer2 2001
+
+SetFlag: SpringWSServerTracing
+IdentifyInheritedAs: org.springframework.ws.transport.WebServiceMessageReceiver SpringWSServerTracing
+
+TraceOneMethodWithParametersIfFlagged: SpringWSServerTracing receive(Lorg/springframework/ws/context/MessageContext;)V SpringWSServerTracer2 "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: SpringWSServerTracing receive(Lorg/springframework/ws/context/MessageContext;)V SpringWSServerTracer1 "WebServices|Server|{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: SpringWSServerTracing processEndpointException(Lorg/springframework/ws/context/MessageContext;Ljava/lang/Object;Ljava/lang/Exception;)V SpringWSServerErrorTracer1 "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: SpringWSServerTracing processEndpointException(Lorg/springframework/ws/context/MessageContext;Ljava/lang/Object;Ljava/lang/Exception;)V SpringWSServerErrorTracer2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: SpringWSServerTracing processEndpointException(Lorg/springframework/ws/context/MessageContext;Ljava/lang/Object;Ljava/lang/Exception;)V SpringWSServerExceptionThrownTracer1 "WebServices|Server|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SpringWSServerTracing processEndpointException(Lorg/springframework/ws/context/MessageContext;Ljava/lang/Object;Ljava/lang/Exception;)V SpringWSServerExceptionThrownTracer2 "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersOfClass: org.springframework.ws.transport.http.MessageDispatcherServlet doService SpringWSServerCorTracer "WEBSERVICE" 
+
+##########################################
+#Rest Service Tracing
+SetTracerClassMapping: SpringRestClientTracer1 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringRestClientTracer1 nameformatter com.wily.field.spring.ws.nameformatter.SpringRestNameFormatter
+SetTracerOrdering: SpringRestClientTracer1 100
+
+SetTracerClassMapping: SpringRestClientTracer2 com.wily.field.spring.ws.SpringWebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringRestClientTracer2 nameformatter com.wily.field.spring.ws.nameformatter.SpringRestNameFormatter
+SetTracerOrdering: SpringRestClientTracer2 200
+
+SetTracerClassMapping: SpringWSRestCorTracer com.wily.field.spring.ws.correlation.SpringRestCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: SpringWSRestCorTracer 99
+
+SetTracerClassMapping: SpringRestBackendTracer com.wily.introscope.agent.trace.hc2.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: SpringRestBackendTracer nameformatter com.wily.field.spring.ws.nameformatter.SpringRestNameFormatter
+SetTracerOrdering: SpringRestBackendTracer 95
+
+SetTracerClassMapping: SpringRestErrorTracer com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SpringRestErrorTracer nameformatter com.wily.field.spring.ws.nameformatter.SpringRestNameFormatter
+SetTracerOrdering: SpringRestErrorTracer 95
+
+#Todo RequestCallback - Interceptor for Header injection
+SetFlag: RestServiceTracing
+IdentifyInheritedAs: org.springframework.web.client.RestTemplate RestServiceTracing
+IdentifyClassAs: org.springframework.web.client.RestTemplate RestServiceTracing
+TraceOneMethodWithParametersIfFlagged: RestServiceTracing doExecute SpringRestClientTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: RestServiceTracing doExecute SpringRestErrorTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: RestServiceTracing doExecute SpringRestClientTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: RestServiceTracing doExecute SpringRestErrorTracer "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: RestServiceTracing doExecute SpringRestBackendTracer "WebService at {namespace}"
+TraceOneMethodWithParametersIfFlagged: RestServiceTracing doExecute SpringRestErrorTracer "Backends|WebService at {namespace}:Errors Per Interval"
+
+SetFlag: ClientHttpRequestTracing
+IdentifyInheritedAs: org.springframework.http.client.ClientHttpRequest ClientHttpRequestTracing
+TraceOneMethodWithParametersIfFlagged: ClientHttpRequestTracing execute SpringWSRestCorTracer "Correlation"
+
+#HTTP Server Correlation
+SetTracerClassMapping: HTTPServerTracer com.wily.field.spring.ws.correlation.HttpServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering:	HTTPServerTracer 5000
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V HTTPServerTracer "Correlation"

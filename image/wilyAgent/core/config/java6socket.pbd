@@ -1,0 +1,7 @@
+################################################################
+# From java2.pbd SocketTracing,the default for java 6 and lower,
+# disable it for java 7
+################################################################
+
+SubstituteClassIfFlagged: SocketTracing java.net.SocketOutputStream java.net.ManagedSocketOutputStreamHighPerformanceNew
+SubstituteClassIfFlagged: SocketTracing java.net.SocketInputStream java.net.ManagedSocketInputStreamHighPerformanceNew

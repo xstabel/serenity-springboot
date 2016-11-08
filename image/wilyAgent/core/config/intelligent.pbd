@@ -1,0 +1,107 @@
+########################################################################
+# Introscope ProbeBuilder List File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                   
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+##########################################
+###				     #####	
+### For Intelligent Instrumentation  #####
+###				     #####	
+##########################################
+SkipIntelligentInstrumentationPackagePrefix: com.wily.
+SkipIntelligentInstrumentationPackagePrefix: java.
+SkipIntelligentInstrumentationPackagePrefix: javax.
+SkipIntelligentInstrumentationPackagePrefix: org.
+SkipIntelligentInstrumentationPackagePrefix: sun.
+SkipIntelligentInstrumentationPackagePrefix: com.sun.
+SkipIntelligentInstrumentationPackagePrefix: oracle.net.
+#SkipIntelligentInstrumentationPackagePrefix: com.ibm.ws.util.
+SkipIntelligentInstrumentationPackagePrefix: oracle.jdbc.driver.
+#SkipIntelligentInstrumentationPackagePrefix: com.ibm.ws.tx.util.
+#SkipIntelligentInstrumentationPackagePrefix: com.ibm.ejs.util.
+#SkipIntelligentInstrumentationPackagePrefix: com.ibm.ws.threadContext.
+#SkipIntelligentInstrumentationPackagePrefix: com.ibm.ejs.
+SkipIntelligentInstrumentationPackagePrefix: oracle.jdbc.
+#SkipIntelligentInstrumentationPackagePrefix: com.ibm.ws.util.
+SkipIntelligentInstrumentationPackagePrefix: com.ibm.ws.logging.object.
+#SkipIntelligentInstrumentationPackagePrefix: com.ibm.
+
+#SAP
+SkipIntelligentInstrumentationPackagePrefix: com.sap.engine.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.tc.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.security.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.pmi.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.mona.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.jmx.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.jms.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.sql.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.s2x.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.i18n.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.portal.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.sld.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.sl.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.scheduler.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.jvm.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.exception.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.bc.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.localization.
+SkipIntelligentInstrumentationPackagePrefix: com.sap.tools.
+
+# Adobe
+SkipIntelligentInstrumentationPackagePrefix: com.adobe.
+
+# IAIK-JCE is a Java-based Cryptographic Service Provider
+SkipIntelligentInstrumentationPackagePrefix: iaik.
+
+#Weblogic
+SkipIntelligentInstrumentationPackagePrefix: weblogic.
+SkipIntelligentInstrumentationPackagePrefix: com.oracle.jrockit.
+SkipIntelligentInstrumentationPackagePrefix: com.bea.
+
+
+IncludeIntelligentInstrumentationPackagePrefix: org.apache.axis.
+IncludeIntelligentInstrumentationPackagePrefix: com.ibm.websphere.samples.
+
+
+SetFlag: IntelligentAllMethods
+TurnOn: IntelligentAllMethods
+
+SetTracerClassMapping: IntelligentInstrumentationTracer com.wily.introscope.agent.trace.intelligent.IntelligentInstrumentationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IntelligentInstrumentationTracer customAggregator intelligentAggregator
+
+IdentifyClassAs:  IntroscopeDummyClass IntelligentAllMethods
+TraceOneMethodIfFlagged: IntelligentAllMethods IntroscopeDummyMethod IntelligentInstrumentationTracer "IntelligentAllMethodsResource"
+
+SkipIntelligentInstrumentationPackagePrefix: org.apache.tomcat.dbcp.
+SkipIntelligentInstrumentationPackagePrefix: org.postgresql.jdbc4.
+
+#######################
+# For Entry Point Detection
+# ================
+# Defines the directives for helping in Entry Point Detection
+
+# NIO SocketChannel
+SetTracerClassMapping: NIOSocketEntryPointDetectionHelperTracer com.wily.introscope.agent.intelligent.entrypoint.tracers.NIOSocketEntryPointDetectionHelperTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing read NIOSocketEntryPointDetectionHelperTracer -
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing write NIOSocketEntryPointDetectionHelperTracer -
+
+# NIO DatagramChannel
+SetTracerClassMapping: NIODatagramEntryPointDetectionHelperTracer com.wily.introscope.agent.intelligent.entrypoint.tracers.NIODatagramEntryPointDetectionHelperTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing read NIODatagramEntryPointDetectionHelperTracer -
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing write NIODatagramEntryPointDetectionHelperTracer -
+
+SetTracerClassMapping: DatagramSendEntryPointDetectionHelperTracer com.wily.introscope.agent.intelligent.entrypoint.tracers.DatagramSendEntryPointDetectionHelperTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: DatagramSendEntryPointDetectionHelperTracer 10001
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I DatagramSendEntryPointDetectionHelperTracer -
+
+SetTracerClassMapping: DatagramReceiveEntryPointDetectionHelperTracer com.wily.introscope.agent.intelligent.entrypoint.tracers.DatagramReceiveEntryPointDetectionHelperTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: DatagramReceiveEntryPointDetectionHelperTracer 10001
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; DatagramReceiveEntryPointDetectionHelperTracer -
+
+SetTracerClassMapping: EntryPointDetectionHelperTracer com.wily.introscope.agent.intelligent.entrypoint.tracers.EntryPointDetectionHelperTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator

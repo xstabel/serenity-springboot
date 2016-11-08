@@ -1,0 +1,35 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                       
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file provides tracer groups for Oracle JDBC          
+# components.  Comment or uncomment the "TurnOn" directives 
+# to alter the set of Oracle JDBC components that are traced.      
+#############################################################
+
+IdentifyInheritedAs: oracle.jdbc.OracleStatement JDBCTracing 
+IdentifyInheritedAs: oracle.jdbc.OraclePreparedStatement JDBCTracing
+IdentifyInheritedAs: oracle.jdbc.OracleCallableStatement JDBCTracing
+IdentifyInheritedAs: oracle.jdbc.driver.OracleStatement JDBCTracing 
+IdentifyInheritedAs: oracle.jdbc.driver.OraclePreparedStatement JDBCTracing
+IdentifyInheritedAs: oracle.jdbc.driver.OracleCallableStatement JDBCTracing
+IdentifyInheritedAs: oracle.jdbc.internal.OracleStatement JDBCTracing
+IdentifyInheritedAs: oracle.jdbc.internal.OraclePreparedStatement JDBCTracing
+IdentifyInheritedAs: oracle.jdbc.internal.OracleCallableStatement JDBCTracing
+
+IdentifyInheritedAs: oracle.jdbc.xa.OracleXAResource JTACommitTracing
+IdentifyInheritedAs: oracle.jdbc.xa.client.OracleXAResource JTACommitTracing
+IdentifyInheritedAs: oracle.jdbc.xa.OracleXAConnection JTACommitTracing
+IdentifyInheritedAs: oracle.jdbc.xa.client.OracleXAConnection JTACommitTracing
+
+# Socket data from the Oracle driver reports too many metrics
+SkipPackagePrefixForFlag: oracle.jdbc. SocketTracing
+SkipPackagePrefixForFlag: oracle.net. SocketTracing

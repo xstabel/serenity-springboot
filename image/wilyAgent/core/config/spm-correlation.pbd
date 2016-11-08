@@ -1,0 +1,203 @@
+########################################################################
+# Introscope ProbeBuilder File for SOA Performance Manager                             
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0.15 Build 990014 
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+###################################################################
+# This file provides directives to support correlation support for 
+# web services on SPM supported java SOAP stacks
+###################################################################
+
+
+
+#################################################################################################
+#
+# Axis 1.x client-side web service tracers (tracer based correlation)
+#
+#
+#################################################################################################
+
+
+SetTracerClassMapping: Axis1ClientCorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis1ClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: Axis1ClientCorrTracer  201
+
+IdentifyClassAs: org.apache.axis.client.Call Axis1ClientCorrelationTracing
+
+SetFlag: Axis1ClientCorrelationTracing
+TurnOn: Axis1ClientCorrelationTracing
+
+
+TraceOneMethodWithParametersIfFlagged: Axis1ClientCorrelationTracing invokeEngine Axis1ClientCorrTracer "WEBSERVICE"
+
+TraceOneMethodWithParametersIfFlagged: Axis1ClientCorrelationTracing invokeEngineOneWay Axis1ClientCorrTracer "WEBSERVICE"
+
+
+#########################################################
+# 
+# Axis 1.x Webservices Server Tracing
+#
+#########################################################
+
+SetTracerClassMapping: Axis1ServerCorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis1ServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: Axis1ServerCorrTracer -200000
+
+
+SetFlag: Axis1ServerCorrelationTracing
+TurnOn: Axis1ServerCorrelationTracing
+
+IdentifyClassAs: org.apache.axis.handlers.soap.SOAPService Axis1ServerCorrelationTracing
+
+# Correlation Tracing
+TraceOneMethodWithParametersIfFlagged: Axis1ServerCorrelationTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerCorrTracer "WebServices"
+
+################################################
+# 
+# Apache CXF Client JAX-WS Instrumentation
+# 
+#######################################################
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncClientCorrTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.CXFClientProxyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncClientCorrTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerOrdering: ApacheCXFJaxWSSyncClientCorrTracer 160
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync(Ljava/lang/reflect/Method;Lorg/apache/cxf/service/model/BindingOperationInfo;[Ljava/lang/Object;)Ljava/lang/Object; ApacheCXFJaxWSSyncClientCorrTracer "WebServices"
+
+
+SetTracerClassMapping:  AsyncJaxwsClientProxyTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.CXFAsyncJaxWSClientProxyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerOrdering: AsyncJaxwsClientProxyTracer 160
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeAsync  AsyncJaxwsClientProxyTracer "WebServicesAsync"
+
+###########################################################
+# 
+# Apache CXF Server JAX-WS Instrumentation
+# 
+############################################################
+
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncServerCorrTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.CXFNameAndSOAPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncServerCorrTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+
+#Corr tracer must come first for name formatter to work
+SetTracerOrdering: ApacheCXFJaxWSSyncServerCorrTracer 90
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSSyncServerCorrTracer "WebServices"
+
+########################################################### 
+# 
+# Axis 2 Webservices Server Correlation 
+# 
+########################################################### 
+
+SetTracerClassMapping: ServerAxis2CorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2ServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator 
+SetTracerOrdering: ServerAxis2CorrTracer -200000 
+
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V ServerAxis2CorrTracer "WebServices" 
+
+###########################################################
+# 
+# Axis 2 Webservices HTTP Client Correlation
+# 
+###########################################################
+
+SetTracerClassMapping: ClientAxis2HTTPCorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2ClientHTTPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ClientAxis2HTTPCorrTracer 201
+
+SetFlag: Axis2ClientTracing2
+TurnOn: Axis2ClientTracing2
+
+IdentifyClassAs: org.apache.axis2.transport.http.AbstractHTTPSender Axis2ClientTracing2
+IdentifyClassAs: org.apache.axis2.transport.http.HTTPSender Axis2ClientTracing2
+
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracing2 executeMethod ClientAxis2HTTPCorrTracer "WebServices"
+
+
+#########################################################
+# 
+# Axis2 Webservices HTTP Server Tracing
+#
+#########################################################
+
+SetTracerClassMapping: ServerAxis2CorrHTTPTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2ServerHTTPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ServerAxis2CorrHTTPTracer -200000
+
+IdentifyClassAs: org.apache.axis2.transport.http.AxisServlet Axis2ServerTracing
+
+# HTTP Correlation Tracing
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing doPost ServerAxis2CorrHTTPTracer  "WebServices"
+
+
+#############################################################
+# 
+# Websphere 6.1 HTTP correlation Tracing
+#
+#############################################################
+
+SetTracerClassMapping: SOAPHTTPTestTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WAS61WSOutboundHTTPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetFlag: SOAPHTTPTestTracing
+# turn tracer on and off
+TurnOn: SOAPHTTPTestTracing
+IdentifyClassAs: com.ibm.ws.webservices.engine.transport.http.HttpOutboundChannelConnection SOAPHTTPTestTracing
+
+TraceOneMethodWithParametersIfFlagged: SOAPHTTPTestTracing prepareHttpRequestHeaders SOAPHTTPTestTracer "WEBSERVICE"
+
+
+##########################################################
+## Weblogic 9, 10 , 10.3 and 10.3.x Instrumentation Points
+##########################################################
+
+#10.3 Client side
+SetTracerClassMapping: WL_CLIENT_JAXWS_CorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.SEIStubCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_CLIENT_JAXWS_CorrelationTracer  2000
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcess WL_CLIENT_JAXWS_CorrelationTracer "WebServices"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcessAsync WL_CLIENT_JAXWS_CorrelationTracer "WebServices"
+
+#10.0 JAXWS Server side
+SetTracerClassMapping: WL_SERVER_JAXWS_CORR_TRACER com.wily.powerpack.webservices.extension.agent.trace.correlation.WL10ServerJAXWSCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerClassMapping: PacketPropertyModifyTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.PacketPropertyModifyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_SERVER_JAXWS_CORR_TRACER  -2000
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING doPost WL_SERVER_JAXWS_CORR_TRACER "WEBSERVICE"
+
+#10.3.x JAXWS  Server Side
+SetTracerClassMapping: WL103X_SERVER_JAXWS_CORR_TRACER com.wily.powerpack.webservices.extension.agent.trace.correlation.WL103xServerJAXWSCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL103X_SERVER_JAXWS_CORR_TRACER  -2000
+
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING doRequest WL103X_SERVER_JAXWS_CORR_TRACER "WEBSERVICE"
+
+#9.0 and 10.0 JAXRPC
+SetTracerClassMapping: WL_JaxRpcClientCorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WL9CorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_JaxRpcClientCorrelationTracer 201
+
+TraceOneMethodWithParametersIfFlagged: WL_ClientCorrelationTracing2 handleRequest WL_JaxRpcClientCorrelationTracer "WebServices"
+
+SetTracerClassMapping: WLS9ServerCorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WL9ServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WLS9ServerCorrelationTracer -400
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WLS9ServerCorrelationTracer "WebServices"
+
+# WebsphereJaxWS HTTP Correlation
+
+SetTracerClassMapping: WebsphereJaxWSCorrTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WebsphereJAXWSClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WebsphereJaxWSCorrTracer 201
+
+SetFlag: WebsphereJaxWSClientCorrTracing
+TurnOn: WebsphereJaxWSClientCorrTracing
+
+IdentifyClassAs: com.ibm.ws.websvcs.transport.http.SOAPOverHTTPSender WebsphereJaxWSClientCorrTracing
+TraceOneMethodWithParametersIfFlagged: WebsphereJaxWSClientCorrTracing send WebsphereJaxWSCorrTracer "WebServices"
+
+SetTracerClassMapping: ServerCorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.websphere.JAXWSServerEndpointCtrlTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ServerCorrelationTracer -2000
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invoke ServerCorrelationTracer "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeAsync ServerCorrelationTracer "WebServices"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeOneWay ServerCorrelationTracer "WebServices"

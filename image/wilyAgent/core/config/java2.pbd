@@ -1,0 +1,467 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                       
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file provides tracer groups
+#   for common Java 2 components.
+# Please use either toggles-full.pbd or toggles-typical.pbd
+#   to TurnOn specific tracing.
+#############################################################
+
+SetFlag: DefaultStalledMethodTracing
+SetFlag: DefaultConcurrentInvocationTracing
+SetFlag: DefaultRateTracing
+
+#######################
+# RMI Configuration
+# ================
+# This list identifies classes which should be traced as
+# RMI stub and skeleton classes (client and server side
+# interfaces respectively).  If you are using an RMI framework
+# not identified by the directives listed here, you will
+# need to add them to this list.
+#
+# Use the "IdentifyInheritedAs" directive to track all
+# direct subclasses or interface implementations
+
+# RMI specification
+IdentifyInheritedAs: java.rmi.server.RemoteStub RMIClientTracing
+IdentifyInheritedAs: java.rmi.server.Skeleton RMIServerTracing
+
+#######################
+# JDBC Tracer Group
+# ================
+# Defines the directives necessary for tracing JDBC activity.
+
+SetFlag: JDBCQueryTracing
+SetFlag: JDBCUpdateTracing
+SetFlag: JDBCTracing
+
+IdentifyFlagAs: JDBCTracing JDBCQueryTracing
+IdentifyFlagAs: JDBCTracing JDBCUpdateTracing
+
+# Java JDBC interfaces
+IdentifyInheritedAs: java.sql.Statement JDBCTracing
+IdentifyInheritedAs: java.sql.PreparedStatement JDBCTracing
+IdentifyInheritedAs: java.sql.CallableStatement JDBCTracing
+
+SetFlag: JDBCQueryRateTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JDBCQueryTracing DefaultRateTracing JDBCQueryRateTracing
+
+SetFlag: JDBCStalledQueryTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JDBCQueryTracing DefaultStalledMethodTracing JDBCStalledQueryTracing
+
+SetFlag: JDBCQueryConcurrentInvocationTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JDBCQueryTracing DefaultConcurrentInvocationTracing JDBCQueryConcurrentInvocationTracing
+
+# JDBC Update Tracing
+
+SetFlag: JDBCUpdateRateTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JDBCUpdateTracing DefaultRateTracing JDBCUpdateRateTracing
+
+SetFlag: JDBCStalledUpdateTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JDBCUpdateTracing DefaultStalledMethodTracing JDBCStalledUpdateTracing
+
+SetFlag: JDBCUpdateConcurrentInvocationTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JDBCUpdateTracing DefaultConcurrentInvocationTracing JDBCUpdateConcurrentInvocationTracing
+
+
+#######################
+# Instance Counts Tracer Group
+# ================
+# This list identifies classes for which approximate
+# instance counts should be reported.  If you have
+# custom classes that you want counted you will need
+# to add them to this list.
+#
+# Use the "IdentifyClassAs" and "IdentifyInheritedAs"
+# directives to identify the classes to count
+
+#IdentifyClassAs: com.acme.YourClassNameHere InstanceCounts
+#IdentifyInheritedAs: com.acme.YourClassNameHere InstanceCounts
+
+
+#########################################################
+# The following section of the file contains directives #
+# which implement the tracer groups listed in           #
+# toggles-full.pbd or toggles-typical.pbd.              #
+# Do not make changes to any of the directives below    #
+# this line or Introscope will not work correctly.      #
+#########################################################
+
+
+#######################
+# RMI Tracer Group
+# ================
+# Defines the directives necessary for RMI tracing.
+
+# RMI Client
+SetFlag: RMIClientTracing
+TraceComplexMethodsIfFlagged: RMIClientTracing BlamePointTracerDifferentMethods "RMI|Client|{classname}|{method}"
+
+# RMI Server
+SetFlag: RMIServerTracing
+TraceComplexMethodsIfFlagged: RMIServerTracing BlamePointTracerDifferentMethods "RMI|Server|{classname}|{method}"
+
+
+#######################
+# Network Tracer Group
+# ================
+# Defines the directives necessary for tracing network activity.
+
+# ManagedSocketTracing
+SetFlag: ManagedSocketTracing
+SetFlag: UDPTracing
+
+SubstituteClassIfFlagged: ManagedSocketTracing java.net.Socket com.wily.introscope.agent.probe.net.ManagedSocket
+SubstituteClassIfFlagged: ManagedSocketTracing java.net.ServerSocket com.wily.introscope.agent.probe.net.ManagedServerSocket
+SubstituteClassIfFlagged: UDPTracing java.net.DatagramSocket com.wily.introscope.agent.probe.net.ManagedDatagramSocket
+
+#######################
+# I/O Socket Tracer Group
+# ================
+# Defines the directives necessary for tracing I/O socket activity.
+
+SetFlag: SocketTracing
+IdentifyClassAs: java.net.ServerSocket SocketTracing
+IdentifyClassAs: java.net.Socket SocketTracing
+IdentifyClassAs: javax.net.ssl.SSLServerSocket SocketTracing
+IdentifyClassAs: com.sun.net.ssl.internal.ssl.SSLServerSocketImpl SocketTracing
+IdentifyClassAs: sun.security.ssl.SSLServerSocketImpl SocketTracing
+IdentifyClassAs: com.ibm.jsse2.hc SocketTracing
+#Uncomment it for JRE 1.6.0 IBM J9 2.4
+#IdentifyClassAs: com.ibm.jsse2.qc SocketTracing
+IdentifyClassAs: com.ibm.jsse2.rc SocketTracing
+IdentifyClassAs: com.ibm.jsse2.cd SocketTracing
+IdentifyClassAs: com.ibm.jsse2.oc SocketTracing
+IdentifyClassAs: javax.net.ssl.SSLSocket SocketTracing
+IdentifyClassAs: java.net.SocketInputStream SocketTracing
+IdentifyClassAs: java.net.SocketOutputStream SocketTracing
+
+# Socket input stream and socket output stream cannot be modified
+# by the SubstituteClassIfFlagged directive on file system.
+SkipClassForFlag: java.net.SocketInputStream FileSystemTracing
+SkipClassForFlag: java.net.SocketOutputStream FileSystemTracing
+
+TraceOneMethodWithParametersIfFlagged: SocketTracing accept IOServerSocketAcceptMappingTracer "Sockets|Server|Port {port}"
+TraceOneMethodWithParametersIfFlagged: SocketTracing accept IOServerSocketAcceptCountTracer "Accepts Per Interval"
+TraceOneMethodWithParametersIfFlagged: SocketTracing accept ServerSocketInitClampManager -
+TraceOneMethodWithParametersIfFlagged: SocketTracing accept IOSocketAcceptFormatterCache -
+TraceOneMethodIfFlagged: SocketTracing connect(Ljava/net/SocketAddress;I)V IOSocketConnectMappingTracer "Sockets|Client|{hostname}|Port {port}"
+TraceOneMethodIfFlagged: SocketTracing connect(Ljava/net/SocketAddress;I)V IOSocketConnectCountTracer "Opens Per Interval"
+TraceOneMethodIfFlagged: SocketTracing connect(Ljava/net/SocketAddress;I)V IOSocketFormatterCache -
+TraceOneMethodWithParametersIfFlagged: SocketTracing connect(Ljava/net/SocketAddress;I)V SocketInitClampManager -
+TraceOneMethodIfFlagged: SocketTracing close IOSocketCloseCountTracer "Closes Per Interval"
+TraceOneMethodWithParametersIfFlagged: SocketTracing close IOSocketFormatterCache -
+SkipMethodForClass: java.net.SocketInputStream close
+SkipMethodForClass: java.net.SocketOutputStream close
+#SubstituteClassIfFlagged: SocketTracing java.net.SocketOutputStream java.net.ManagedSocketOutputStreamHighPerformance
+#SubstituteClassIfFlagged: SocketTracing java.net.SocketInputStream java.net.ManagedSocketInputStreamHighPerformance
+
+SetTracerClassMapping: IOServerSocketAcceptMappingTracer com.wily.introscope.agent.trace.io.SocketAcceptMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOServerSocketAcceptMappingTracer useblame false
+SetTracerOrdering: IOServerSocketAcceptMappingTracer 10000
+SetTracerClassMapping: IOServerSocketAcceptCountTracer com.wily.introscope.agent.trace.io.SocketAcceptPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOServerSocketAcceptCountTracer nameformatter com.wily.introscope.agent.trace.io.CachedSocketAcceptNameFormatter
+SetTracerParameter: IOServerSocketAcceptCountTracer useblame false
+SetTracerClassMapping: IOSocketConnectMappingTracer com.wily.introscope.agent.trace.io.SocketConnectMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketConnectMappingTracer useblame false
+SetTracerOrdering: IOSocketConnectMappingTracer 10000
+SetTracerClassMapping: IOSocketConnectCountTracer com.wily.introscope.agent.trace.io.SocketConnectPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketConnectCountTracer nameformatter com.wily.introscope.agent.trace.io.CachedSocketNameFormatter
+SetTracerParameter: IOSocketConnectCountTracer useblame false
+SetTracerClassMapping: IOSocketCloseCountTracer com.wily.introscope.agent.trace.io.SocketClosePerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketCloseCountTracer nameformatter com.wily.introscope.agent.trace.io.CachedSocketNameFormatter
+SetTracerParameter: IOSocketCloseCountTracer useblame false
+SetTracerClassMapping: StreamMappingTracer com.wily.introscope.agent.trace.io.StreamMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: StreamMappingTracer useblame false
+SetTracerClassMapping: InputStreamBandwidthTracer com.wily.introscope.agent.trace.io.InputStreamMethodResultRateTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: InputStreamBandwidthTracer nameformatter com.wily.introscope.agent.trace.io.StreamNameFormatter
+SetTracerParameter: InputStreamBandwidthTracer useblame false
+SetTracerClassMapping: OutputStreamBandwidthTracer com.wily.introscope.agent.trace.io.OutputStreamRateTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: OutputStreamBandwidthTracer nameformatter com.wily.introscope.agent.trace.io.StreamNameFormatter
+SetTracerParameter: OutputStreamBandwidthTracer useblame false
+SetTracerClassMapping: IOSocketBackendReadTracer com.wily.introscope.agent.trace.io.SocketBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketBackendReadTracer nameformatter com.wily.introscope.agent.trace.io.StreamBackendNameFormatter
+SetTracerParameter: IOSocketBackendReadTracer annotationtitle "Socket read"
+SetTracerParameter: IOSocketBackendReadTracer useblame true
+SetTracerClassMapping: IOSocketBackendWriteTracer com.wily.introscope.agent.trace.io.SocketBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketBackendWriteTracer nameformatter com.wily.introscope.agent.trace.io.StreamBackendNameFormatter
+SetTracerParameter: IOSocketBackendWriteTracer annotationtitle "Socket write"
+SetTracerParameter: IOSocketBackendWriteTracer useblame true
+SetTracerClassMapping: IOSocketConcurrentReaderCounter com.wily.introscope.agent.trace.io.SocketConcurrentReaderCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketConcurrentReaderCounter nameformatter com.wily.introscope.agent.trace.io.StreamNameFormatter
+SetTracerParameter: IOSocketConcurrentReaderCounter useblame false
+SetTracerClassMapping: IOSocketConcurrentWriterCounter com.wily.introscope.agent.trace.io.SocketConcurrentWriterCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketConcurrentWriterCounter nameformatter com.wily.introscope.agent.trace.io.StreamNameFormatter
+SetTracerParameter: IOSocketConcurrentWriterCounter useblame false
+SetTracerClassMapping: IOSocketFormatterCache com.wily.introscope.agent.trace.io.SocketFormatterCacheOnFinishTraceHighPerformance com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketFormatterCache nameformatter com.wily.introscope.agent.trace.io.StreamNameFormatter
+SetTracerParameter: IOSocketFormatterCache useblame false
+SetTracerOrdering: IOSocketFormatterCache 7500
+SetTracerClassMapping: IOSocketAcceptFormatterCache com.wily.introscope.agent.trace.io.SocketFormatterCacheOnFinishTraceHighPerformance com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: IOSocketAcceptFormatterCache nameformatter com.wily.introscope.agent.trace.io.CachedSocketAcceptNameFormatter
+SetTracerParameter: IOSocketAcceptFormatterCache useblame false
+SetTracerOrdering: IOSocketAcceptFormatterCache 7500
+
+SetTracerClassMapping: SocketInitClampManager com.wily.introscope.agent.trace.io.clamp.SocketInitClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: SocketInitClampManager 1000000
+
+SetTracerClassMapping: ServerSocketInitClampManager com.wily.introscope.agent.trace.io.clamp.ServerSocketInitClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ServerSocketInitClampManager -1000000
+
+#######################
+# File System Tracer Group
+# ================
+# Defines the directives necessary for tracing file system activity.
+
+SetFlag: FileSystemTracing
+
+SubstituteClassIfFlagged: FileSystemTracing java.io.FileInputStream com.wily.introscope.agent.probe.io.ManagedFileInputStream
+SubstituteClassIfFlagged: FileSystemTracing java.io.FileOutputStream com.wily.introscope.agent.probe.io.ManagedFileOutputStream
+
+
+#######################
+# NIO Socket Tracer Group
+# ================
+# Defines the directives necessary for tracing NIO socket activity.
+
+SetFlag: NIOSocketTracing
+IdentifyInheritedAs: java.nio.channels.ServerSocketChannel NIOSocketTracing
+IdentifyInheritedAs: java.nio.channels.SocketChannel NIOSocketTracing
+IdentifyClassAs: java.nio.channels.spi.AbstractInterruptibleChannel NIOSocketTracing
+
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing accept NIOServerSocketAcceptMappingTracer "NIO|Channels|Sockets|Server|Port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing accept ServerSocketChannelInitClampManager -
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing connect NIOSocketConnectMappingTracer "NIO|Channels|Sockets|Client|{hostname}|Port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing connect ChannelInitClampManager -
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing finishConnect NIOSocketChannelFinishConnectMappingTracer "NIO|Channels|Sockets|Client|{hostname}|Port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing finishConnect ChannelOnFinishClampManager -
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing accept NIOServerSocketAcceptCountTracer "Accepts Per Interval"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing connect NIOSocketConnectCountTracer "Opens Per Interval"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing finishConnect NIOSocketChannelFinishConnectCountTracer "Opens Per Interval"
+TraceOneMethodIfFlagged: NIOSocketTracing close NIOSocketCloseCountTracer "Closes Per Interval"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing read NIOSocketBandwidthTracer "Input Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing write NIOSocketBandwidthTracer "Output Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing read NIOSocketBackendTracer "Backends|System {hostname} on port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracing write NIOSocketBackendTracer "Backends|System {hostname} on port {port}"
+TraceOneMethodIfFlagged: NIOSocketTracing read NIOSocketConcurrentInvocationCounter "Concurrent Readers"
+TraceOneMethodIfFlagged: NIOSocketTracing read ChannelClampManager -
+TraceOneMethodIfFlagged: NIOSocketTracing write NIOSocketConcurrentInvocationCounter "Concurrent Writers"
+TraceOneMethodIfFlagged: NIOSocketTracing write ChannelClampManager -
+
+SetTracerClassMapping: NIOServerSocketAcceptMappingTracer com.wily.introscope.agent.trace.nio.SocketAcceptMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOServerSocketAcceptMappingTracer useblame false
+SetTracerOrdering: NIOServerSocketAcceptMappingTracer 10000
+SetTracerClassMapping: NIOServerSocketAcceptCountTracer com.wily.introscope.agent.trace.nio.SocketAcceptPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOServerSocketAcceptCountTracer nameformatter com.wily.introscope.agent.trace.nio.SocketAcceptNameFormatter
+SetTracerParameter: NIOServerSocketAcceptCountTracer useblame false
+SetTracerClassMapping: NIOSocketConnectMappingTracer com.wily.introscope.agent.trace.nio.SocketConnectMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketConnectMappingTracer useblame false
+SetTracerOrdering: NIOSocketConnectMappingTracer 10000
+SetTracerClassMapping: NIOSocketChannelFinishConnectMappingTracer com.wily.introscope.agent.trace.nio.SocketChannelFinishConnectMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketChannelFinishConnectMappingTracer useblame false
+SetTracerOrdering: NIOSocketChannelFinishConnectMappingTracer 10000
+SetTracerClassMapping: NIOSocketChannelFinishConnectCountTracer com.wily.introscope.agent.trace.nio.SocketChannelFinishConnectPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketChannelFinishConnectCountTracer nameformatter com.wily.introscope.agent.trace.nio.SocketChannelFinishConnectNameFormatter
+SetTracerParameter: NIOSocketChannelFinishConnectCountTracer useblame false
+
+SetTracerClassMapping: NIOSocketConnectCountTracer com.wily.introscope.agent.trace.nio.SocketConnectPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketConnectCountTracer nameformatter com.wily.introscope.agent.trace.nio.SocketConnectNameFormatter
+SetTracerParameter: NIOSocketConnectCountTracer useblame false
+SetTracerClassMapping: NIOSocketCloseCountTracer com.wily.introscope.agent.trace.nio.SocketPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketCloseCountTracer nameformatter com.wily.introscope.agent.trace.nio.SocketNameFormatter
+SetTracerParameter: NIOSocketCloseCountTracer useblame false
+SetTracerClassMapping: NIOSocketBandwidthTracer com.wily.introscope.agent.trace.nio.SocketMethodResultRateTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketBandwidthTracer nameformatter com.wily.introscope.agent.trace.nio.SocketNameFormatter
+SetTracerParameter: NIOSocketBandwidthTracer useblame false
+SetTracerClassMapping: NIOSocketBackendTracer com.wily.introscope.agent.trace.nio.SocketBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketBackendTracer nameformatter com.wily.introscope.agent.trace.nio.SocketBackendNameFormatter
+SetTracerParameter: NIOSocketBackendTracer useblame true
+SetTracerClassMapping: NIOSocketConcurrentInvocationCounter com.wily.introscope.agent.trace.nio.SocketConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIOSocketConcurrentInvocationCounter nameformatter com.wily.introscope.agent.trace.nio.SocketNameFormatter
+SetTracerParameter: NIOSocketConcurrentInvocationCounter useblame false
+
+SetFlag: NIOSocketSummaryTracing
+IdentifyInheritedAs: java.nio.channels.SocketChannel NIOSocketSummaryTracing
+SetTracerClassMapping: NIOSocketSummaryBandwidthTracer com.wily.introscope.agent.trace.nio.SocketClampAwareMethodResultRateTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIOSocketSummaryBandwidthTracer useblame false
+SetTracerClassMapping: NIOSocketSummaryConcurrentInvocationCounter com.wily.introscope.agent.trace.nio.SocketClampAwareConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIOSocketSummaryConcurrentInvocationCounter useblame false
+TraceOneMethodWithParametersIfFlagged: NIOSocketSummaryTracing read NIOSocketSummaryBandwidthTracer "NIO|Channels|Sockets:Input Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIOSocketSummaryTracing write NIOSocketSummaryBandwidthTracer "NIO|Channels|Sockets:Output Bandwidth (Bytes Per Second)"
+TraceOneMethodIfFlagged: NIOSocketSummaryTracing read NIOSocketSummaryConcurrentInvocationCounter "NIO|Channels|Sockets:Concurrent Readers"
+TraceOneMethodIfFlagged: NIOSocketSummaryTracing write NIOSocketSummaryConcurrentInvocationCounter "NIO|Channels|Sockets:Concurrent Writers"
+
+SetTracerClassMapping: ServerSocketChannelInitClampManager com.wily.introscope.agent.trace.io.clamp.ServerSocketChannelInitClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ServerSocketChannelInitClampManager -1000000
+
+SetTracerClassMapping: ChannelOnFinishClampManager com.wily.introscope.agent.trace.io.clamp.ChannelOnFinishClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ChannelOnFinishClampManager 1000000
+
+SetTracerClassMapping: ChannelInitClampManager com.wily.introscope.agent.trace.io.clamp.ChannelInitClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ChannelInitClampManager 1000000
+
+SetTracerClassMapping: ChannelClampManager com.wily.introscope.agent.trace.io.clamp.ChannelClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ChannelClampManager -1000000
+#######################
+# NIO Datagram Tracer Group
+# ================
+# Defines the directives necessary for tracing NIO datagram activity.
+# NOTE: Backends nodes for datagrams have UDP before port to distinguish them from socket ports (TCP not added to socket back end metric
+# names for compatability with previous releases).
+
+SetFlag: NIODatagramTracing
+IdentifyInheritedAs: java.nio.channels.DatagramChannel NIODatagramTracing
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing connect NIODatagramConnectMappingTracer "NIO|Channels|Datagrams|Client|{hostname}|Port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing connect DatagramInitClampManager -
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I NIODatagramSendMappingTracer "NIO|Channels|Datagrams|Client|{hostname}|Port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I NIODatagramSendBandwidthTracer "Output Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I NIODatagramSendCountTracer "Datagrams Out"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I NIODatagramSendConcurrentInvocationCounter "Concurrent Writers"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I NIODatagramSendBackendTracer "Backends|System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I DatagramSendMethodClampManager -
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing write NIODatagramBandwidthTracer "Output Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing write NIODatagramCountTracer "Datagrams Out"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing write NIODatagramConcurrentInvocationCounter "Concurrent Writers"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing write NIODatagramBackendTracer "Backends|System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing write DatagramClampManager -
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; NIODatagramReceiveMappingTracer "NIO|Channels|Datagrams|Server|Port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; NIODatagramReceiveBandwidthTracer "Input Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; NIODatagramReceiveCountTracer "Datagrams In"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; DatagramReceiveMethodClampManager -
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing read NIODatagramBandwidthTracer "Input Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing read NIODatagramCountTracer "Datagrams In"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing read NIODatagramConcurrentInvocationCounter "Concurrent Readers"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing read NIODatagramBackendTracer "Backends|System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracing read DatagramClampManager -
+SetTracerClassMapping: NIODatagramConnectMappingTracer com.wily.introscope.agent.trace.nio.DatagramMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramConnectMappingTracer useblame false
+SetTracerClassMapping: NIODatagramSendMappingTracer com.wily.introscope.agent.trace.nio.DatagramMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramSendMappingTracer addressparameterindex 1
+SetTracerParameter: NIODatagramSendMappingTracer useblame false
+SetTracerOrdering: NIODatagramSendMappingTracer	 -10000
+SetTracerClassMapping: NIODatagramReceiveMappingTracer com.wily.introscope.agent.trace.nio.DatagramReceiveMethodMappingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramReceiveMappingTracer useblame false
+SetTracerOrdering: NIODatagramReceiveMappingTracer	 10000
+SetTracerClassMapping: NIODatagramSendBandwidthTracer com.wily.introscope.agent.trace.nio.DatagramSendMethodResultRateTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramSendBandwidthTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodNameFormatter
+SetTracerParameter: NIODatagramSendBandwidthTracer useblame false
+SetTracerClassMapping: NIODatagramReceiveBandwidthTracer com.wily.introscope.agent.trace.nio.DatagramReceiveMethodResultRateTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramReceiveBandwidthTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramReceiveMethodNameFormatter
+SetTracerParameter: NIODatagramReceiveBandwidthTracer useblame false
+SetTracerClassMapping: NIODatagramBandwidthTracer com.wily.introscope.agent.trace.nio.DatagramMethodResultRateTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramBandwidthTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramNameFormatter
+SetTracerParameter: NIODatagramBandwidthTracer useblame false
+SetTracerClassMapping: NIODatagramSendCountTracer com.wily.introscope.agent.trace.nio.DatagramSendMethodPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramSendCountTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodNameFormatter
+SetTracerParameter: NIODatagramSendCountTracer useblame false
+SetTracerClassMapping: NIODatagramReceiveCountTracer com.wily.introscope.agent.trace.nio.DatagramReceiveMethodPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramReceiveCountTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramReceiveMethodNameFormatter
+SetTracerParameter: NIODatagramReceiveCountTracer useblame false
+SetTracerClassMapping: NIODatagramCountTracer com.wily.introscope.agent.trace.nio.DatagramPerIntervalCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramCountTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramNameFormatter
+SetTracerParameter: NIODatagramCountTracer useblame false
+SetTracerClassMapping: NIODatagramSendConcurrentInvocationCounter com.wily.introscope.agent.trace.nio.DatagramSendMethodConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramSendConcurrentInvocationCounter nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodNameFormatter
+SetTracerParameter: NIODatagramSendConcurrentInvocationCounter useblame false
+SetTracerClassMapping: NIODatagramConcurrentInvocationCounter com.wily.introscope.agent.trace.nio.DatagramConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramConcurrentInvocationCounter nameformatter com.wily.introscope.agent.trace.nio.DatagramNameFormatter
+SetTracerParameter: NIODatagramConcurrentInvocationCounter useblame false
+SetTracerClassMapping: NIODatagramSendBackendTracer com.wily.introscope.agent.trace.nio.DatagramSendMethodBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramSendBackendTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodBackendNameFormatter
+SetTracerParameter: NIODatagramSendBackendTracer useblame true
+SetTracerClassMapping: NIODatagramBackendTracer com.wily.introscope.agent.trace.nio.DatagramBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NIODatagramBackendTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramBackendNameFormatter
+SetTracerParameter: NIODatagramBackendTracer useblame true
+
+SetTracerClassMapping: DatagramReceiveMethodClampManager com.wily.introscope.agent.trace.io.clamp.DatagramReceiveMethodClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: DatagramReceiveMethodClampManager 1000000
+
+SetTracerClassMapping: DatagramInitClampManager com.wily.introscope.agent.trace.io.clamp.DatagramInitClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: DatagramInitClampManager -1000000
+
+SetTracerClassMapping: DatagramSendMethodClampManager com.wily.introscope.agent.trace.io.clamp.DatagramInitClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: DatagramSendMethodClampManager addressparameterindex 1
+SetTracerOrdering: DatagramSendMethodClampManager -1000000
+
+SetTracerClassMapping: DatagramClampManager com.wily.introscope.agent.trace.io.clamp.DatagramClampManager com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: DatagramClampManager -1000000
+SetFlag: NIODatagramSummaryTracing
+IdentifyInheritedAs: java.nio.channels.DatagramChannel NIODatagramSummaryTracing
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing read NIODatagramSummaryDatagramCountTracer "NIO|Channels|Datagrams:Datagrams In"
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; NIODatagramSummaryReceiveDatagramCountTracer "NIO|Channels|Datagrams:Datagrams In"
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I NIODatagramSummaryDatagramCountTracer "NIO|Channels|Datagrams:Datagrams Out"
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing write NIODatagramSummaryDatagramCountTracer "NIO|Channels|Datagrams:Datagrams Out"
+TraceOneMethodWithParametersIfFlagged: NIODatagramSummaryTracing read NIODatagramSummaryBandwidthTracer "NIO|Channels|Datagrams:Input Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIODatagramSummaryTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; NIODatagramSummaryReceiveBandwidthTracer "NIO|Channels|Datagrams:Input Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIODatagramSummaryTracing send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I NIODatagramSummaryBandwidthTracer "NIO|Channels|Datagrams:Output Bandwidth (Bytes Per Second)"
+TraceOneMethodWithParametersIfFlagged: NIODatagramSummaryTracing write NIODatagramSummaryBandwidthTracer "NIO|Channels|Datagrams:Output Bandwidth (Bytes Per Second)"
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing read NIODatagramSummaryConcurrentInvocationCounter "NIO|Channels|Datagrams:Concurrent Readers
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing receive(Ljava/nio/ByteBuffer;)Ljava/net/SocketAddress; NIODatagramSummaryOnReceiveConcurrentInvocationCounter "NIO|Channels|Datagrams:Concurrent Readers
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing send NIODatagramSummaryConcurrentInvocationCounter "NIO|Channels|Datagrams:Concurrent Writers"
+TraceOneMethodIfFlagged: NIODatagramSummaryTracing write NIODatagramSummaryConcurrentInvocationCounter "NIO|Channels|Datagrams:Concurrent Writers"
+SetTracerClassMapping: NIODatagramSummaryDatagramCountTracer com.wily.introscope.agent.trace.nio.SocketClampAwarePerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIODatagramSummaryDatagramCountTracer useblame false
+SetTracerClassMapping: NIODatagramSummaryReceiveDatagramCountTracer com.wily.introscope.agent.trace.nio.SummaryReceiveMethodPerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIODatagramSummaryReceiveDatagramCountTracer useblame false
+SetTracerClassMapping: NIODatagramSummaryBandwidthTracer com.wily.introscope.agent.trace.nio.SocketClampAwareMethodResultRateTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIODatagramSummaryBandwidthTracer useblame false
+SetTracerClassMapping: NIODatagramSummaryReceiveBandwidthTracer com.wily.introscope.agent.trace.nio.SummaryReceiveMethodResultRateTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIODatagramSummaryReceiveBandwidthTracer useblame false
+SetTracerClassMapping: NIODatagramSummaryConcurrentInvocationCounter com.wily.introscope.agent.trace.nio.SocketClampAwareConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIODatagramSummaryConcurrentInvocationCounter useblame false
+SetTracerClassMapping: NIODatagramSummaryOnReceiveConcurrentInvocationCounter com.wily.introscope.agent.trace.ConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NIODatagramSummaryOnReceiveConcurrentInvocationCounter useblame false
+
+SetFlag: NIOSelectorTracing
+IdentifyFlagAs: NIOSelectorTracing NIOSocketTracing
+IdentifyClassAs: java.nio.channels.Selector NIOSelectorTracing
+TraceOneMethodIfFlagged: NIOSelectorTracing open NIOSelectorOpenWatcher -
+SetTracerClassMapping: NIOSelectorOpenWatcher com.wily.introscope.agent.trace.nio.SelectorOpenWatcher com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+#######################
+# Thread Tracer Group
+# ================
+# Defines the directives necessary for tracing threads.
+
+SetFlag: ThreadTracing
+
+SubstituteClassIfFlagged: ThreadTracing java.lang.Thread com.wily.introscope.agent.probe.lang.ManagedThread
+
+
+#######################
+# CORBA Tracer Group
+# ================
+# Defines the directives necessary for CORBA tracing.
+
+SetFlag: CorbaTracing
+IdentifyCorbaAs: CorbaTracing
+TraceComplexMethodsIfFlagged: CorbaTracing BlamePointTracerDifferentInstances "CORBA|{classname}"
+
+
+#######################
+# Instance Counts Tracer Group
+# ================
+# Defines the directives necessary for approximate instance counting.
+
+SetFlag: InstanceCounts
+
+TraceOneMethodIfFlagged: InstanceCounts <init> SimpleInstanceCounter "Instance Counts|{packageandclassname}:Approximate Instance Count"
+TraceOneMethodIfFlagged: InstanceCounts readObject(Ljava/io/ObjectInputStream;)V SimpleInstanceCounter "Instance Counts|{packageandclassname}:Approximate Instance Count"
+TraceOneMethodIfFlagged: InstanceCounts readExternal(Ljava/io/ObjectInput;)V SimpleInstanceCounter "Instance Counts|{packageandclassname}:Approximate Instance Count"
+TraceOneMethodWithParametersIfFlagged: InstanceCounts clone()Ljava/lang/Object; SimpleInstanceCounter "Instance Counts|{packageandclassname}:Approximate Instance Count"
+
+#######################
+# Ship classes that we do not need to ty and instrument
+# =====================
+#
+SkipPackagePrefix: sun.reflect

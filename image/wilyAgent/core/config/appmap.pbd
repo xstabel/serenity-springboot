@@ -1,0 +1,555 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                       
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file provides tracer directives for App Map Instrumentation
+#############################################################
+
+
+#############
+# Flag intersection
+#############
+
+SetFlag: MethodClassLevelInstrument
+SetFlag: ClassLevelInstrument
+
+TurnOn: MethodClassLevelInstrument
+
+# Activate this flag for class level App Map information
+#TurnOn: ClassLevelInstrument
+
+SetFlag: HttpServletTypeSpecificServiceTracingMethodClass
+SetFlag: HTTPServletTracingMethodClass
+SetFlag: ServletFilterTracingMethodClass
+SetFlag: SQLAgentConnectionsMethodClass
+SetFlag: SocketTracingMethodClass
+SetFlag: NIOSocketTracingMethodClass
+SetFlag: NIODatagramTracingMethodClass
+
+SetFlag: HttpServletTypeSpecificServiceTracingClass
+SetFlag: HTTPServletTracingClass
+SetFlag: ServletFilterTracingClass
+SetFlag: SQLAgentConnectionsClass
+SetFlag: SocketTracingClass
+SetFlag: NIOSocketTracingClass
+SetFlag: NIODatagramTracingClass
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpServletTypeSpecificServiceTracing MethodClassLevelInstrument HttpServletTypeSpecificServiceTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: HTTPServletTracing MethodClassLevelInstrument HTTPServletTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: ServletFilterTracing MethodClassLevelInstrument ServletFilterTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: SQLAgentConnections MethodClassLevelInstrument SQLAgentConnectionsMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: SocketTracing MethodClassLevelInstrument SocketTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NIOSocketTracing MethodClassLevelInstrument NIOSocketTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NIODatagramTracing MethodClassLevelInstrument NIODatagramTracingMethodClass
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpServletTypeSpecificServiceTracing ClassLevelInstrument HttpServletTypeSpecificServiceTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: HTTPServletTracing ClassLevelInstrument HTTPServletTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: ServletFilterTracing ClassLevelInstrument ServletFilterTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: SQLAgentConnections ClassLevelInstrument SQLAgentConnectionsClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: SocketTracing ClassLevelInstrument SocketTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NIOSocketTracing ClassLevelInstrument NIOSocketTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NIODatagramTracing ClassLevelInstrument NIODatagramTracingClass
+
+##############
+# Trace the servlets
+##############
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClass service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapApplicationNameTracer Servlets.HttpServletTypeSpecificServiceTracing.HttpServletRequest
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClass service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapApplicationNameTracer Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClass doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapApplicationNameTracer Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClass service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapBTCNameTracer Servlets.HttpServletTypeSpecificServiceTracing.HttpServletRequest
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClass service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapBTCNameTracer Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClass doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapBTCNameTracer Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClass service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapBTCNameTracer2 Servlets.HttpServletTypeSpecificServiceTracing.HttpServletRequest
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClass service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapBTCNameTracer2 Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClass doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapBTCNameTracer2 Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClass service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapServletTracer "{classname}|{method}"
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClass service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapServletTracer "{classname}|{method}"
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClass doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapServletTracer Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingClass service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapServletTracerClassLevel "{classname}"
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingClass service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapServletTracerClassLevel "{classname}"
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingClass doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapServletTracerClassLevel Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClass service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapServletTracerBT "{classname}|{method}"
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClass service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapServletTracerBT "{classname}|{method}"
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClass doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapServletTracerBT Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingClass service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapServletTracerClassLevelBT "{classname}"
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingClass service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapServletTracerClassLevelBT "{classname}"
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingClass doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapServletTracerClassLevelBT Servlets.HTTPServletTracing.ServletRequest
+
+##############
+# Trace Backends Database
+##############
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsMethodClass createStatement AppMapDatabaseTracerBT "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsMethodClass prepareStatement AppMapDatabaseTracerBT "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsMethodClass prepareCall AppMapDatabaseTracerBT "{database}"
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsMethodClass createStatement AppMapDatabaseTracer "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsMethodClass prepareStatement AppMapDatabaseTracer "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsMethodClass prepareCall AppMapDatabaseTracer "{database}"
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsClass createStatement AppMapDatabaseTracerClassLevelBT "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsClass prepareStatement AppMapDatabaseTracerClassLevelBT "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsClass prepareCall AppMapDatabaseTracerClassLevelBT "{database}"
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsClass createStatement AppMapDatabaseTracerClassLevel "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsClass prepareStatement AppMapDatabaseTracerClassLevel "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentConnectionsClass prepareCall AppMapDatabaseTracerClassLevel "{database}"
+
+##############
+# Trace Sockets
+# NOTE: metric names for sockets and datagrams MUST be identical to equivalent metric under 'Backends' node as defined in java2.pbd 
+##############
+
+#TraceOneMethodWithParametersIfFlagged: SocketTracingMethodClass read AppMapSocketTracerBT "System {hostname} on port {port}"
+#TraceOneMethodWithParametersIfFlagged: SocketTracingMethodClass write AppMapSocketTracerBT "System {hostname} on port {port}"
+
+#TraceOneMethodWithParametersIfFlagged: SocketTracingMethodClass read AppMapSocketTracer "System {hostname} on port {port}"
+#TraceOneMethodWithParametersIfFlagged: SocketTracingMethodClass write AppMapSocketTracer "System {hostname} on port {port}"
+
+#TraceOneMethodWithParametersIfFlagged: SocketTracingClass read AppMapSocketTracerClassLevelBT "System {hostname} on port {port}"
+#TraceOneMethodWithParametersIfFlagged: SocketTracingClass write AppMapSocketTracerClassLevelBT "System {hostname} on port {port}"
+
+#TraceOneMethodWithParametersIfFlagged: SocketTracingClass read AppMapSocketTracerClassLevel "System {hostname} on port {port}"
+#TraceOneMethodWithParametersIfFlagged: SocketTracingClass write AppMapSocketTracerClassLevel "System {hostname} on port {port}"
+
+##############
+# Trace NIO Sockets
+##############
+
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingMethodClass read AppMapNIOSocketTracerBT "System {hostname} on port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingMethodClass write AppMapNIOSocketTracerBT "System {hostname} on port {port}"
+
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingMethodClass read AppMapNIOSocketTracer "System {hostname} on port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingMethodClass write AppMapNIOSocketTracer "System {hostname} on port {port}"
+
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingClass read AppMapNIOSocketTracerClassLevelBT "System {hostname} on port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingClass write AppMapNIOSocketTracerClassLevelBT "System {hostname} on port {port}"
+
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingClass read AppMapNIOSocketTracerClassLevel "System {hostname} on port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingClass write AppMapNIOSocketTracerClassLevel "System {hostname} on port {port}"
+
+##############
+# Trace NIO Datagrams
+# NOTE: see note in java2.pbd for reason that datagram metrics have UDP in name
+##############
+
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClass read AppMapNIODatagramTracerBT "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClass write AppMapNIODatagramTracerBT "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClass send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I AppMapNIOUnconnectedDatagramTracerBT "System {hostname} on UDP port {port}"
+
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClass read AppMapNIODatagramTracer "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClass write AppMapNIODatagramTracer "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClass send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I AppMapNIOUnconnectedDatagramTracer "System {hostname} on UDP port {port}"
+
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingClass read AppMapNIODatagramTracerClassLevelBT "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingClass write AppMapNIODatagramTracerClassLevelBT "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingClass send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I AppMapNIOUnconnectedDatagramTracerClassLevelBT "System {hostname} on UDP port {port}"
+
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingClass read AppMapNIODatagramTracerClassLevel "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingClass write AppMapNIODatagramTracerClassLevel "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingClass send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I AppMapNIOUnconnectedDatagramTracerClassLevel "System {hostname} on UDP port {port}"
+
+
+#################################################
+# Set Tracers and validators for AppMap feature
+SetTracerClassMapping: AppMapApplicationNameTracer com.wily.introscope.appmap.agent.trace.AppMapApplicationNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapApplicationNameTracer applicationName TestApplication
+SetTracerParameter: AppMapApplicationNameTracer nameformatter com.wily.introscope.appmap.agent.trace.AppMapApplicationNameFormatter
+SetTracerParameter: AppMapApplicationNameTracer ownerType Application
+SetTracerParameter: AppMapApplicationNameTracer useblame false
+
+SetTracerClassMapping: AppMapBTCNameTracer com.wily.introscope.appmap.agent.trace.AppMapApplicationNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapBTCNameTracer applicationName TestApplication
+SetTracerParameter: AppMapBTCNameTracer nameformatter com.wily.introscope.appmap.agent.trace.AppMapBtcNameFormatter
+SetTracerParameter: AppMapBTCNameTracer ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapBTCNameTracer useblame false
+
+SetTracerClassMapping: AppMapBTCNameTracer2 com.wily.introscope.appmap.agent.trace.AppMapBtcPostParamTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapBTCNameTracer2 applicationName TestApplication
+SetTracerParameter: AppMapBTCNameTracer2 nameformatter com.wily.introscope.appmap.agent.trace.AppMapBtcNameFormatter
+SetTracerParameter: AppMapBTCNameTracer2 ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapBTCNameTracer2 useblame false
+
+SetTracerClassMapping: AppMapServletTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapServletTracer nodeType Servlet
+SetTracerParameter: AppMapServletTracer nodeLevel MethodClass
+SetTracerParameter: AppMapServletTracer ownerType Application
+SetTracerParameter: AppMapServletTracer useblame false
+
+SetTracerClassMapping: AppMapDatabaseTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapDatabaseTracer nodeType Database
+SetTracerParameter: AppMapDatabaseTracer nodeLevel MethodClass
+SetTracerParameter: AppMapDatabaseTracer nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: AppMapDatabaseTracer ownerType Application
+SetTracerParameter: AppMapDatabaseTracer boundaryType Backend
+SetTracerParameter: AppMapDatabaseTracer agentcomponent "SQL Agent"
+SetTracerParameter: AppMapDatabaseTracer useblame false
+
+SetTracerClassMapping: AppMapSocketTracer com.wily.introscope.appmap.agent.trace.SocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapSocketTracer nodeType Socket
+SetTracerParameter: AppMapSocketTracer nodeLevel MethodClass
+SetTracerParameter: AppMapSocketTracer nameformatter com.wily.introscope.agent.trace.io.ClientStreamNameFormatter
+SetTracerParameter: AppMapSocketTracer ownerType Application
+SetTracerParameter: AppMapSocketTracer boundaryType Backend
+SetTracerParameter: AppMapSocketTracer useblame false
+
+SetTracerClassMapping: AppMapNIOSocketTracer com.wily.introscope.appmap.agent.trace.NIOSocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOSocketTracer nodeType Socket
+SetTracerParameter: AppMapNIOSocketTracer nodeLevel MethodClass
+SetTracerParameter: AppMapNIOSocketTracer nameformatter com.wily.introscope.agent.trace.nio.SocketBackendNameFormatter
+SetTracerParameter: AppMapNIOSocketTracer ownerType Application
+SetTracerParameter: AppMapNIOSocketTracer boundaryType Backend
+SetTracerParameter: AppMapNIOSocketTracer useblame false
+
+SetTracerClassMapping: AppMapNIODatagramTracer com.wily.introscope.appmap.agent.trace.NIODatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIODatagramTracer nodeType Socket
+SetTracerParameter: AppMapNIODatagramTracer nodeLevel MethodClass
+SetTracerParameter: AppMapNIODatagramTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramBackendNameFormatter
+SetTracerParameter: AppMapNIODatagramTracer ownerType Application
+SetTracerParameter: AppMapNIODatagramTracer boundaryType Backend
+SetTracerParameter: AppMapNIODatagramTracer useblame false
+
+SetTracerClassMapping: AppMapNIOUnconnectedDatagramTracer com.wily.introscope.appmap.agent.trace.NIOUnconnectedDatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracer nodeType Socket
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracer nodeLevel MethodClass
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracer nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodBackendNameFormatter
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracer ownerType Application
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracer boundaryType Backend
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracer useblame false
+
+SetTracerClassMapping: AppMapServletTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapServletTracerClassLevel nodeType Servlet
+SetTracerParameter: AppMapServletTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapServletTracerClassLevel ownerType Application
+SetTracerParameter: AppMapServletTracerClassLevel useblame false
+
+SetTracerClassMapping: AppMapDatabaseTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapDatabaseTracerClassLevel nodeType Database
+SetTracerParameter: AppMapDatabaseTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapDatabaseTracerClassLevel nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: AppMapDatabaseTracerClassLevel ownerType Application
+SetTracerParameter: AppMapDatabaseTracerClassLevel boundaryType Backend
+SetTracerParameter: AppMapDatabaseTracerClassLevel agentcomponent "SQL Agent"
+SetTracerParameter: AppMapDatabaseTracerClassLevel useblame false
+
+SetTracerClassMapping: AppMapSocketTracerClassLevel com.wily.introscope.appmap.agent.trace.SocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapSocketTracerClassLevel nodeType Socket
+SetTracerParameter: AppMapSocketTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapSocketTracerClassLevel nameformatter com.wily.introscope.agent.trace.io.ClientStreamNameFormatter
+SetTracerParameter: AppMapSocketTracerClassLevel ownerType Application
+SetTracerParameter: AppMapSocketTracerClassLevel boundaryType Backend
+SetTracerParameter: AppMapSocketTracerClassLevel useblame false
+
+SetTracerClassMapping: AppMapNIOSocketTracerClassLevel com.wily.introscope.appmap.agent.trace.NIOSocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOSocketTracerClassLevel nodeType Socket
+SetTracerParameter: AppMapNIOSocketTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapNIOSocketTracerClassLevel nameformatter com.wily.introscope.agent.trace.nio.SocketBackendNameFormatter
+SetTracerParameter: AppMapNIOSocketTracerClassLevel ownerType Application
+SetTracerParameter: AppMapNIOSocketTracerClassLevel boundaryType Backend
+SetTracerParameter: AppMapNIOSocketTracerClassLevel useblame false
+
+SetTracerClassMapping: AppMapNIODatagramTracerClassLevel com.wily.introscope.appmap.agent.trace.NIODatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIODatagramTracerClassLevel nodeType Socket
+SetTracerParameter: AppMapNIODatagramTracerClassLevel nodeLevel MethodClass
+SetTracerParameter: AppMapNIODatagramTracerClassLevel nameformatter com.wily.introscope.agent.trace.nio.DatagramBackendNameFormatter
+SetTracerParameter: AppMapNIODatagramTracerClassLevel ownerType Application
+SetTracerParameter: AppMapNIODatagramTracerClassLevel boundaryType Backend
+SetTracerParameter: AppMapNIODatagramTracerClassLevel useblame false
+
+SetTracerClassMapping: AppMapNIOUnconnectedDatagramTracerClassLevel com.wily.introscope.appmap.agent.trace.NIOUnconnectedDatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevel nodeType Socket
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevel nodeLevel MethodClass
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevel nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodBackendNameFormatter
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevel ownerType Application
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevel boundaryType Backend
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevel useblame false
+
+SetTracerClassMapping: AppMapServletTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapServletTracerBT nodeType Servlet
+SetTracerParameter: AppMapServletTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapServletTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapServletTracerBT useblame false
+
+SetTracerClassMapping: AppMapDatabaseTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapDatabaseTracerBT nodeType Database
+SetTracerParameter: AppMapDatabaseTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapDatabaseTracerBT nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: AppMapDatabaseTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapDatabaseTracerBT boundaryType Backend
+SetTracerParameter: AppMapDatabaseTracerBT agentcomponent "SQL Agent"
+SetTracerParameter: AppMapDatabaseTracerBT useblame false
+
+SetTracerClassMapping: AppMapSocketTracerBT com.wily.introscope.appmap.agent.trace.SocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapSocketTracerBT nodeType Socket
+SetTracerParameter: AppMapSocketTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapSocketTracerBT nameformatter com.wily.introscope.agent.trace.io.ClientStreamNameFormatter
+SetTracerParameter: AppMapSocketTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapSocketTracerBT boundaryType Backend
+SetTracerParameter: AppMapSocketTracerBT useblame false
+
+SetTracerClassMapping: AppMapNIOSocketTracerBT com.wily.introscope.appmap.agent.trace.NIOSocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOSocketTracerBT nodeType Socket
+SetTracerParameter: AppMapNIOSocketTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapNIOSocketTracerBT nameformatter com.wily.introscope.agent.trace.nio.SocketBackendNameFormatter
+SetTracerParameter: AppMapNIOSocketTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNIOSocketTracerBT boundaryType Backend
+SetTracerParameter: AppMapNIOSocketTracerBT useblame false
+
+SetTracerClassMapping: AppMapNIODatagramTracerBT com.wily.introscope.appmap.agent.trace.NIODatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIODatagramTracerBT nodeType Socket
+SetTracerParameter: AppMapNIODatagramTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapNIODatagramTracerBT nameformatter com.wily.introscope.agent.trace.nio.DatagramBackendNameFormatter
+SetTracerParameter: AppMapNIODatagramTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNIODatagramTracerBT boundaryType Backend
+SetTracerParameter: AppMapNIODatagramTracerBT useblame false
+
+SetTracerClassMapping: AppMapNIOUnconnectedDatagramTracerBT com.wily.introscope.appmap.agent.trace.NIOUnconnectedDatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerBT nodeType Socket
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerBT nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodBackendNameFormatter
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerBT boundaryType Backend
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerBT useblame false
+
+SetTracerClassMapping: AppMapServletTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapServletTracerClassLevelBT nodeType Servlet
+SetTracerParameter: AppMapServletTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapServletTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapServletTracerClassLevelBT useblame false
+
+SetTracerClassMapping: AppMapDatabaseTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapDatabaseTracerClassLevelBT nodeType Database
+SetTracerParameter: AppMapDatabaseTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapDatabaseTracerClassLevelBT nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: AppMapDatabaseTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapDatabaseTracerClassLevelBT boundaryType Backend
+SetTracerParameter: AppMapDatabaseTracerClassLevelBT agentcomponent "SQL Agent"
+SetTracerParameter: AppMapDatabaseTracerClassLevelBT useblame false
+
+SetTracerClassMapping: AppMapSocketTracerClassLevelBT com.wily.introscope.appmap.agent.trace.SocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapSocketTracerClassLevelBT nodeType Socket
+SetTracerParameter: AppMapSocketTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapSocketTracerClassLevelBT nameformatter com.wily.introscope.agent.trace.io.ClientStreamNameFormatter
+SetTracerParameter: AppMapSocketTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapSocketTracerClassLevelBT boundaryType Backend
+SetTracerParameter: AppMapSocketTracerClassLevelBT useblame false
+
+SetTracerClassMapping: AppMapNIOSocketTracerClassLevelBT com.wily.introscope.appmap.agent.trace.NIOSocketAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOSocketTracerClassLevelBT nodeType Socket
+SetTracerParameter: AppMapNIOSocketTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapNIOSocketTracerClassLevelBT nameformatter com.wily.introscope.agent.trace.nio.SocketBackendNameFormatter
+SetTracerParameter: AppMapNIOSocketTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNIOSocketTracerClassLevelBT boundaryType Backend
+SetTracerParameter: AppMapNIOSocketTracerClassLevelBT useblame false
+
+SetTracerClassMapping: AppMapNIODatagramTracerClassLevelBT com.wily.introscope.appmap.agent.trace.NIODatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIODatagramTracerClassLevelBT nodeType Socket
+SetTracerParameter: AppMapNIODatagramTracerClassLevelBT nodeLevel MethodClass
+SetTracerParameter: AppMapNIODatagramTracerClassLevelBT nameformatter com.wily.introscope.agent.trace.nio.DatagramBackendNameFormatter
+SetTracerParameter: AppMapNIODatagramTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNIODatagramTracerClassLevelBT boundaryType Backend
+SetTracerParameter: AppMapNIODatagramTracerClassLevelBT useblame false
+
+SetTracerClassMapping: AppMapNIOUnconnectedDatagramTracerClassLevelBT com.wily.introscope.appmap.agent.trace.NIOUnconnectedDatagramAppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevelBT nodeType Socket
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevelBT nodeLevel MethodClass
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevelBT nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodBackendNameFormatter
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevelBT boundaryType Backend
+SetTracerParameter: AppMapNIOUnconnectedDatagramTracerClassLevelBT useblame false
+
+
+SetTracerOrdering: AppMapBTCNameTracer -5001
+SetTracerOrdering: AppMapApplicationNameTracer -5000
+SetTracerOrdering: AppMapDatabaseTracerClassLevelBT -4003
+SetTracerOrdering: AppMapSocketTracerClassLevelBT -4003
+SetTracerOrdering: AppMapNIOSocketTracerClassLevelBT -4003
+SetTracerOrdering: AppMapNIODatagramTracerClassLevelBT -4003
+SetTracerOrdering: AppMapServletTracerClassLevelBT -4003
+SetTracerOrdering: AppMapDatabaseTracerBT -4002
+SetTracerOrdering: AppMapSocketTracerBT -4002
+SetTracerOrdering: AppMapNIOSocketTracerBT -4002
+SetTracerOrdering: AppMapNIODatagramTracerBT -4002
+SetTracerOrdering: AppMapServletTracerBT -4002
+SetTracerOrdering: AppMapDatabaseTracerClassLevel -4001
+SetTracerOrdering: AppMapSocketTracerClassLevel -4001
+SetTracerOrdering: AppMapNIOSocketTracerClassLevel -4001
+SetTracerOrdering: AppMapNIODatagramTracerClassLevel -4001
+SetTracerOrdering: AppMapServletTracerClassLevel -4001
+SetTracerOrdering: AppMapDatabaseTracer -4000
+SetTracerOrdering: AppMapSocketTracer -4000
+SetTracerOrdering: AppMapNIOSocketTracer -4000
+SetTracerOrdering: AppMapNIODatagramTracer -4000
+SetTracerOrdering: AppMapServletTracer -4000
+SetTracerOrdering: AppMapBTCNameTracer2 -3000
+
+#############################################################
+# This file provides tracer directives for App Map Instrumentation (new configuration)
+#############################################################
+
+SetFlag: AppMapInstrumentNew
+
+SetFlag: HttpServletTypeSpecificServiceTracingMethodClassNew
+SetFlag: HTTPServletTracingMethodClassNew
+SetFlag: ServletFilterTracingMethodClassNew
+SetFlag: JSPServletTracingMethodClassNew
+SetFlag: SQLAgentConnectionsMethodClassNew
+SetFlag: SQLAgentStatementsMethodClassNew
+SetFlag: NIOSocketTracingMethodClassNew
+SetFlag: NIODatagramTracingMethodClassNew
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpServletTypeSpecificServiceTracing AppMapInstrumentNew HttpServletTypeSpecificServiceTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: HTTPServletTracing AppMapInstrumentNew HTTPServletTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: ServletFilterTracing AppMapInstrumentNew ServletFilterTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: JSPServletTracing AppMapInstrumentNew JSPServletTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: SQLAgentConnections AppMapInstrumentNew SQLAgentConnectionsMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: SQLAgentStatements AppMapInstrumentNew SQLAgentStatementsMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: NIOSocketTracing AppMapInstrumentNew NIOSocketTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: NIODatagramTracing AppMapInstrumentNew NIODatagramTracingMethodClassNew
+
+##############
+# Trace the servlets
+##############
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClassNew service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapApplicationNameMarker Servlets.HttpServletTypeSpecificServiceTracing.HttpServletRequest
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClassNew service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapApplicationNameMarker Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClassNew doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapApplicationNameMarker Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: JSPServletTracingMethodClassNew _jspService AppMapApplicationNameMarker Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClassNew service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapBTCNameMarker Servlets.HttpServletTypeSpecificServiceTracing.HttpServletRequest
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClassNew service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapBTCNameMarker Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClassNew doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapBTCNameMarker Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: JSPServletTracingMethodClassNew _jspService AppMapBTCNameMarker Servlets.HTTPServletTracing.ServletRequest
+
+#TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClassNew service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapBTCNameTracer2 Servlets.HttpServletTypeSpecificServiceTracing.HttpServletRequest
+#TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClassNew service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapBTCNameTracer2 Servlets.HTTPServletTracing.ServletRequest
+#TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClassNew doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapBTCNameTracer2 Servlets.HTTPServletTracing.ServletRequest
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracingMethodClassNew service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AppMapServletMarker "{classname}|{method}"
+TraceOneMethodWithParametersIfFlagged: HTTPServletTracingMethodClassNew service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AppMapServletMarker "{classname}|{method}"
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingMethodClassNew doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AppMapServletMarker Servlets.HTTPServletTracing.ServletRequest
+TraceOneMethodWithParametersIfFlagged: JSPServletTracingMethodClassNew _jspService AppMapServletMarker Servlets.HTTPServletTracing.ServletRequest
+
+##############
+# Trace Backends Database
+##############
+
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew execute()Z AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeQuery()Ljava/sql/ResultSet; AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeQuery(Ljava/lang/String;)Ljava/sql/ResultSet; AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew execute(Ljava/lang/String;I)Z AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew execute(Ljava/lang/String;[I)Z AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew execute(Ljava/lang/String;[Ljava/lang/String;)Z AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew execute(Ljava/lang/String;)Z AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeUpdate()I AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeUpdate(Ljava/lang/String;)I AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeUpdate(Ljava/lang/String;I)I AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeUpdate(Ljava/lang/String;[I)I AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeUpdate(Ljava/lang/String;[Ljava/lang/String;)I AppMapDatabaseMarker "{database}"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatementsMethodClassNew executeBatch()[I AppMapDatabaseMarker "{database}"
+
+##############
+# Trace NIO Sockets
+##############
+
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingMethodClassNew read AppMapNIOSocketMarker "System {hostname} on port {port}"
+TraceOneMethodWithParametersIfFlagged: NIOSocketTracingMethodClassNew write AppMapNIOSocketMarker "System {hostname} on port {port}"
+
+##############
+# Trace NIO Datagrams
+# NOTE: see note in java2.pbd for reason that datagram metrics have UDP in name
+##############
+
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClassNew read AppMapNIODatagramMarker "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClassNew write AppMapNIODatagramMarker "System {hostname} on UDP port {port}"
+TraceOneMethodWithParametersIfFlagged: NIODatagramTracingMethodClassNew send(Ljava/nio/ByteBuffer;Ljava/net/SocketAddress;)I AppMapNIOUnconnectedDatagramMarker "System {hostname} on UDP port {port}"
+
+#########
+
+
+#########
+
+SetTracerClassMapping: AppMapApplicationNameMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapApplicationNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapApplicationNameMarker applicationName TestApplication
+SetTracerParameter: AppMapApplicationNameMarker nameformatter com.wily.introscope.appmap.agent.trace.hc2.AppMapApplicationNameFormatter
+SetTracerParameter: AppMapApplicationNameMarker ownerType Application
+SetTracerParameter: AppMapApplicationNameMarker useblame false
+SetTracerParameter: AppMapApplicationNameMarker newmode true
+
+SetTracerClassMapping: AppMapBTCNameMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapApplicationNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapBTCNameMarker applicationName TestApplication
+SetTracerParameter: AppMapBTCNameMarker nameformatter com.wily.introscope.appmap.agent.trace.AppMapBtcNameFormatter
+SetTracerParameter: AppMapBTCNameMarker ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapBTCNameMarker useblame false
+SetTracerParameter: AppMapBTCNameMarker newmode true
+
+SetTracerClassMapping: AppMapServletMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapServletMarker nodeType Servlet
+SetTracerParameter: AppMapServletMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapServletMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapServletMarker isCrossProcess true
+SetTracerParameter: AppMapServletMarker useblame false
+SetTracerParameter: AppMapServletMarker newmode true
+
+SetTracerClassMapping: AppMapDatabaseMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapDatabaseMarker nodeType Database
+SetTracerParameter: AppMapDatabaseMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapDatabaseMarker nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: AppMapDatabaseMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapDatabaseMarker boundaryType Backend
+SetTracerParameter: AppMapDatabaseMarker useblame false
+SetTracerParameter: AppMapDatabaseMarker agentcomponent "SQL Agent"
+SetTracerParameter: AppMapDatabaseMarker newmode true
+
+SetTracerClassMapping: AppMapNIOSocketMarker com.wily.introscope.appmap.agent.trace.hc2.NIOSocketAppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOSocketMarker nodeType Socket
+SetTracerParameter: AppMapNIOSocketMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapNIOSocketMarker nameformatter com.wily.introscope.agent.trace.nio.SocketBackendNameFormatter
+SetTracerParameter: AppMapNIOSocketMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapNIOSocketMarker boundaryType Backend
+SetTracerParameter: AppMapNIOSocketMarker useblame false
+SetTracerParameter: AppMapNIOSocketMarker newmode true
+
+SetTracerClassMapping: AppMapNIODatagramMarker com.wily.introscope.appmap.agent.trace.hc2.NIODatagramAppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIODatagramMarker nodeType Socket
+SetTracerParameter: AppMapNIODatagramMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapNIODatagramMarker nameformatter com.wily.introscope.agent.trace.nio.DatagramBackendNameFormatter
+SetTracerParameter: AppMapNIODatagramMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapNIODatagramMarker boundaryType Backend
+SetTracerParameter: AppMapNIODatagramMarker useblame false
+SetTracerParameter: AppMapNIODatagramMarker newmode true
+
+SetTracerClassMapping: AppMapNIOUnconnectedDatagramMarker com.wily.introscope.appmap.agent.trace.hc2.NIOUnconnectedDatagramAppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNIOUnconnectedDatagramMarker nodeType Socket
+SetTracerParameter: AppMapNIOUnconnectedDatagramMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapNIOUnconnectedDatagramMarker nameformatter com.wily.introscope.agent.trace.nio.DatagramSendMethodBackendNameFormatter
+SetTracerParameter: AppMapNIOUnconnectedDatagramMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapNIOUnconnectedDatagramMarker boundaryType Backend
+SetTracerParameter: AppMapNIOUnconnectedDatagramMarker useblame false
+SetTracerParameter: AppMapNIOUnconnectedDatagramMarker newmode true
+
+
+
+SetTracerOrdering: AppMapApplicationNameMarker -5000
+SetTracerOrdering: AppMapBTCNameMarker -5000
+SetTracerOrdering: AppMapDatabaseMarker -4000
+SetTracerOrdering: AppMapNIOSocketMarker 1000
+SetTracerOrdering: AppMapNIODatagramMarker 1000
+SetTracerOrdering: AppMapServletMarker -4000
+SetTracerOrdering: AppMapBTCNameTracer2 -3000
+

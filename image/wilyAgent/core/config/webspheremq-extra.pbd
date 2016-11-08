@@ -1,0 +1,118 @@
+###############################################################################
+#
+# CA Wily Introscope(R)
+# PowerPack for WebSphere MQ Connectors and Messaging System(R)
+# Version: 10.1.0.15
+# Build: 990014
+#
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#                                                                  
+# Introscope Probe Builder Directive (PBD) file for
+#
+#             IBM MQSeries Java Classes:
+#			com.ibm.mq.jar
+#			com.ibm.mqjms.jar
+#
+#
+###############################################################################
+
+SetTracerClassMapping: 	JMSSendCorrelationTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.JMSSendCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:    	JMSSendCorrelationTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering:	JMSSendCorrelationTracer 100
+SetTracerParameter: 	JMSSendCorrelationTracer reentrancy instance
+
+SetTracerClassMapping: 	JMSReceiveCorrelationTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.JMSReceiveCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:    	JMSReceiveCorrelationTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering:	JMSReceiveCorrelationTracer 100
+SetTracerParameter: 	JMSReceiveCorrelationTracer reentrancy instance
+
+
+SetTracerClassMapping: 	MQMapEnablingTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:    	MQMapEnablingTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerParameter: 	MQMapEnablingTracer nodeType 50
+SetTracerParameter: 	MQMapEnablingTracer reentrancy instance
+
+SetTracerClassMapping: 	MQPutCorrelationTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.MQPutCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:    	MQPutCorrelationTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering:	MQPutCorrelationTracer 100
+SetTracerParameter: 	MQPutCorrelationTracer reentrancy instance
+
+SetTracerClassMapping: 	MQGetCorrelationTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.MQGetCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:    	MQGetCorrelationTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering:	MQGetCorrelationTracer 100
+SetTracerParameter: 	MQGetCorrelationTracer reentrancy instance
+
+## MQ Backend Tracer
+SetTracerClassMapping:  MQBackendTracer com.wily.introscope.agent.trace.hc2.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     MQBackendTracer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQBackendTracer 1
+SetTracerParameter: 	MQBackendTracer reentrancy instance
+
+
+#MapEnabling Tracer for MQ JMS
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+
+# Correlation Tracer for MQ JMS
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V JMSSendCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V JMSSendCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V JMSSendCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V JMSSendCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V JMSSendCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V JMSSendCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V JMSSendCorrelationTracer "WebSphereMQ"
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; JMSReceiveCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; JMSReceiveCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; JMSReceiveCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V JMSReceiveCorrelationTracer "WebSphereMQ"
+
+# Blame Tracer for Backend Metrics MQ JMS
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+
+
+# MapEnabling Tracer for JCA
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMapEnablingTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+
+# Correlation Tracer for JCA
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQPutCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQPutCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQPutCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQPutCorrelationTracer "WebSphereMQ"
+
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQGetCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQGetCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQGetCorrelationTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQGetCorrelationTracer "WebSphereMQ"
+
+# Blame Tracer for Backend Metrics MQ
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendTracer "Backends|WebSphereMQ on {hostname}|{queuemanager}"

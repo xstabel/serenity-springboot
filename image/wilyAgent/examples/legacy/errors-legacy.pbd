@@ -1,0 +1,60 @@
+########################################################################
+# Introscope ProbeBuilder Directives File
+# for Error Detector
+# 
+# Version: 10.1.0.15
+# Build: 990014
+# 
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file configures Error Detector by specifying what 
+# code-level events constitute serious errors.  By default,
+# only front- and back-end errors are considered serious.  That
+# is, only errors that will be manifest as a user-facing error page
+# or that indicate a problem with a backend system (JDBC, JMS, etc.)
+# are included in this default configuration.
+#############################################################
+
+
+# Servlets
+# HTTP Error Codes
+SetFlag: HTTPErrorCodeTracing
+TurnOn: HTTPErrorCodeTracing
+IdentifyInheritedAs: javax.servlet.http.HttpServletResponse HTTPErrorCodeTracing
+
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V ExceptionErrorReporter "Servlets|{classname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: HTTPErrorCodeTracing sendError(I)V HTTPErrorCodeReporter "Servlets|{classname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: HTTPErrorCodeTracing sendError(ILjava/lang/String;)V HTTPErrorCodeReporter "Servlets|{classname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: HTTPErrorCodeTracing setStatus(I)V HTTPErrorCodeReporter "Servlets|{classname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: HTTPErrorCodeTracing setStatus(ILjava/lang/String;)V HTTPErrorCodeReporter "Servlets|{classname}:Errors Per Interval"
+
+# JSP
+TraceOneMethodWithParametersIfFlagged: JSPTracing _jspService ExceptionErrorReporter "JSP|{classname}:Errors Per Interval"
+
+# JDBC
+SetTracerClassMapping: SQLExceptionErrorReporter com.wily.introscope.agent.errors.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SQLExceptionErrorReporter nameformatter com.wily.introscope.agent.sqlagent.StatementNameFormatter
+SetTracerParameter: SQLExceptionErrorReporter reentrancy instance
+SetTracerParameter: SQLExceptionErrorReporter agentcomponent "SQL Agent"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements execute SQLExceptionErrorReporter "Backends|{database}|SQL|{commandtype}|Query|{sql}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeQuery SQLExceptionErrorReporter "Backends|{database}|SQL|{commandtype}|Query|{sql}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeBatch SQLExceptionErrorReporter "Backends|{database}|SQL|{commandtype}|Query|{sql}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: SQLAgentStatements executeUpdate SQLExceptionErrorReporter "Backends|{database}|SQL|{commandtype}|Update|{sql}:Errors Per Interval"
+
+# J2EE Connectors
+TraceOneMethodWithParametersIfFlagged: J2eeConnectorTracing execute ExceptionErrorReporter "J2EE Connector:Errors Per Interval"
+
+# JavaMail
+TraceOneMethodWithParametersIfFlagged: JavaMailTransportTracing send ExceptionErrorReporter "Java Mail:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: JavaMailTransportTracing sendMessage ExceptionErrorReporter "Java Mail:Errors Per Interval"
+
+# JTA
+TraceOneMethodWithParametersIfFlagged: JTACommitTracing commit ExceptionErrorReporter "JTA|{classname}:Errors Per Interval"
+
+# JMS
+TraceOneMethodWithParametersIfFlagged: JMSSenderTracing send ExceptionErrorReporter "JMS:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: JMSPublisherTracing publish ExceptionErrorReporter "JMS:Errors Per Interval"

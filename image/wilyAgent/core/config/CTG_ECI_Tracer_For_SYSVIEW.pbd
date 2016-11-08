@@ -1,0 +1,49 @@
+########################################################################
+# IBM CTG Java Gateway Tracer
+#
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#
+########################################################################
+# JavaGatewayNameFormatter place holder substitution rules
+#
+# This explains how the place holders are substituted in the name format
+# template which is delivered as:
+# "CTG{Request type}{Server}{Program}{Transaction}{xOperation}"
+# It is possible to rearrange or remove the place holders to change 
+# the name of metrics and/or number of metrics collected. 
+#
+# The following place holders are removed and if appropriate replaced
+# with the appropriate values shown below.
+#
+# {Request type} becomes one of: Code Page, ECI, EPI, ESI, or XA.
+# {Server} becomes " server " followed by the server name.
+# {Program} becomes " program " followed by the program name.
+# {Transaction} becomes " transaction " followed by the transaction.
+# {xOperation} becomes either an ECI or an XA transaction operation:
+#   For ECI transaction: ECI_COMMIT or ECI_BACKOUT.
+#   For XA transaction: XA_START, XA_END, XA_PREPARE, XA_COMMIT, 
+#                       XA_ROLLBACK, XA_FORGET, XA_RECOVER, or CLEANUP.
+#
+########################################################################
+
+SetTracerClassMapping: JavaGatewayTracing com.wily.powerpack.sysview.ctgtracer.eci.hc2.JavaGatewayFlowTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JavaGatewayTracing nameformatter com.wily.powerpack.sysview.ctgtracer.eci.JavaGatewayNameFormatter
+
+
+SetFlag: JavaGatewayTracer
+TurnOn: JavaGatewayTracer
+
+IdentifyClassAs: com.ibm.ctg.client.JavaGateway JavaGatewayTracer
+TraceOneMethodWithParametersIfFlagged: JavaGatewayTracer flow JavaGatewayTracing "CTG{Request type}{Server}{Program}{Transaction}{xOperation}"
+
+SetTracerClassMapping: AppMapCTGBackendTracer com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapCTGBackendTracer nodeType GenericBackend
+SetTracerParameter: AppMapCTGBackendTracer nodeLevel MethodClass
+SetTracerParameter: AppMapCTGBackendTracer ownerType Application
+SetTracerParameter: AppMapCTGBackendTracer boundaryType Backend
+SetTracerParameter: AppMapCTGBackendTracer nameformatter com.wily.powerpack.sysview.ctgtracer.eci.JavaGatewayNameFormatter
+
+TraceOneMethodWithParametersIfFlagged: JavaGatewayTracer flow AppMapCTGBackendTracer "CTG{Request type}{Server}{Program}{Transaction}{xOperation}"
+

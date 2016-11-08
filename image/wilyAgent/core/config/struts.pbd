@@ -1,0 +1,44 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+##########################
+# Tracing of Apache Struts
+# ========================
+SetFlag: StrutsTracing
+
+IdentifyClassAs: org.apache.struts.action.Action StrutsTracing
+IdentifyInheritedAs: org.apache.struts.action.Action StrutsTracing
+IdentifyClassAs: org.apache.struts.action.ActionForm StrutsTracing
+IdentifyInheritedAs: org.apache.struts.action.ActionForm StrutsTracing
+IdentifyClassAs: org.apache.struts.action.ActionBase StrutsTracing
+IdentifyInheritedAs: org.apache.struts.action.ActionBase StrutsTracing
+IdentifyClassAs: org.apache.struts.action.ActionForward StrutsTracing
+IdentifyClassAs: org.apache.struts.action.ActionMapping StrutsTracing
+IdentifyInheritedAs: org.apache.struts.util.MessageResources StrutsTracing
+IdentifyInheritedAs: org.apache.struts.util.MessageResourcesFactory StrutsTracing
+IdentifyClassAs: org.apache.struts.upload.MultipartValueStream StrutsTracing
+IdentifyClassAs: org.apache.struts.upload.BufferedMultipartInputStream StrutsTracing
+IdentifyInheritedAs: org.apache.struts.tiles.actions.TilesAction StrutsTracing
+IdentifyInheritedAs: org.apache.struts.tiles.actions.DefinitionDispatcherAction StrutsTracing
+IdentifyInheritedAs: org.apache.struts.tiles.actions.ViewDefinitionsAction StrutsTracing
+IdentifyInheritedAs: org.apache.struts.tiles.actions.NoOpAction StrutsTracing
+IdentifyInheritedAs: org.apache.struts.tiles.actions.ReloadDefinitionsAction StrutsTracing
+
+#
+# perform is deprecated; execute is used
+#
+TraceOneMethodIfFlagged: StrutsTracing perform BlamePointTracerDifferentInstances "Struts|{classname}"
+
+
+#
+# execute
+#
+TraceOneMethodIfFlagged: StrutsTracing execute BlamePointTracerDifferentInstances "Struts|{classname}"

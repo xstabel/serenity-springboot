@@ -1,0 +1,34 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                     
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file provides tracer directives for Business Centric Http Instrumentation
+#############################################################
+
+#  All content moved to required.pbd
+
+#TurnOn: ServletFilterTracing
+#SetFlag: ServletFilterTracing
+#IdentifyInheritedAs: javax.servlet.Filter ServletFilterTracing
+
+#TraceOneMethodWithParametersIfFlagged: ServletFilterTracing doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V BizTrxHttpTracer "{Business Definition}"
+
+#TraceOneMethodWithParametersIfFlagged: HTTPServletTracing service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V BizTrxHttpTracer "{Business Definition}"
+#TraceOneMethodWithParametersIfFlagged: HTTPServletTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V BizTrxHttpTracer "{Business Definition}"
+#TraceOneMethodWithParametersIfFlagged: HTTPServletClassOnly service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V BizTrxHttpTracer "{Business Definition}"
+
+#TraceOneMethodWithParametersIfFlagged: JSPTracing _jspService BizTrxHttpTracer "{Business Definition}"
+
+#SetTracerClassMapping: BizTrxHttpTracer com.wily.introscope.agent.biztrxhttp.trace.BizTrxHttpTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: BizTrxHttpTracer -2005
+#SetTracerParameter: BizTrxHttpTracer nameformatter com.wily.introscope.agent.trace.biz.trx.BizTrxNameFormatter
+#SetTracerParameter: BizTrxHttpTracer errorTracing true
+

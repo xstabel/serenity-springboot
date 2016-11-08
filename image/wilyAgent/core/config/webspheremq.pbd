@@ -1,0 +1,727 @@
+###############################################################################
+#
+# CA Wily Introscope(R)
+# PowerPack for WebSphere MQ Connectors and Messaging System(R)
+# Version: 10.1.0.15
+# Build: 990014
+#
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#                                                                  
+# Introscope Probe Builder Directive (PBD) file for
+#
+#             IBM MQSeries Java Classes:
+#			com.ibm.mq.jar
+#			com.ibm.mqjms.jar
+#
+#
+###############################################################################
+
+
+###
+###  User Guidance:
+###  Customize the "TurnOn" switches below to suit your requirements.
+
+
+
+###  com.ibm.mq.jar -- TurnOn switches ###
+## MQ 6.x and MQ7.x
+TurnOn: MQQueue
+TurnOn: MQQueueManager
+TurnOn: MQManagedConnectionJ11
+TurnOn: MQDistributionList
+TurnOn: MQSESSIONClient
+TurnOn: MQprocess
+
+## MQ7.x
+TurnOn: MQQueue6
+TurnOn: MQQueueManager6
+TurnOn: MQManagedConnectionJ116
+TurnOn: MQSESSION6
+TurnOn: MQDestination
+TurnOn: MQSESSION
+
+###  com.ibm.mqjms.jar -- TurnOn switches ###
+## MQ 6.x and MQ7.x
+TurnOn: MQJMSmqSession
+TurnOn: MQJMSmqQueueSession
+TurnOn: MQJMSmqTopicSession
+TurnOn: MQJMSmqMessageProducer
+TurnOn: MQJMSmqTopicSender
+TurnOn: MQJMSmqMessageConsumer
+TurnOn: MQJMSmqConnectionConsumer
+
+## MQ 6.x
+TurnOn: MQJMSmqQueueAgentThread
+
+## MQ7.x
+TurnOn: MQJMSmqQueueSender
+TurnOn: WMQConsumerShadow
+
+## MQ7.x, not needed as of now
+#TurnOn: JmsMessageProducerImpl
+#TurnOn: JmsMessageConsumerImpl
+
+### Set all the tracers for connector and jms ###
+## SetTracerOrdering defines the sequence in which tracers should be executed(Ordering works like ranking system)
+
+## Blame Tracer
+SetTracerClassMapping:  MQMethodTimer com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     MQMethodTimer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQMethodTimer 1
+SetTracerParameter: 	MQMethodTimer reentrancy instance
+
+## Cache data tracer
+SetTracerClassMapping:  QueueVOCacheTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.QueueVOCacheTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: 	QueueVOCacheTracer 10
+SetTracerParameter: 	QueueVOCacheTracer reentrancy instance
+
+## CPT tracer
+## Tracers for MQ 6.x and MQ7.x MQ Connector
+SetTracerClassMapping:  MQPutTransactionTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.hc2.MQPutTransactionTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: 	MQPutTransactionTracer 100
+SetTracerParameter: 	MQPutTransactionTracer reentrancy instance
+
+SetTracerClassMapping:  MQGetTransactionTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.hc2.MQGetTransactionTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: 	MQGetTransactionTracer 100
+SetTracerParameter: 	MQGetTransactionTracer reentrancy instance
+
+## Tracers for MQ7.x JMS Connector
+SetTracerClassMapping:  JMSSendTransactionTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.hc2.JMSSendTransactionTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: 	JMSSendTransactionTracer 100
+SetTracerParameter: 	JMSSendTransactionTracer reentrancy instance
+
+SetTracerClassMapping:  JMSReceiveTransactionTracer com.wily.powerpack.websphereMQ.agent.extensions.tracer.hc2.JMSReceiveTransactionTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: 	JMSReceiveTransactionTracer 100
+SetTracerParameter: 	JMSReceiveTransactionTracer reentrancy instance
+
+## Backend Blame Tracer
+SetTracerClassMapping:  MQBackendMethodTimer com.wily.powerpack.websphereMQ.agent.extensions.tracer.hc2.MQBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     MQBackendMethodTimer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQBackendMethodTimer 1000
+SetTracerParameter: 	MQBackendMethodTimer reentrancy instance
+SetTracerParameter: 	MQBackendMethodTimer computeaggregatedmetrics true
+
+## Backend Blame Tracer
+SetTracerClassMapping:  MQBackendOperationMethodTimer com.wily.powerpack.websphereMQ.agent.extensions.tracer.hc2.MQBackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     MQBackendOperationMethodTimer nameformatter com.wily.powerpack.websphereMQ.agent.extensions.nameformatter.trace.nameformatter.ANameFormatter
+SetTracerOrdering: 	MQBackendOperationMethodTimer 1000
+SetTracerParameter: 	MQBackendOperationMethodTimer reentrancy instance
+SetTracerParameter: 	MQBackendOperationMethodTimer computeaggregatedmetrics false
+
+### START Blame Tracer For Connector ###
+
+## MQ6.x
+SetFlag: MQQueue
+IdentifyClassAs: com/ibm/mq/MQQueue MQQueue
+
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue putMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+
+
+## MQ7.x
+SetFlag: MQQueue6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQQueue MQQueue6
+
+TraceOneMethodWithParametersIfFlagged: MQQueue6 put(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 putMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+
+
+## MQ7.x
+SetFlag: MQDestination
+IdentifyClassAs: com/ibm/mq/MQDestination MQDestination
+
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Get|Queue Get"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQQueueManager
+IdentifyClassAs: com/ibm/mq/MQQueueManager MQQueueManager
+
+TraceOneMethodWithParametersIfFlagged: MQQueueManager begin()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Begin"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessProcess(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQProcess; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Access Process"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQQueue; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Access Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessDistributionList([Lcom/ibm/mq/MQDistributionListItem;ILjava/lang/String;)Lcom/ibm/mq/MQDistributionList; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Access Distribution List"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterQueue(Lcom/ibm/mq/MQQueue;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterDistributionList(Lcom/ibm/mq/MQDistributionList;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Distribution List"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterProcess(Lcom/ibm/mq/MQProcess;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Process"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager commit()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Manager Commit"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager disconnect()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Manager Disconnect"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+
+## MQ6.x
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+
+
+## MQ7.x
+SetFlag: MQQueueManager6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQQueueManager MQQueueManager6
+
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Access Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 unregisterQueue(Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Unregister Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 commit()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Manager Commit"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 disconnect()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Manager Disconnect"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Queues|{queue}|Put|Queue Put"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQManagedConnectionJ11
+IdentifyClassAs: com/ibm/mq/MQManagedConnectionJ11 MQManagedConnectionJ11
+
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 getConnection(Ljavax/resource/spi/ConnectionRequestInfo;)Ljava/lang/Object; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Get Connection"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 cleanup()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Cleanup"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 destroy()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Destroy"
+
+
+## MQ7.x
+SetFlag: MQManagedConnectionJ116
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQManagedConnectionJ11 MQManagedConnectionJ116
+
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 getConnection(Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionRequestInfo;)Ljava/lang/Object; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Get Connection"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 destroy()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Destroy"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQDistributionList
+IdentifyClassAs: com/ibm/mq/MQDistributionList MQDistributionList
+
+TraceOneMethodWithParametersIfFlagged: MQDistributionList put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Put|Distribution List Put"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList close()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Distribution List Close"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getFirstDistributionListItem()Lcom/ibm/mq/MQDistributionListItem; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Distribution List Get Item"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getInvalidDestinationCount()I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Get|Get Count"
+
+
+## MQ6.x
+SetFlag: MQSESSIONClient
+IdentifyClassAs: com/ibm/mq/MQSESSIONClient MQSESSIONClient
+
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCONNX(Ljava/lang/String;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pthrowable;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Session Connect"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQDISC(Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Session Disconnect"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQOPEN(ILcom/ibm/mq/MQOD;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCLOSE(ILcom/ibm/mq/Pint;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQBACK(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCMIT(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAOPEN(Ljava/lang/String;II)I  MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|XA Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACLOSE(Ljava/lang/String;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|XA Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XASTART(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Start"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Prepare"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|XA Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XARECOVER([Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Recover"
+
+
+## MQ7.x
+SetFlag: MQSESSION6
+IdentifyClassAs: com/ibm/msg/client/wmq/v6/base/internal/MQSESSION MQSESSION6
+
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Session Connect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Session Disconnect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/msg/client/wmq/v6/base/internal/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAOPEN(Ljava/lang/String;II)I  MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|XA Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACLOSE(Ljava/lang/String;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|XA Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XASTART(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Start"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|XA Session Prepare"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|XA Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XARECOVER([Ljavax/transaction/xa/Xid;II)I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|XA Session Recover"
+
+
+## MQ7.x
+SetFlag: MQSESSION
+IdentifyClassAs: com/ibm/mq/MQSESSION MQSESSION
+
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Session Connect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Disconnect|Session Disconnect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Open|Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Commit|Session Commit"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQprocess
+IdentifyClassAs: com/ibm/mq/MQProcess MQprocess
+
+TraceOneMethodWithParametersIfFlagged: MQprocess close()V MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Close|Process Close"
+TraceOneMethodWithParametersIfFlagged: MQprocess getApplicationType()I MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|Operations|Connect|Queue Process Get Type"
+
+### FINISH Blame Tracer For Connector ###
+
+
+### START CPT Tracer For Connector ###
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQPutTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQGetTransactionTracer "WebSphereMQ"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue putMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;)V MQPutTransactionTracer "WebSphereMQ"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue6 put(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQPutTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 putMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQPutTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)I MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)I MQGetTransactionTracer "WebSphereMQ"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQPutTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQGetTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQGetTransactionTracer "WebSphereMQ"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQPutTransactionTracer "WebSphereMQ"
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQPutTransactionTracer "WebSphereMQ"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQPutTransactionTracer "WebSphereMQ"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQPutTransactionTracer "WebSphereMQ"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQDistributionList put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQPutTransactionTracer "WebSphereMQ"
+
+### FINISH CPT Tracer For Connector ###
+
+
+### START Data Cache Tracer For Connector ###
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQQueue; QueueVOCacheTracer "WebSphereMQ"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue; QueueVOCacheTracer "WebSphereMQ"
+
+### FINISH Data Cache Tracer For Connector ###
+
+
+### START Blame Tracer For JMS ###
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqSession
+IdentifyClassAs: com/ibm/mq/jms/MQSession MQJMSmqSession  
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDestination(Ljava/lang/String;)Lcom/ibm/jms/JMSDestination; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Destination"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession stop()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Disconnect|Stop Session"
+## Added for MDB processing for MQ v6.x
+## UnComment this line only for MQ6.x to avoid double metric reporting for Async Receive (one is due to onMessage) and could cause Unknown Queue Name
+#TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Queues|{queue}|Receive|Async Receive"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createQueue(Ljava/lang/String;)Ljavax/jms/Queue; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Queue"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTopic(Ljava/lang/String;)Ljavax/jms/Topic; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Topic"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryQueue()Ljavax/jms/TemporaryQueue; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Queue"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryTopic()Ljavax/jms/TemporaryTopic; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Connect|Create Topic"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;)Ljavax/jms/TopicSubscriber; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;)Ljavax/jms/QueueBrowser; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Browser"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueBrowser; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Browser"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage()Ljavax/jms/TextMessage; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Message"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage(Ljava/lang/String;)Ljavax/jms/TextMessage; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Message"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Process Message"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession unsubscribe(Ljava/lang/String;)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Disconnect|Unsubscribe"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession commit()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Commit|Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession recover()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Rollback|Session Recover"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession rollback()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession close()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Disconnect|Session Close"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqQueueSession
+IdentifyClassAs: com/ibm/mq/jms/MQQueueSession MQJMSmqQueueSession  
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createSender(Ljavax/jms/Queue;)Ljavax/jms/QueueSender; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Sender"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;)Ljavax/jms/QueueReceiver; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Receiver"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueReceiver; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Receiver"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Producer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqTopicSession
+IdentifyClassAs: com/ibm/mq/jms/MQTopicSession MQJMSmqTopicSession  
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createPublisher(Ljavax/jms/Topic;)Ljavax/jms/TopicPublisher; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Publisher"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;)Ljavax/jms/TopicSubscriber; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Send|Create Producer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Operations|Receive|Create Consumer"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqMessageProducer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageProducer MQJMSmqMessageProducer
+
+## MQ6.x 
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send"
+
+
+## MQ7.x
+SetFlag: MQJMSmqQueueSender
+IdentifyClassAs: com/ibm/mq/jms/MQQueueSender MQJMSmqQueueSender
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Producer Send"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqTopicSender
+IdentifyClassAs: com/ibm/mq/jms/MQTopicPublisher MQJMSmqTopicSender
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;IIJ)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;IIJ)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Send|Publish"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqMessageConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageConsumer MQJMSmqMessageConsumer
+
+## MQ7.x
+IdentifyClassAs: com/ibm/mq/jms/MQSession$FacadeMessageListener MQJMSmqMessageConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQMessageConsumer$FacadeMessageListener MQJMSmqMessageConsumer
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer getTopic()Ljavax/jms/Topic; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Get Topic"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveAsync(J)Z MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Async Receive"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Receive No Wait"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Consumer Receive"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Consumer Receive"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Receive|Async Receive"
+
+## MQ7.x
+SetFlag: WMQConsumerShadow
+IdentifyClassAs: com/ibm/msg/client/wmq/internal/WMQConsumerShadow  WMQConsumerShadow
+
+TraceOneMethodWithParametersIfFlagged: WMQConsumerShadow getMsg(Lcom/ibm/mq/jmqi/MQGMO;IZ)Lcom/ibm/msg/client/provider/ProviderMessage; MQMethodTimer "WebSphereMQ|Connector|{hostname}|{queuemanager}|{queue}|Get|Queue Get"
+
+
+## MQ6.x and MQ7.x
+SetFlag: MQJMSmqConnectionConsumer
+IdentifyClassAs: com/ibm/mq/jms/MQConnectionConsumer MQJMSmqConnectionConsumer
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer close()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Disconnect|Close Connection"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer getServerSessionPool()Ljavax/jms/ServerSessionPool; MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|{queue}|Connect|Get Server Session Pool"
+
+
+## MQ6.x
+SetFlag: MQJMSmqQueueAgentThread
+IdentifyClassAs: com/ibm/mq/jms/MQQueueAgentThread MQJMSmqQueueAgentThread
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueAgentThread run()V MQMethodTimer "WebSphereMQ|JMS|{hostname}|{queuemanager}|Queues|{queue}|Receive|Process Message"
+
+### FINISH Blame Tracer For JMS ###
+
+
+## MQ7.x
+### START CPT Tracer For JMS ###
+
+#SetFlag: JmsMessageProducerImpl
+#IdentifyClassAs: com/ibm/msg/client/jms/internal/JmsMessageProducerImpl JmsMessageProducerImpl
+#TraceOneMethodWithParametersIfFlagged: JmsMessageProducerImpl sendMessage(Ljavax/jms/Message;Lcom/ibm/msg/client/jms/admin/JmsDestinationImpl;)V JMSSendTransactionTracer "WebSphereMQ"
+#SetFlag: JmsMessageConsumerImpl
+#IdentifyClassAs: com/ibm/msg/client/jms/internal/JmsMessageConsumerImpl JmsMessageConsumerImpl
+#TraceOneMethodWithParametersIfFlagged: JmsMessageConsumerImpl receiveInboundMessage(J)Ljavax/jms/Message; JMSReceiveTransactionTracer "WebSphereMQ"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V JMSSendTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V JMSSendTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V JMSSendTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V JMSSendTransactionTracer "WebSphereMQ"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V JMSSendTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V JMSSendTransactionTracer "WebSphereMQ"
+
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; JMSReceiveTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; JMSReceiveTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; JMSReceiveTransactionTracer "WebSphereMQ"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V JMSReceiveTransactionTracer "WebSphereMQ"
+
+### FINISH CPT Tracer For JMS ###
+
+
+### START Boundary Blame Backend Tracer and Nameformatter For JMS ###
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDestination(Ljava/lang/String;)Lcom/ibm/jms/JMSDestination; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Destination"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession stop()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect|Stop Session"
+## Added for MDB processing for MQ v6.x
+## UnComment this line only for MQ6.x to avoid double metric reporting for Async Receive (one is due to onMessage)and could cause Unknown Queue Name
+#TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Queues|{queue}|Receive|Async Receive"
+
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createQueue(Ljava/lang/String;)Ljavax/jms/Queue; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Queue"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTopic(Ljava/lang/String;)Ljavax/jms/Topic; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Topic"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryQueue()Ljavax/jms/TemporaryQueue; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Queue"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTemporaryTopic()Ljavax/jms/TemporaryTopic; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Connect|Create Topic"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;)Ljavax/jms/TopicSubscriber; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createDurableSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;)Ljavax/jms/QueueBrowser; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Browser"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createBrowser(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueBrowser; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Browser"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage()Ljavax/jms/TextMessage; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Message"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession createTextMessage(Ljava/lang/String;)Ljavax/jms/TextMessage; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Message"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession run()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Process Message"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession unsubscribe(Ljava/lang/String;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect|Unsubscribe"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession commit()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Commit|Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession recover()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Rollback|Session Recover"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession rollback()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqSession close()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Disconnect|Session Close"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createSender(Ljavax/jms/Queue;)Ljavax/jms/QueueSender; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Sender"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;)Ljavax/jms/QueueReceiver; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Receiver"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createReceiver(Ljavax/jms/Queue;Ljava/lang/String;)Ljavax/jms/QueueReceiver; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Receiver"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Producer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createPublisher(Ljavax/jms/Topic;)Ljavax/jms/TopicPublisher; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Publisher"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;)Ljavax/jms/TopicSubscriber; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createSubscriber(Ljavax/jms/Topic;Ljava/lang/String;Z)Ljavax/jms/TopicSubscriber; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Subscriber"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createProducer(Ljavax/jms/Destination;)Ljavax/jms/MessageProducer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Send|Create Producer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;)Ljavax/jms/MessageConsumer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;)Ljavax/jms/MessageConsumer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSession createConsumer(Ljavax/jms/Destination;Ljava/lang/String;Z)Ljavax/jms/MessageConsumer; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Operations|Receive|Create Consumer"
+
+## MQ6.x 
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Message;IIJ)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageProducer send(Ljavax/jms/Destination;Ljavax/jms/Message;IIJ)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueSender send(Ljavax/jms/Queue;Ljavax/jms/Message;IIJ)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Producer Send"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Message;IIJ)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqTopicSender publish(Ljavax/jms/Topic;Ljavax/jms/Message;IIJ)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Send|Publish"
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer getTopic()Ljavax/jms/Topic; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Get Topic"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveAsync(J)Z MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Async Receive"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receiveNoWait()Ljavax/jms/Message; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Receive No Wait"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive()Ljavax/jms/Message; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Consumer Receive"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer receive(J)Ljavax/jms/Message; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Consumer Receive"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqMessageConsumer onMessage(Ljavax/jms/Message;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Receive|Async Receive"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: WMQConsumerShadow getMsg(Lcom/ibm/mq/jmqi/MQGMO;IZ)Lcom/ibm/msg/client/provider/ProviderMessage; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|{queue}|Get|Queue Get"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer close()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Disconnect|Close Connection"
+TraceOneMethodWithParametersIfFlagged: MQJMSmqConnectionConsumer getServerSessionPool()Ljavax/jms/ServerSessionPool; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|{queue}|Connect|Get Server Session Pool"
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQJMSmqQueueAgentThread run()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|JMS|Queues|{queue}|Receive|Process Message"
+
+### FINISH Boundary Blame Backend Tracer and Nameformatter For JMS ### 
+
+
+### START Boundary Blame Backend Tracer and Nameformatter For Connector ### 
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQQueue put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue putMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueue6 put(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 putMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 get(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMessage;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;I)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQQueue6 getMsg2NoExc(Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQGetMessageOptions;)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQDestination put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination get(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;I)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+TraceOneMethodWithParametersIfFlagged: MQDestination getMsg2NoExc(Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQGetMessageOptions;)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Get|Queue Get"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager begin()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Begin"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessProcess(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQProcess; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Access Process"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/mq/MQQueue; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Access Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager accessDistributionList([Lcom/ibm/mq/MQDistributionListItem;ILjava/lang/String;)Lcom/ibm/mq/MQDistributionList; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Access Distribution List"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterQueue(Lcom/ibm/mq/MQQueue;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterDistributionList(Lcom/ibm/mq/MQDistributionList;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Distribution List"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager unregisterProcess(Lcom/ibm/mq/MQProcess;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Process"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager commit()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Manager Commit"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager disconnect()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Manager Disconnect"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendOperationMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMsg2;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+
+## MQ6.x
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendOperationMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendOperationMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager put(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;Ljava/lang/String;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 accessQueue(Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Access Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 unregisterQueue(Lcom/ibm/msg/client/wmq/v6/base/internal/MQQueue;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Unregister Queue"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 commit()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Manager Commit"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 disconnect()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Manager Disconnect"
+
+## DO NOT change any method signature as the parameters count is being used in the code
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendOperationMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Manager Put"
+TraceOneMethodWithParametersIfFlagged: MQQueueManager6 putMsg2(Ljava/lang/String;Ljava/lang/String;Lcom/ibm/msg/client/wmq/v6/base/internal/MQMsg2;Lcom/ibm/msg/client/wmq/v6/base/internal/MQPutMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Queues|{queue}|Put|Queue Put"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 getConnection(Ljavax/resource/spi/ConnectionRequestInfo;)Ljava/lang/Object; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Get Connection"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 cleanup()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Cleanup"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ11 destroy()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Destroy"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 getConnection(Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionRequestInfo;)Ljava/lang/Object; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Get Connection"
+TraceOneMethodWithParametersIfFlagged: MQManagedConnectionJ116 destroy()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Destroy"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQDistributionList put(Lcom/ibm/mq/MQMessage;Lcom/ibm/mq/MQPutMessageOptions;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Put|Distribution List Put"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList close()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Distribution List Close"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getFirstDistributionListItem()Lcom/ibm/mq/MQDistributionListItem; MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Distribution List Get Item"
+TraceOneMethodWithParametersIfFlagged: MQDistributionList getInvalidDestinationCount()I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Get|Get Count"
+
+## MQ6.x
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCONNX(Ljava/lang/String;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pthrowable;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Session Connect"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQDISC(Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Session Disconnect"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQOPEN(ILcom/ibm/mq/MQOD;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCLOSE(ILcom/ibm/mq/Pint;ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQBACK(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient MQCMIT(ILcom/ibm/mq/Pint;Lcom/ibm/mq/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAOPEN(Ljava/lang/String;II)I  MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|XA Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACLOSE(Ljava/lang/String;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|XA Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XASTART(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Start"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Prepare"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|XA Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSIONClient XARECOVER([Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Recover"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/msg/client/wmq/v6/base/internal/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Session Connect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Session Disconnect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/msg/client/wmq/v6/base/internal/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAOPEN(Ljava/lang/String;II)I  MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|XA Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACLOSE(Ljava/lang/String;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|XA Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XASTART(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Start"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAPREPARE(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|XA Session Prepare"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XACOMMIT(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|XA Session Commit"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XAROLLBACK(Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSION6 XARECOVER([Ljavax/transaction/xa/Xid;II)I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|XA Session Recover"
+
+## MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCONNX_j(Ljava/lang/String;Lcom/ibm/mq/jmqi/system/JmqiConnectOptions;Lcom/ibm/mq/MQConnectionOptions;Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Session Connect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQDISC(Lcom/ibm/mq/jmqi/handles/Phconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Disconnect|Session Disconnect"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQOPEN(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/MQOD;ILcom/ibm/mq/jmqi/handles/Phobj;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Open|Session Open"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCLOSE(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Phobj;ILcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Session Close"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQBACK(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Rollback|Session Rollback"
+TraceOneMethodWithParametersIfFlagged: MQSESSION MQCMIT(Lcom/ibm/mq/jmqi/handles/Hconn;Lcom/ibm/mq/jmqi/handles/Pint;Lcom/ibm/mq/jmqi/handles/Pint;)V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Commit|Session Commit"
+
+## MQ6.x and MQ7.x
+TraceOneMethodWithParametersIfFlagged: MQprocess close()V MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Close|Process Close"
+TraceOneMethodWithParametersIfFlagged: MQprocess getApplicationType()I MQBackendMethodTimer "Backends|WebSphereMQ on {hostname}|{queuemanager}|Connector|Operations|Connect|Queue Process Get Type"
+
+### FINISH Boundary Blame Backend Tracer and Nameformatter For Connector ###
+
+###

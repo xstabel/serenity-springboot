@@ -1,0 +1,28 @@
+########################################################################
+# Introscope ProbeBuilder Directives File
+# 
+# Version: 10.1.0.15
+# Build: 990014
+# 
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+#
+# This jsf_toggles.pbd file provides TurnOn toggle switches
+#   to determine honoring of other directives
+#   in subsequent *.pbd files
+#
+# Comment or uncomment the "TurnOn" directives 
+#   to alter the set of JSF components that are traced.      
+#
+#############################################################
+
+TurnOn: JSF_ApplicationTracing
+#TurnOn: JSF_ComponentTracing
+TurnOn: JSF_LifecycleTracing
+TurnOn: JSF_EventTracing
+#TurnOn: JSF_ValidatorTracing
+TurnOn: JSF_ExceptionTracing

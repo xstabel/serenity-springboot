@@ -1,0 +1,101 @@
+########################################################################
+# Introscope ProbeBuilder List File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+########################################################################
+# This file contains a list of ProbeBuilder directives files.          #
+# These files contain the ProbeBuilder directives used when            #
+# adding probes into Apache Tomcat Application Server                  #
+# 6.0.x or 7.0.x.                                                      #
+########################################################################
+
+#######################
+# List Title
+# ================
+
+Title: Apache Tomcat Application Server [Typical - Optimized] (6.0.x, 7.0.x)
+
+
+#######################
+# List Description
+# ================
+
+Description: Default Typical Introscope settings plus support for Apache Tomcat Application Server versions 6.0.x and 7.0.x
+
+
+#######################
+# Directives Files
+# ================
+# One directives file name per line.  Relative names
+# are resolved against the location of this file.
+
+toggles-typical.pbd
+required.pbd
+apm-common.pbd
+java${JVMCOMPATIBILITY}socket.pbd
+jvm.pbd
+j2ee.pbd
+java2.pbd
+struts.pbd
+taglibs.pbd
+oraclejdbc.pbd
+sqlagent.pbd
+errors.pbd
+tomcat.pbd
+jsf-toggles-typical.pbd
+jsf.pbd
+biz-trx-http.pbd
+appmap.pbd
+appmap-ejb.pbd
+#bizrecording.pbd
+di.pbd
+intelligent.pbd
+endUserEndpoints.pbd
+httpcorrelation.pbd
+httpbackendmetrics.pbd
+appmap-http.pbd
+
+#######################
+# SOA Performance Management
+# ================
+
+webservices.pbd
+spm-correlation.pbd
+appmap-soa.pbd
+
+#######################
+# Servlet Header Decorator
+#
+# Enable this PBD for CEM integration.  It appends additional
+# information to the HTTP response that is then captured by CEM.
+# ================
+
+#ServletHeaderDecorator.pbd
+
+
+#######################
+# LeakHunter
+#
+# Enable this PBD to help locate the source of potential memory leaks.
+# This will incur overhead, so enable LeakHunter only when necessary. 
+# See LeakHunter documentation for usage and configuration details.
+# ================
+
+#leakhunter.pbd
+
+#######################
+# CA Browser Response Time Monitor
+#
+# Enable this PBD for CA Browser Response Time Monitor (CA BRTM).
+# CA BRTM lets you monitor web page load performance metrics.
+# ==================
+
+#brtm.pbd
+

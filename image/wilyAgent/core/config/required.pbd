@@ -1,0 +1,469 @@
+########################################################################
+# Introscope ProbeBuilder List File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+
+########################################################################
+# This file contains a list of directives derived from probebuiler's   #
+# required.pbd. These directives are tracer class mappings and tracer  #
+# parameter settings used by other ootb pbd/pbl files.		       #	
+########################################################################
+
+
+
+######################################
+#from required_common_tracers.pbd
+######################################
+
+SetTracerClassMapping: BackendMarker com.wily.introscope.agent.trace.hc2.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: BackendMarker forcestandardmetrics false
+SetTracerParameter: BackendMarker newmode true
+SetTracerParameter: BackendMarker useblame true
+SetTracerOrdering: BackendMarker -1000000
+SetTracerParameter: BackendMarker useblame true
+
+SetTracerClassMapping: FrontendMarker com.wily.introscope.agent.trace.hc2.FrontendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: FrontendMarker newmode true
+SetTracerParameter: FrontendMarker useblame true
+
+# Generic blame point -- gives blamed MethodTimer, PerIntervalCounter and
+# ConcurrentInvocationCounter metrics
+SetTracerClassMapping: BlamePointTracer com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: BlamePointTracer newmode true
+SetTracerParameter: BlamePointTracer useblame true
+
+SetTracerClassMapping: DefaultFrontendBlamePointTracer com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: DefaultFrontendBlamePointTracer defaultfrontend true
+SetTracerParameter: DefaultFrontendBlamePointTracer newmode true
+SetTracerParameter: DefaultFrontendBlamePointTracer useblame true
+
+SetTracerClassMapping: BlamePointTracerDifferentInstances com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: BlamePointTracerDifferentInstances reentrancy instance
+SetTracerParameter: BlamePointTracerDifferentInstances newmode true
+SetTracerParameter: BlamePointTracerDifferentInstances useblame true
+
+SetTracerClassMapping: HttpServletBlamePointTracerDifferentInstances com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances reentrancy instance
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances hascontextualmetrics true
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances name0 "Servlets:Average Response Time (ms)"
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances mappedresource0 "Average Response Time (ms)"
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances name1 "Servlets:Responses Per Interval"
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances mappedresource1 "Responses Per Interval"
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances newmode true
+SetTracerParameter: HttpServletBlamePointTracerDifferentInstances useblame true
+
+
+
+SetTracerClassMapping: BlamePointTracerDifferentMethods com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: BlamePointTracerDifferentMethods reentrancy methodname
+SetTracerParameter: BlamePointTracerDifferentMethods newmode true
+SetTracerParameter: BlamePointTracerDifferentMethods useblame true
+
+SetTracerClassMapping: DefaultFrontendBlamePointTracerDifferentInstances com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentInstances reentrancy instance
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentInstances defaultfrontend true
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentInstances newmode true
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentInstances useblame true
+
+SetTracerClassMapping: DefaultFrontendBlamePointTracerDifferentMethods com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentMethods reentrancy methodname
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentMethods defaultfrontend true
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentMethods newmode true
+SetTracerParameter: DefaultFrontendBlamePointTracerDifferentMethods useblame true
+
+# Tracers and validator for Dynamic Instrumentation
+SetTracerClassMapping: ConditionalBlamePointTracer com.wily.introscope.agent.trace.hc2.ConditionalBlamePointTracer com.wily.introscope.probebuilder.validate.ConditionalDynamicResourceNameValidator
+SetTracerParameter: ConditionalBlamePointTracer newmode true
+SetTracerParameter: ConditionalBlamePointTracer useblame true
+
+SetTracerClassMapping: DynamicBlamePointTracer com.wily.introscope.agent.trace.hc2.ConditionalBlamePointTracer com.wily.introscope.probebuilder.validate.ConditionalDynamicResourceNameValidator
+SetTracerParameter: DynamicBlamePointTracer newmode true
+SetTracerParameter: DynamicBlamePointTracer useblame true
+
+SetTracerClassMapping: ConditionalAnchorTracer com.wily.introscope.agent.trace.ConditionalAnchorTracer com.wily.introscope.probebuilder.validate.ConditionalDynamicResourceNameValidator
+SetTracerParameter: ConditionalAnchorTracer newmode true
+#note the use of false here. We want to explicitely state here that this tracer does not use the blame
+SetTracerParameter: ConditionalAnchorTracer useblame false
+
+######################################
+#from required_common_tracers.pbd 
+#MethodFinishCounter
+######################################
+
+SetTracerClassMapping: SimpleIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SimpleIncrementor delta 1
+SetTracerClassMapping: SimpleDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SimpleDecrementor delta -1
+SetTracerClassMapping: MethodTraceIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTraceIncrementor delta 1
+SetTracerParameter: MethodTraceIncrementor reentrancy instance
+SetTracerClassMapping: MethodTraceDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTraceDecrementor delta -1
+SetTracerParameter: MethodTraceDecrementor reentrancy instance
+SetTracerClassMapping: BlamedSimpleIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedSimpleIncrementor delta 1
+SetTracerParameter: BlamedSimpleIncrementor useblame true
+SetTracerClassMapping: BlamedSimpleDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedSimpleDecrementor delta -1
+SetTracerParameter: BlamedSimpleDecrementor useblame true
+SetTracerClassMapping: BlamedMethodTraceIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTraceIncrementor delta 1
+SetTracerParameter: BlamedMethodTraceIncrementor reentrancy instance
+SetTracerParameter: BlamedMethodTraceIncrementor useblame true
+SetTracerOrdering: BlamedMethodTraceIncrementor -100
+SetTracerClassMapping: BlamedMethodTraceDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTraceDecrementor delta -1
+SetTracerParameter: BlamedMethodTraceDecrementor reentrancy instance
+SetTracerParameter: BlamedMethodTraceDecrementor useblame true
+SetTracerOrdering: BlamedMethodTraceDecrementor -100
+
+SetTracerClassMapping: NormalCompletionSimpleIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NormalCompletionSimpleIncrementor delta 1
+SetTracerParameter: NormalCompletionSimpleIncrementor resultfilter normalcompletion
+SetTracerClassMapping: NormalCompletionSimpleDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NormalCompletionSimpleDecrementor delta -1
+SetTracerParameter: NormalCompletionSimpleDecrementor resultfilter normalcompletion
+SetTracerClassMapping: NormalCompletionMethodTraceIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NormalCompletionMethodTraceIncrementor delta 1
+SetTracerParameter: NormalCompletionMethodTraceIncrementor reentrancy instance
+SetTracerParameter: NormalCompletionMethodTraceIncrementor resultfilter normalcompletion
+SetTracerClassMapping: NormalCompletionMethodTraceDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NormalCompletionMethodTraceDecrementor delta -1
+SetTracerParameter: NormalCompletionMethodTraceDecrementor reentrancy instance
+SetTracerParameter: NormalCompletionMethodTraceDecrementor resultfilter normalcompletion
+SetTracerClassMapping: BlamedNormalCompletionSimpleIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedNormalCompletionSimpleIncrementor delta 1
+SetTracerParameter: BlamedNormalCompletionSimpleIncrementor useblame true
+SetTracerParameter: BlamedNormalCompletionSimpleIncrementor resultfilter normalcompletion
+SetTracerClassMapping: BlamedNormalCompletionSimpleDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedNormalCompletionSimpleDecrementor delta -1
+SetTracerParameter: BlamedNormalCompletionSimpleDecrementor useblame true
+SetTracerParameter: BlamedNormalCompletionSimpleDecrementor resultfilter normalcompletion
+SetTracerClassMapping: BlamedNormalCompletionMethodTraceIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedNormalCompletionMethodTraceIncrementor delta 1
+SetTracerParameter: BlamedNormalCompletionMethodTraceIncrementor reentrancy instance
+SetTracerParameter: BlamedNormalCompletionMethodTraceIncrementor useblame true
+SetTracerParameter: BlamedNormalCompletionMethodTraceIncrementor resultfilter normalcompletion
+SetTracerOrdering: BlamedNormalCompletionMethodTraceIncrementor -100
+SetTracerClassMapping: BlamedNormalCompletionMethodTraceDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedNormalCompletionMethodTraceDecrementor delta -1
+SetTracerParameter: BlamedNormalCompletionMethodTraceDecrementor reentrancy instance
+SetTracerParameter: BlamedNormalCompletionMethodTraceDecrementor useblame true
+SetTracerParameter: BlamedNormalCompletionMethodTraceDecrementor resultfilter normalcompletion
+SetTracerOrdering: BlamedNormalCompletionMethodTraceDecrementor -100
+
+SetTracerClassMapping: ThrownExceptionSimpleIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThrownExceptionSimpleIncrementor delta 1
+SetTracerParameter: ThrownExceptionSimpleIncrementor resultfilter thrownexception
+SetTracerClassMapping: ThrownExceptionSimpleDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThrownExceptionSimpleDecrementor delta -1
+SetTracerParameter: ThrownExceptionSimpleDecrementor resultfilter thrownexception
+SetTracerClassMapping: ThrownExceptionMethodTraceIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThrownExceptionMethodTraceIncrementor delta 1
+SetTracerParameter: ThrownExceptionMethodTraceIncrementor reentrancy instance
+SetTracerParameter: ThrownExceptionMethodTraceIncrementor resultfilter thrownexception
+SetTracerClassMapping: ThrownExceptionMethodTraceDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThrownExceptionMethodTraceDecrementor delta -1
+SetTracerParameter: ThrownExceptionMethodTraceDecrementor reentrancy instance
+SetTracerParameter: ThrownExceptionMethodTraceDecrementor resultfilter thrownexception
+SetTracerClassMapping: BlamedThrownExceptionSimpleIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedThrownExceptionSimpleIncrementor delta 1
+SetTracerParameter: BlamedThrownExceptionSimpleIncrementor useblame true
+SetTracerParameter: BlamedThrownExceptionSimpleIncrementor resultfilter thrownexception
+SetTracerClassMapping: BlamedThrownExceptionSimpleDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedThrownExceptionSimpleDecrementor delta -1
+SetTracerParameter: BlamedThrownExceptionSimpleDecrementor useblame true
+SetTracerParameter: BlamedThrownExceptionSimpleDecrementor resultfilter thrownexception
+SetTracerClassMapping: BlamedThrownExceptionMethodTraceIncrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedThrownExceptionMethodTraceIncrementor delta 1
+SetTracerParameter: BlamedThrownExceptionMethodTraceIncrementor reentrancy instance
+SetTracerParameter: BlamedThrownExceptionMethodTraceIncrementor useblame true
+SetTracerParameter: BlamedThrownExceptionMethodTraceIncrementor resultfilter thrownexception
+SetTracerOrdering: BlamedThrownExceptionMethodTraceIncrementor -100
+SetTracerClassMapping: BlamedThrownExceptionMethodTraceDecrementor com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedThrownExceptionMethodTraceDecrementor delta -1
+SetTracerParameter: BlamedThrownExceptionMethodTraceDecrementor reentrancy instance
+SetTracerParameter: BlamedThrownExceptionMethodTraceDecrementor useblame true
+SetTracerParameter: BlamedThrownExceptionMethodTraceDecrementor resultfilter thrownexception
+SetTracerOrdering: BlamedThrownExceptionMethodTraceDecrementor -100
+
+######################################
+#from required_common_tracers.pbd 
+#PerInterValCounter
+######################################
+SetTracerClassMapping: PerIntervalCounter com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerClassMapping: PerIntervalCounterDifferentInstances com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: PerIntervalCounterDifferentInstances reentrancy instance
+SetTracerClassMapping: PerIntervalCounterDifferentMethods com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: PerIntervalCounterDifferentMethods reentrancy methodname
+SetTracerClassMapping: BlamedPerIntervalCounter com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedPerIntervalCounter useblame true
+SetTracerClassMapping: BlamedPerIntervalCounterDifferentInstances com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedPerIntervalCounterDifferentInstances reentrancy instance
+SetTracerParameter: BlamedPerIntervalCounterDifferentInstances useblame true
+SetTracerOrdering: BlamedPerIntervalCounterDifferentInstances -100
+SetTracerClassMapping: BlamedPerIntervalCounterDifferentMethods com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedPerIntervalCounterDifferentMethods reentrancy methodname
+SetTracerParameter: BlamedPerIntervalCounterDifferentMethods useblame true
+SetTracerOrdering: BlamedPerIntervalCounterDifferentMethods 100
+
+SetTracerClassMapping: NormalCompletionPerIntervalCounter com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NormalCompletionPerIntervalCounter resultfilter normalcompletion
+SetTracerClassMapping: NormalCompletionPerIntervalCounterDifferentInstances com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NormalCompletionPerIntervalCounterDifferentInstances reentrancy instance
+SetTracerParameter: NormalCompletionPerIntervalCounterDifferentInstances resultfilter normalcompletion
+SetTracerClassMapping: NormalCompletionPerIntervalCounterDifferentMethods com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NormalCompletionPerIntervalCounterDifferentMethods reentrancy methodname
+SetTracerParameter: NormalCompletionPerIntervalCounterDifferentMethods resultfilter normalcompletion
+SetTracerClassMapping: BlamedNormalCompletionPerIntervalCounter com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounter useblame true
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounter resultfilter normalcompletion
+SetTracerClassMapping: BlamedNormalCompletionPerIntervalCounterDifferentInstances com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounterDifferentInstances reentrancy instance
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounterDifferentInstances useblame true
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounterDifferentInstances resultfilter normalcompletion
+SetTracerOrdering: BlamedNormalCompletionPerIntervalCounterDifferentInstances -100
+SetTracerClassMapping: BlamedNormalCompletionPerIntervalCounterDifferentMethods com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounterDifferentMethods reentrancy methodname
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounterDifferentMethods useblame true
+SetTracerParameter: BlamedNormalCompletionPerIntervalCounterDifferentMethods resultfilter normalcompletion
+SetTracerOrdering: BlamedNormalCompletionPerIntervalCounterDifferentMethods 100
+
+SetTracerClassMapping: ThrownExceptionPerIntervalCounter com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThrownExceptionPerIntervalCounter resultfilter thrownexception
+SetTracerClassMapping: ThrownExceptionPerIntervalCounterDifferentInstances com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThrownExceptionPerIntervalCounterDifferentInstances reentrancy instance
+SetTracerParameter: ThrownExceptionPerIntervalCounterDifferentInstances resultfilter thrownexception
+SetTracerClassMapping: ThrownExceptionPerIntervalCounterDifferentMethods com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThrownExceptionPerIntervalCounterDifferentMethods reentrancy methodname
+SetTracerParameter: ThrownExceptionPerIntervalCounterDifferentMethods resultfilter thrownexception
+SetTracerClassMapping: BlamedThrownExceptionPerIntervalCounter com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounter useblame true
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounter resultfilter thrownexception
+SetTracerClassMapping: BlamedThrownExceptionPerIntervalCounterDifferentInstances com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounterDifferentInstances reentrancy instance
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounterDifferentInstances useblame true
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounterDifferentInstances resultfilter thrownexception
+SetTracerOrdering: BlamedThrownExceptionPerIntervalCounterDifferentInstances -100
+SetTracerClassMapping: BlamedThrownExceptionPerIntervalCounterDifferentMethods com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounterDifferentMethods reentrancy methodname
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounterDifferentMethods useblame true
+SetTracerParameter: BlamedThrownExceptionPerIntervalCounterDifferentMethods resultfilter thrownexception
+SetTracerOrdering: BlamedThrownExceptionPerIntervalCounterDifferentMethods 100
+
+
+######################################
+#from required_common_tracers.pbd 
+#MethodTimer
+######################################
+SetTracerClassMapping: MethodTimer com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerClassMapping: MethodTimerDifferentInstances com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimerDifferentInstances reentrancy instance
+SetTracerClassMapping: MethodTimerDifferentMethods com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimerDifferentMethods reentrancy methodname
+SetTracerClassMapping: BlamedMethodTimer com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTimer useblame true
+SetTracerClassMapping: BlamedMethodTimerDifferentInstances com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTimerDifferentInstances reentrancy instance
+SetTracerParameter: BlamedMethodTimerDifferentInstances useblame true
+SetTracerOrdering: BlamedMethodTimerDifferentInstances -100
+SetTracerClassMapping: BlamedMethodTimerDifferentMethods com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTimerDifferentMethods reentrancy methodname
+SetTracerParameter: BlamedMethodTimerDifferentMethods useblame true
+SetTracerOrdering: BlamedMethodTimerDifferentMethods 100
+######################################
+#from required_java_tracers.pbd
+######################################
+
+SetTracerClassMapping: HttpServletTracer com.wily.introscope.agent.trace.hc2.HttpServletTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: HttpServletTracer generatebusinesstransactionmetrics true
+SetTracerParameter: HttpServletTracer newmode true
+SetTracerParameter: HttpServletTracer useblame true
+SetTracerOrdering: HttpServletTracer -1000
+
+SetTracerClassMapping: ServletTracingDisablingTracer com.wily.introscope.agent.trace.hc2.ServletTracingDisablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ServletTracingDisablingTracer newmode true
+SetTracerParameter: ServletTracingDisablingTracer useblame false
+SetTracerOrdering: ServletTracingDisablingTracer -2000
+
+#################################################
+# Errors tracers from required_common_tracers
+#################################################
+
+SetTracerClassMapping: ExceptionErrorReporter  com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer  com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ExceptionErrorReporter reentrancy instance
+SetTracerParameter: ExceptionErrorReporter newmode true
+SetTracerParameter: ExceptionErrorReporter useblame false
+SetTracerParameter: ExceptionErrorReporter ownmetric false
+
+SetTracerClassMapping: MethodCalledErrorReporter com.wily.introscope.agent.trace.hc2.MethodCompletedErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodCalledErrorReporter reentrancy instance
+SetTracerParameter: MethodCalledErrorReporter newmode true
+SetTracerParameter: MethodCalledErrorReporter useblame false
+SetTracerParameter: MethodCalledErrorReporter ownmetric false
+
+SetTracerClassMapping: HTTPErrorCodeReporter com.wily.introscope.agent.trace.hc2.HTTPErrorCodeReporter com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: HTTPErrorCodeReporter reentrancy instance
+SetTracerParameter: HTTPErrorCodeReporter newmode true
+SetTracerParameter: HTTPErrorCodeReporter useblame false
+
+SetTracerClassMapping: ThisErrorReporter com.wily.introscope.agent.trace.hc2.ThisErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ThisErrorReporter reentrancy instance
+SetTracerParameter: ThisErrorReporter newmode true
+SetTracerParameter: ThisErrorReporter useblame false
+
+SetTracerClassMapping: LegacyCompatibleExceptionErrorReporterHC2  com.wily.introscope.agent.trace.hc2.LegacyCompatibleErrorReportingTracer  com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: LegacyCompatibleExceptionErrorReporterHC2 reentrancy instance
+SetTracerParameter: LegacyCompatibleExceptionErrorReporterHC2 newmode true
+SetTracerParameter: LegacyCompatibleExceptionErrorReporterHC2 useblame false
+
+SetTracerOrdering: HTTPErrorCodeReporter 1000
+SetTracerOrdering: MethodCalledErrorReporter 1000
+SetTracerOrdering: ExceptionErrorReporter 1000
+SetTracerOrdering: LegacyCompatibleExceptionErrorReporterHC2 900
+
+
+
+#########################################
+# Additional parameters 
+#########################################
+
+# Parameters for http servlet tracers
+
+SetTracerParameter: HttpServletTracer usecomputedblame true
+
+
+
+#################################
+# Additional mapping for single metric tracers
+# from required_common_tracers
+################################
+
+SetTracerClassMapping: MethodTimerHC com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimerHC newmode true
+SetTracerParameter: MethodTimerHC useblame false
+
+SetTracerClassMapping: MethodTimerDifferentInstancesHC com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimerDifferentInstancesHC reentrancy instance
+SetTracerParameter: MethodTimerDifferentInstancesHC newmode true
+SetTracerParameter: MethodTimerDifferentInstancesHC useblame false
+
+SetTracerClassMapping: MethodTimerDifferentMethodsHC com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimerDifferentMethodsHC reentrancy methodname
+SetTracerParameter: MethodTimerDifferentInstancesHC newmode true
+SetTracerParameter: MethodTimerDifferentInstancesHC useblame false
+
+SetTracerClassMapping: BlamedMethodTimerHC com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimerDifferentInstancesHC newmode true
+SetTracerParameter: BlamedMethodTimerHC useblame true
+
+SetTracerClassMapping: BlamedMethodTimerDifferentInstancesHC com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTimerDifferentInstancesHC reentrancy instance
+SetTracerParameter: MethodTimerDifferentInstancesHC newmode true
+SetTracerParameter: BlamedMethodTimerDifferentInstancesHC useblame true
+
+SetTracerClassMapping: BlamedMethodTimerDifferentMethodsHC com.wily.introscope.agent.trace.hc2.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTimerDifferentMethodsHC reentrancy methodname
+SetTracerParameter: BlamedMethodTimerDifferentMethodsHC newmode true
+SetTracerParameter: BlamedMethodTimerDifferentMethodsHC useblame true
+
+SetTracerClassMapping: MethodNanoTimerHC com.wily.introscope.agent.trace.hc2.MethodNanoTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodNanoTimerHC newmode true
+SetTracerParameter: MethodNanoTimerHC useblame false
+
+SetTracerClassMapping: MethodNanoTimerDifferentInstancesHC com.wily.introscope.agent.trace.hc2.MethodNanoTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodNanoTimerDifferentInstancesHC reentrancy instance
+SetTracerParameter: MethodNanoTimerDifferentInstancesHC newmode true
+SetTracerParameter: MethodNanoTimerDifferentInstancesHC useblame false
+
+SetTracerClassMapping: MethodNanoTimerDifferentMethodsHC com.wily.introscope.agent.trace.hc2.MethodNanoTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodNanoTimerDifferentMethodsHC reentrancy methodname
+SetTracerParameter: MethodNanoTimerDifferentMethodsHC newmode true
+SetTracerParameter: MethodNanoTimerDifferentMethodsHC useblame false
+
+SetTracerClassMapping: BlamedMethodNanoTimerHC com.wily.introscope.agent.trace.hc2.MethodNanoTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodNanoTimerHC newmode true
+SetTracerParameter: BlamedMethodNanoTimerHC useblame true
+
+SetTracerClassMapping: BlamedMethodNanoTimerDifferentInstancesHC com.wily.introscope.agent.trace.hc2.MethodNanoTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodNanoTimerDifferentInstancesHC reentrancy instance
+SetTracerParameter: BlamedMethodNanoTimerDifferentInstancesHC newmode true
+SetTracerParameter: BlamedMethodNanoTimerDifferentInstancesHC useblame true
+
+SetTracerClassMapping: BlamedMethodNanoTimerDifferentMethodsHC com.wily.introscope.agent.trace.hc2.MethodNanoTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodNanoTimerDifferentMethodsHC reentrancy methodname
+SetTracerParameter: BlamedMethodNanoTimerDifferentMethodsHC newmode true
+SetTracerParameter: BlamedMethodNanoTimerDifferentMethodsHC useblame true
+
+SetTracerClassMapping: PerIntervalCounterHC com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: PerIntervalCounterHC newmode true
+SetTracerParameter: PerIntervalCounterHC useblame false
+
+SetTracerClassMapping: PerIntervalCounterDifferentInstancesHC com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: PerIntervalCounterDifferentInstancesHC reentrancy instance
+SetTracerParameter: PerIntervalCounterDifferentInstancesHC newmode true
+SetTracerParameter: PerIntervalCounterDifferentInstancesHC useblame false
+
+SetTracerClassMapping: PerIntervalCounterDifferentMethodsHC com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: PerIntervalCounterDifferentMethodsHC reentrancy methodname
+SetTracerParameter: PerIntervalCounterDifferentMethodsHC newmode true
+SetTracerParameter: PerIntervalCounterDifferentMethodsHC useblame false
+
+SetTracerClassMapping: BlamedPerIntervalCounterHC com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedPerIntervalCounterHC newmode true
+SetTracerParameter: BlamedPerIntervalCounterHC useblame true
+
+SetTracerClassMapping: BlamedPerIntervalCounterDifferentInstancesHC com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedPerIntervalCounterDifferentInstancesHC reentrancy instance
+SetTracerParameter: BlamedPerIntervalCounterDifferentInstancesHC newmode true
+SetTracerParameter: BlamedPerIntervalCounterDifferentInstancesHC useblame true
+
+SetTracerClassMapping: BlamedPerIntervalCounterDifferentMethodsHC com.wily.introscope.agent.trace.hc2.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedPerIntervalCounterDifferentMethodsHC reentrancy methodname
+SetTracerParameter: BlamedPerIntervalCounterDifferentMethodsHC newmode true
+SetTracerParameter: BlamedPerIntervalCounterDifferentMethodsHC useblame true
+
+
+################################################################
+#
+#New Mode Mapping for MethodeRateTracer and MethodFinishCounter
+#
+#####################3##########################################
+
+SetTracerClassMapping: MethodRateTracerHC com.wily.introscope.agent.trace.hc2.MethodRateTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+ 
+SetTracerClassMapping: BlamedMethodTraceIncrementorHC com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTraceIncrementorHC delta 1
+SetTracerParameter: BlamedMethodTraceIncrementorHC reentrancy instance
+SetTracerParameter: BlamedMethodTraceIncrementorHC useblame true
+
+SetTracerClassMapping: SimpleIncrementorHC com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SimpleIncrementorHC delta 1
+
+SetTracerClassMapping: SimpleDecrementorHC com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SimpleDecrementorHC delta -1
+
+SetTracerClassMapping: BlamedMethodRateTracerHC com.wily.introscope.agent.trace.hc2.MethodRateTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodRateTracerHC useblame true
+
+SetTracerClassMapping: BlamedMethodTraceDecrementorHC com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTraceDecrementorHC delta -1
+SetTracerParameter: BlamedMethodTraceDecrementorHC reentrancy instance
+SetTracerParameter: BlamedMethodTraceDecrementorHC useblame true
+
+SetTracerClassMapping: MethodTraceIncrementorHC com.wily.introscope.agent.trace.hc2.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTraceIncrementorHC delta 1
+SetTracerParameter: MethodTraceIncrementorHC reentrancy instance
+
+#ordering : 
+
+SetTracerOrdering: BlamedMethodTraceIncrementorHC -100
+
+SetTracerOrdering: BlamedMethodTraceDecrementorHC -100

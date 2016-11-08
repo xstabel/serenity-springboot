@@ -1,0 +1,39 @@
+###############################################################################
+#
+# CA Wily Introscope(R)
+# PowerPack for WebSphere MQ Connectors and Messaging System(R)
+# Version: 10.1.0.15
+# Build: 990014
+#
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#
+# Introscope ProbeBuilder List File                              
+###############################################################################
+           
+###############################################################
+### This file contains the ProbeBuilder directives used when   
+### adding probes into IBM WebSphere 6.1.x, and 7.0.x.    
+### This pbl file should be placed in the wily directory.
+###     The pbl file includes four pbd's
+### a) webspheremq-legacy.pbd - This pbd adds support for MQ PP 10.1.0.15 metrics.
+### b) webspheremq_errors-legacy.pbd - This pbd supports Error Detector. By default, this is commented out.
+### c) webspheremq_instancecounts-legacy.pbd - This pbd will provide Instance Counts value. By default, this is commented out.
+### d) webspheremq-extra-legacy.pbd - This pbd will provide the webservice dependency if MQ is used as transport. 
+###   By default, this is commented out. SOA Performance Manager needs to be installed before using this PBD. 
+###   Note: To receive metrics in respective areas, please uncomment the respective pbd file(s).
+###############################################################
+
+
+#######################
+# Directives Files
+# ================
+# One directives file name per line.  Relative names
+# are resolved against the location of this file.
+
+webspheremq-legacy.pbd
+#webspheremq-extra-legacy.pbd
+#webspheremq_errors-legacy.pbd
+#webspheremq_instancecounts-legacy.pbd
+

@@ -1,0 +1,67 @@
+########################################################################
+# HttpServlet SYSVIEW Tracer                              
+#
+#  	Version: 10.1.0.15
+#  	Build: 990014
+#
+# 	Copyright (c) 2015 CA. All Rights Reserved.
+# 	Introscope(R) is a registered trademark of CA.
+#
+########################################################################
+
+
+##################################################################################################
+#
+# Generic client-side HTTP URL Connection tracers
+#
+# NOTES:
+# Injects Correlation ID into the HTTP header for use with HTTP correlation
+#
+##################################################################################################
+TurnOn: URLConnectionCorrelationTracing
+SetFlag: URLConnectionCorrelationTracing
+
+InstrumentBootstrapClass: java.net.URLConnection true
+IdentifyDeepInheritedAs: java.net.URLConnection URLConnectionCorrelationTracing
+
+SetTracerClassMapping: URLConnCorrTracer com.wily.powerpack.sysview.httptracer.URLConnectionCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator 
+SetTracerClassMapping: URLConnBlamePointTracer com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator 
+
+SetTracerOrdering: URLConnBlamePointTracer 100
+SetTracerOrdering: URLConnCorrTracer 200
+
+TraceOneMethodWithParametersIfFlagged: URLConnectionCorrelationTracing setDoOutput  URLConnCorrTracer "URL Correlation Tracing"
+TraceOneMethodWithParametersIfFlagged: URLConnectionCorrelationTracing setDoOutput  URLConnBlamePointTracer "URL Connection Tracing"
+
+
+##################################################################################################
+#
+# Generic server-side HTTP Servlet tracers
+#
+# NOTES:
+# Extracts Correlation ID from HTTP header for middleware servlets
+#
+# This can be restricted to a specific servlet by copying then commenting out the following
+# directive then renaming the class in the copy to the class of the servlet to trace.
+# The servlet must be a direct or indirect subclass of javax.servlet.http.HttpServlet.
+# IdentifyDeepInheritedAs: javax.servlet.http.HttpServlet HttpServletCorrelationTracing
+##################################################################################################
+IdentifyDeepInheritedAs: javax.servlet.http.HttpServlet HttpServletCorrelationTracing
+
+TurnOn: HttpServletCorrelationTracing
+SetFlag: HttpServletCorrelationTracing
+
+SetTracerClassMapping: HttpServletCorrelationTracer com.wily.powerpack.sysview.httptracer.HttpServletCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerClassMapping: HSBlamePointTracer com.wily.introscope.agent.trace.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator 
+
+SetTracerOrdering: HSBlamePointTracer 100
+SetTracerOrdering: HttpServletCorrelationTracer 200
+
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doPost HttpServletCorrelationTracer "Http Servlet Correlation Tracing"
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doPost HSBlamePointTracer "HttpServlet Tracing"
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doGet HttpServletCorrelationTracer "Http Servlet Correlation Tracing"
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doGet HSBlamePointTracer "HttpServlet Tracing"
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doDelete HttpServletCorrelationTracer "Http Servlet Correlation Tracing"
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doDelete HSBlamePointTracer "HttpServlet Tracing"
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doPut HttpServletCorrelationTracer "Http Servlet Correlation Tracing"
+TraceOneMethodWithParametersIfFlagged: HttpServletCorrelationTracing doPut HSBlamePointTracer "HttpServlet Tracing"

@@ -1,0 +1,22 @@
+# This file defines sub networks and is used by agent to weight importance of network interfaces.  Interfaces in the networks
+# defined here will have lower priority when it comes to choosing the primary network interface.
+#
+# File format.  Line consists of simple text lines.  If line contains #, the # and rest of line is discarded as comment.  Next
+# any trailing spaces are discarded.  Any empty lines are also discarded.  Remaining lines are assumed to start with either
+# 'private' or 'tunnel' then one or more whitespace characters followed by sub net specified in the form of <IP ADDRESS>/<RANGE>.
+# Where <IP ADDRESS> is either IPv4 or IPv6 address (though only sub net portion of address is required), if address contains
+# any colons, it is assumed to be in IPv6 format, otherwise it is assumed to be in IPv4 format.  The <RANGE> is an integer
+# number indicating the number of bits in the subnet address.  For example 10/8 indicates the subnet starting at 10.0.0.0
+# and which requires sub net mask of 255.0.0.0.
+# private IPv4 sub nets
+private	10/8			# RFC1918: 10.0.0.0		net mask 255.0.0.0
+private	172.106/12		# RFC1918: 172.106.0.0	net mask 255.240.0.0
+private	192.168/16		# RFC1918: 192.168.0.0	net mask 255.255.0.0
+private	169.254/16		# RFC3330: 169.254.0.0	net mask 255.255.0.0
+# private IPv6 sub nets
+private	FE80::/10		# RFC3513: FE80::		net mask FFC0::			link local
+private	FEC0::/10		# RFC3513: FEC0::		net mask FFC0::			site local
+private	FC00::/7		# RFC4193: FC00::		net mask FE00::			local IPv6 unicast
+# IPv6 tunnelling sub nets
+tunnel	2002::/16		# RFC3056: 2002::		net mask FFFF::			6to4 pseudo tunnel
+tunnel	2001:0000:/32	# RFC3480: 2001:0000::	net mask FFFF:FFFF::	Teredo: Tunneling IPv6 over UDP

@@ -1,0 +1,378 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                   
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#############################################################
+# This file provides tracer directives for AppMap EJB Instrumentation
+#############################################################
+
+#############
+# Flag intersection
+#############
+
+SetFlag: SessionBeanTracingMethodClass
+SetFlag: SessionBean3TracingMethodClass
+SetFlag: EntityBeanTracingMethodClass
+SetFlag: EntityBean3TracingMethodClass
+SetFlag: MessageDrivenBeanTracingMethodClass
+SetFlag: MessageDrivenBean3TracingMethodClass
+SetFlag: EJB2StubTracingMethodClass
+SetFlag: EJB3stubTracingMethodClass
+
+SetFlag: SessionBeanTracingClass
+SetFlag: SessionBean3TracingClass
+SetFlag: EntityBeanTracingClass
+SetFlag: EntityBean3TracingClass
+SetFlag: MessageDrivenBeanTracingClass
+SetFlag: MessageDrivenBean3TracingClass
+SetFlag: EJB2StubTracingClass
+SetFlag: EJB3stubTracingClass
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBeanTracing MethodClassLevelInstrument SessionBeanTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBean3Tracing MethodClassLevelInstrument SessionBean3TracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBeanTracing MethodClassLevelInstrument EntityBeanTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBean3Tracing MethodClassLevelInstrument EntityBean3TracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBeanTracing MethodClassLevelInstrument MessageDrivenBeanTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBean3Tracing MethodClassLevelInstrument MessageDrivenBean3TracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EJB2StubTracing MethodClassLevelInstrument EJB2StubTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EJB3stubTracing MethodClassLevelInstrument EJB3stubTracingMethodClass
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBeanTracing ClassLevelInstrument SessionBeanTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBean3Tracing ClassLevelInstrument SessionBean3TracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBeanTracing ClassLevelInstrument EntityBeanTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBean3Tracing ClassLevelInstrument EntityBean3TracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBeanTracing ClassLevelInstrument MessageDrivenBeanTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBean3Tracing ClassLevelInstrument MessageDrivenBean3TracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EJB2StubTracing ClassLevelInstrument EJB2StubTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: EJB3stubTracing ClassLevelInstrument EJB3stubTracingClass
+
+#################################
+# EJBs as front ends and backends
+#################################
+
+######
+# Temporary moved to required.pbd and required.new.pbd
+###
+
+
+########################
+# AppMap vertex tracers
+########################
+
+TraceComplexMethodsIfFlagged: SessionBeanTracingMethodClass AppMapEJB2ApplicationNameTracer "{bean}"
+TraceComplexMethodsIfFlagged: SessionBeanTracingMethodClass AppMapEJB2Tracer "Session {interface}|{method}" 
+TraceComplexMethodsIfFlagged: SessionBeanTracingClass AppMapEJB2TracerClassLevel "Session {interface}" 
+TraceComplexMethodsIfFlagged: SessionBeanTracingMethodClass AppMapEJB2TracerBT "Session {interface}|{method}" 
+TraceComplexMethodsIfFlagged: SessionBeanTracingClass AppMapEJB2TracerClassLevelBT "Session {interface}" 
+
+TraceComplexMethodsIfFlagged: SessionBean3TracingMethodClass AppMapEJB3ApplicationNameTracer "{bean}"
+TraceComplexMethodsIfFlagged: SessionBean3TracingMethodClass AppMapEJB3Tracer "Session {interface}|{method}" 
+TraceComplexMethodsIfFlagged: SessionBean3TracingClass AppMapEJB3TracerClassLevel "Session {interface}" 
+TraceComplexMethodsIfFlagged: SessionBean3TracingMethodClass AppMapEJB3TracerBT "Session {interface}|{method}" 
+TraceComplexMethodsIfFlagged: SessionBean3TracingClass AppMapEJB3TracerClassLevelBT "Session {interface}" 
+
+TraceComplexMethodsIfFlagged: EntityBeanTracingMethodClass AppMapEJB2ApplicationNameTracer "{bean}"
+TraceComplexMethodsIfFlagged: EntityBeanTracingMethodClass AppMapEJB2Tracer "Entity {interface}|{method}"
+TraceComplexMethodsIfFlagged: EntityBeanTracingClass AppMapEJB2TracerClassLevel "Entity {interface}"
+TraceComplexMethodsIfFlagged: EntityBeanTracingMethodClass AppMapEJB2TracerBT "Entity {interface}|{method}"
+TraceComplexMethodsIfFlagged: EntityBeanTracingClass AppMapEJB2TracerClassLevelBT "Entity {interface}"
+
+TraceComplexMethodsIfFlagged: EntityBean3TracingMethodClass AppMapEJB3Tracer "Entity {bean}|{method}"
+TraceComplexMethodsIfFlagged: EntityBean3TracingClass AppMapEJB3TracerClassLevel "Entity {bean}"
+TraceComplexMethodsIfFlagged: EntityBean3TracingMethodClass AppMapEJB3TracerBT "Entity {bean}|{method}"
+TraceComplexMethodsIfFlagged: EntityBean3TracingClass AppMapEJB3TracerClassLevelBT "Entity {bean}"
+
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingMethodClass AppMapEJB2ApplicationNameTracer "{bean}"
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingMethodClass AppMapEJB2Tracer "MDB {bean}|{method}"
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingClass AppMapEJB2TracerClassLevel "MDB {bean}"
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingMethodClass AppMapEJB2TracerBT " MDB{bean}|{method}"
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingClass AppMapEJB2TracerClassLevelBT "MDB {bean}"
+
+TraceComplexMethodsIfFlagged: MessageDrivenBean3TracingMethodClass AppMapEJB3Tracer "MDB {bean}|{method}"
+TraceComplexMethodsIfFlagged: MessageDrivenBean3TracingClass AppMapEJB3TracerClassLevel "MDB {bean}"
+TraceComplexMethodsIfFlagged: MessageDrivenBean3TracingMethodClass AppMapEJB3TracerBT "MDB {bean}|{method}"
+TraceComplexMethodsIfFlagged: MessageDrivenBean3TracingClass AppMapEJB3TracerClassLevelBT "MDB {bean}"
+
+TraceComplexMethodsIfFlagged: EJB2StubTracingMethodClass AppMapEJB2ClientTracer "{interface}|{method}" 
+TraceComplexMethodsIfFlagged: EJB2StubTracingClass AppMapEJB2ClientTracerClassLevel "{interface}" 
+TraceComplexMethodsIfFlagged: EJB2StubTracingMethodClass AppMapEJB2ClientTracerBT "{interface}|{method}" 
+TraceComplexMethodsIfFlagged: EJB2StubTracingClass AppMapEJB2ClientTracerClassLevelBT "{interface}" 
+
+TraceComplexMethodsIfFlagged: EJB3stubTracingMethodClass AppMapEJB3ClientTracer "{interface}|{method}" 
+TraceComplexMethodsIfFlagged: EJB3stubTracingClass AppMapEJB3ClientTracerClassLevel "{interface}" 
+TraceComplexMethodsIfFlagged: EJB3stubTracingMethodClass AppMapEJB3ClientTracerBT "{interface}|{method}" 
+TraceComplexMethodsIfFlagged: EJB3stubTracingClass AppMapEJB3ClientTracerClassLevelBT "{interface}" 
+
+SetTracerClassMapping: AppMapEJB2ApplicationNameTracer com.wily.introscope.appmap.agent.trace.AppMapLazyNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2ApplicationNameTracer applicationName EJB
+SetTracerParameter: AppMapEJB2ApplicationNameTracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+SetTracerParameter: AppMapEJB2ApplicationNameTracer ownerType Application
+
+SetTracerClassMapping: AppMapEJB3ApplicationNameTracer com.wily.introscope.appmap.agent.trace.AppMapLazyNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3ApplicationNameTracer applicationName EJB
+SetTracerParameter: AppMapEJB3ApplicationNameTracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+SetTracerParameter: AppMapEJB3ApplicationNameTracer ownerType Application
+
+
+SetTracerClassMapping: AppMapEJB2Tracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2Tracer nodeType EJB
+SetTracerParameter: AppMapEJB2Tracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+SetTracerParameter: AppMapEJB2Tracer nodeLevel MethodClass
+SetTracerParameter: AppMapEJB2Tracer ownerType Application
+
+SetTracerClassMapping: AppMapEJB3Tracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3Tracer nodeType EJB
+SetTracerParameter: AppMapEJB3Tracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+SetTracerParameter: AppMapEJB3Tracer nodeLevel MethodClass
+SetTracerParameter: AppMapEJB3Tracer ownerType Application
+
+SetTracerClassMapping: AppMapEJB2ClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2ClientTracer nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB2ClientTracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb2StubNameFormatter
+SetTracerParameter: AppMapEJB2ClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapEJB2ClientTracer ownerType Application
+SetTracerParameter: AppMapEJB2ClientTracer boundaryType Backend
+
+SetTracerClassMapping: AppMapEJB3ClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3ClientTracer nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB3ClientTracer nameformatter com.wily.introscope.agent.trace.ejb.Ejb3StubNameFormatter
+SetTracerParameter: AppMapEJB3ClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapEJB3ClientTracer ownerType Application
+SetTracerParameter: AppMapEJB3ClientTracer boundaryType Backend
+
+SetTracerClassMapping: AppMapEJB2TracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2TracerClassLevel nodeType EJB
+SetTracerParameter: AppMapEJB2TracerClassLevel nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+SetTracerParameter: AppMapEJB2TracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapEJB2TracerClassLevel ownerType Application
+
+SetTracerClassMapping: AppMapEJB3TracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3TracerClassLevel nodeType EJB
+SetTracerParameter: AppMapEJB3TracerClassLevel nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+SetTracerParameter: AppMapEJB3TracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapEJB3TracerClassLevel ownerType Application
+
+SetTracerClassMapping: AppMapEJB2ClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2ClientTracerClassLevel nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB2ClientTracerClassLevel nameformatter com.wily.introscope.agent.trace.ejb.Ejb2StubNameFormatter
+SetTracerParameter: AppMapEJB2ClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapEJB2ClientTracerClassLevel ownerType Application
+SetTracerParameter: AppMapEJB3TracerClassLevel boundaryType Backend
+
+SetTracerClassMapping: AppMapEJB3ClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3ClientTracerClassLevel nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB3ClientTracerClassLevel nameformatter com.wily.introscope.agent.trace.ejb.Ejb3StubNameFormatter
+SetTracerParameter: AppMapEJB3ClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapEJB3ClientTracerClassLevel ownerType Application
+SetTracerParameter: AppMapEJB3ClientTracerClassLevel boundaryType Backend
+
+SetTracerClassMapping: AppMapEJB2TracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2TracerBT nodeType EJB
+SetTracerParameter: AppMapEJB2TracerBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+SetTracerParameter: AppMapEJB2TracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapEJB2TracerBT ownerType BusinessTransactionComponent
+
+SetTracerClassMapping: AppMapEJB3TracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3TracerBT nodeType EJB
+SetTracerParameter: AppMapEJB3TracerBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+SetTracerParameter: AppMapEJB3TracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapEJB3TracerBT ownerType BusinessTransactionComponent
+
+SetTracerClassMapping: AppMapEJB2ClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2ClientTracerBT nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB2ClientTracerBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb2StubNameFormatter
+SetTracerParameter: AppMapEJB2ClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapEJB2ClientTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapEJB2ClientTracerBT boundaryType Backend
+
+SetTracerClassMapping: AppMapEJB3ClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3ClientTracerBT nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB3ClientTracerBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb3StubNameFormatter
+SetTracerParameter: AppMapEJB3ClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapEJB3ClientTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapEJB3ClientTracerBT boundaryType Backend
+
+SetTracerClassMapping: AppMapEJB2TracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2TracerClassLevelBT nodeType EJB
+SetTracerParameter: AppMapEJB2TracerClassLevelBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+SetTracerParameter: AppMapEJB2TracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapEJB2TracerClassLevelBT ownerType BusinessTransactionComponent
+
+SetTracerClassMapping: AppMapEJB3TracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3TracerClassLevelBT nodeType EJB
+SetTracerParameter: AppMapEJB3TracerClassLevelBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+SetTracerParameter: AppMapEJB3TracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapEJB3TracerClassLevelBT ownerType BusinessTransactionComponent
+
+SetTracerClassMapping: AppMapEJB2ClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2ClientTracerClassLevelBT nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB2ClientTracerClassLevelBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb2StubNameFormatter
+SetTracerParameter: AppMapEJB2ClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapEJB2ClientTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapEJB2ClientTracerClassLevelBT boundaryType Backend
+
+SetTracerClassMapping: AppMapEJB3ClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3ClientTracerClassLevelBT nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB3ClientTracerClassLevelBT nameformatter com.wily.introscope.agent.trace.ejb.Ejb3StubNameFormatter
+SetTracerParameter: AppMapEJB3ClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapEJB3ClientTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapEJB3ClientTracerClassLevelBT boundaryType Backend
+
+SetTracerOrdering: EJB2ContextMapper -5001
+SetTracerOrdering: AppMapEJB2ApplicationNameTracer -5000
+SetTracerOrdering: AppMapEJB3ApplicationNameTracer -5000
+SetTracerOrdering: AppMapEJB2ClientTracerClassLevelBT -4003
+SetTracerOrdering: AppMapEJB3ClientTracerClassLevelBT -4003
+SetTracerOrdering: AppMapEJB2TracerClassLevelBT -4003
+SetTracerOrdering: AppMapEJB3TracerClassLevelBT -4003
+SetTracerOrdering: AppMapEJB2ClientTracerBT -4002
+SetTracerOrdering: AppMapEJB3ClientTracerBT -4002
+SetTracerOrdering: AppMapEJB2TracerBT -4002
+SetTracerOrdering: AppMapEJB3TracerBT -4002
+SetTracerOrdering: AppMapEJB2ClientTracerClassLevel -4001
+SetTracerOrdering: AppMapEJB3ClientTracerClassLevel -4001
+SetTracerOrdering: AppMapEJB2TracerClassLevel -4001
+SetTracerOrdering: AppMapEJB3TracerClassLevel -4001
+SetTracerOrdering: AppMapEJB2ClientTracer -4000
+SetTracerOrdering: AppMapEJB3ClientTracer -4000
+SetTracerOrdering: AppMapEJB2Tracer -4000
+SetTracerOrdering: AppMapEJB3Tracer -4000
+
+#############################################################
+# This file provides tracer directives for AppMap EJB Instrumentation (new configuration
+#############################################################
+
+#############
+# Flag intersection
+#############
+
+SetFlag: SessionBeanTracingMethodClassNew
+SetFlag: SessionBean3TracingMethodClassNew
+SetFlag: EntityBeanTracingMethodClassNew
+SetFlag: EntityBean3TracingMethodClassNew
+SetFlag: MessageDrivenBeanTracingMethodClassNew
+SetFlag: MessageDrivenBean3TracingMethodClassNew
+SetFlag: EJB2StubTracingMethodClassNew
+SetFlag: EJB3StubTracingMethodClassNew
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBeanTracing AppMapInstrumentNew SessionBeanTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBean3Tracing AppMapInstrumentNew SessionBean3TracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBeanTracing AppMapInstrumentNew EntityBeanTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBean3Tracing AppMapInstrumentNew EntityBean3TracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBeanTracing AppMapInstrumentNew MessageDrivenBeanTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBean3Tracing AppMapInstrumentNew MessageDrivenBean3TracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: EJB2StubTracing AppMapInstrumentNew EJB2StubTracingMethodClassNew
+IdentifyTwoFlagIntersectionAsAggregateFlag: EJB3StubTracing AppMapInstrumentNew EJB3StubTracingMethodClassNew
+
+SkipMethodForFlag: AppMapInstrumentNew ejbActivate
+SkipMethodForFlag: AppMapInstrumentNew ejbPassivate
+SkipMethodForFlag: AppMapInstrumentNew ejbLoad
+SkipMethodForFlag: AppMapInstrumentNew ejbRemove
+SkipMethodForFlag: AppMapInstrumentNew setEntityContext
+SkipMethodForFlag: AppMapInstrumentNew unsetEntityContext
+SkipMethodForFlag: AppMapInstrumentNew ejbCreate
+SkipMethodForFlag: AppMapInstrumentNew ejbPostCreate
+SkipMethodForFlag: AppMapInstrumentNew ejbStore
+
+########################
+# AppMap vertex tracers
+########################
+
+TraceComplexMethodsIfFlagged: SessionBeanTracingMethodClassNew AppMapEJB2ApplicationNameMarker "{bean}"
+
+TraceComplexMethodsIfFlagged: SessionBeanTracingMethodClassNew AppMapEJB2Marker "Session {interface}|{method}" 
+
+TraceComplexMethodsIfFlagged: SessionBean3TracingMethodClassNew AppMapEJB3ApplicationNameMarker "{bean}"
+
+TraceComplexMethodsIfFlagged: SessionBean3TracingMethodClassNew AppMapEJB3Marker "Session {interface}|{method}" 
+
+TraceComplexMethodsIfFlagged: EntityBeanTracingMethodClassNew AppMapEJB2ApplicationNameMarker "{bean}"
+
+TraceComplexMethodsIfFlagged: EntityBeanTracingMethodClassNew AppMapEJB2Marker "Entity {interface}|{method}"
+
+TraceComplexMethodsIfFlagged: EntityBean3TracingMethodClassNew AppMapEJB3CachingMarker "Entity {bean}|{method}"
+
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingMethodClassNew AppMapEJB2ApplicationNameMarker "{bean}"
+
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingMethodClassNew AppMapEJB2CachingMarker "MDB {bean}|{method}"
+
+TraceComplexMethodsIfFlagged: MessageDrivenBean3TracingMethodClassNew AppMapEJB3CachingMarker "MDB {bean}|{method}"
+
+TraceComplexMethodsIfFlagged: EJB2StubTracingMethodClassNew AppMapEJB2ClientMarker "{interface}|{method}" 
+
+TraceComplexMethodsIfFlagged: EJB3StubTracingMethodClassNew AppMapEJB3ClientMarker "{interface}|{method}" 
+
+
+SetTracerClassMapping: AppMapEJB2ApplicationNameMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapLazyNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2ApplicationNameMarker applicationName EJB
+SetTracerParameter: AppMapEJB2ApplicationNameMarker nameformatter com.wily.introscope.agent.trace.ejb.hc2.Ejb2BeanCachingNameFormatter
+SetTracerParameter: AppMapEJB2ApplicationNameMarker ownerType Application
+SetTracerParameter: AppMapEJB2ApplicationNameMarker useblame false
+
+SetTracerClassMapping: AppMapEJB3ApplicationNameMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapLazyNameTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3ApplicationNameMarker applicationName EJB
+SetTracerParameter: AppMapEJB3ApplicationNameMarker nameformatter com.wily.introscope.agent.trace.ejb.hc2.Ejb3BeanCachingNameFormatter
+SetTracerParameter: AppMapEJB3ApplicationNameMarker ownerType Application
+SetTracerParameter: AppMapEJB3ApplicationNameMarker useblame false
+
+SetTracerClassMapping: AppMapEJB2Marker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2Marker nodeType EJB
+SetTracerParameter: AppMapEJB2Marker nameformatter com.wily.introscope.agent.trace.ejb.Ejb2BeanNameFormatter
+SetTracerParameter: AppMapEJB2Marker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapEJB2Marker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapEJB2Marker useblame false
+
+SetTracerClassMapping: AppMapEJB3Marker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3Marker nodeType EJB
+SetTracerParameter: AppMapEJB3Marker nameformatter com.wily.introscope.agent.trace.ejb.Ejb3BeanNameFormatter
+SetTracerParameter: AppMapEJB3Marker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapEJB3Marker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapEJB3Marker useblame false
+
+SetTracerClassMapping: AppMapEJB2CachingMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2CachingMarker nodeType EJB
+SetTracerParameter: AppMapEJB2CachingMarker nameformatter com.wily.introscope.agent.trace.ejb.hc2.Ejb2BeanCachingNameFormatter
+SetTracerParameter: AppMapEJB2CachingMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapEJB2CachingMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapEJB2CachingMarker useblame false
+
+SetTracerClassMapping: AppMapEJB3CachingMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3CachingMarker nodeType EJB
+SetTracerParameter: AppMapEJB3CachingMarker nameformatter com.wily.introscope.agent.trace.ejb.hc2.Ejb3BeanCachingNameFormatter
+SetTracerParameter: AppMapEJB3CachingMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapEJB3CachingMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapEJB3CachingMarker useblame false
+
+SetTracerClassMapping: AppMapEJB2ClientMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB2ClientMarker nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB2ClientMarker nameformatter com.wily.introscope.agent.trace.ejb.hc2.Ejb2StubNameFormatter
+SetTracerParameter: AppMapEJB2ClientMarker boundaryType Backend
+SetTracerParameter: AppMapEJB2ClientMarker isCrossProcess true
+SetTracerParameter: AppMapEJB2ClientMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapEJB2ClientMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapEJB2ClientMarker useblame false
+
+SetTracerClassMapping: AppMapEJB3ClientMarker com.wily.introscope.appmap.agent.trace.hc2.AppMapMarkerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapEJB3ClientMarker nodeType EJB-CLIENT
+SetTracerParameter: AppMapEJB3ClientMarker nameformatter com.wily.introscope.agent.trace.ejb.Ejb3StubNameFormatter
+SetTracerParameter: AppMapEJB3ClientMarker boundaryType Backend
+SetTracerParameter: AppMapEJB3ClientMarker isCrossProcess true
+SetTracerParameter: AppMapEJB3ClientMarker nodeLevel MethodClass,Class
+SetTracerParameter: AppMapEJB3ClientMarker ownerType Application,BusinessTransactionComponent
+SetTracerParameter: AppMapEJB3ClientMarker useblame false
+
+SetTracerOrdering: AppMapEJB2ApplicationNameMarker -5000
+SetTracerOrdering: AppMapEJB3ApplicationNameMarker -5000
+SetTracerOrdering: AppMapEJB2ClientMarker -4000
+SetTracerOrdering: AppMapEJB3ClientMarker -4000
+SetTracerOrdering: AppMapEJB2Marker -4000
+SetTracerOrdering: AppMapEJB3Marker -4000
+SetTracerOrdering: AppMapEJB2CachingMarker -4000
+SetTracerOrdering: AppMapEJB3CachingMarker -4000

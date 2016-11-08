@@ -1,0 +1,49 @@
+##################
+## BrtmTracer
+##################
+SetFlag: BRTMTracing
+TurnOn: BRTMTracing
+
+SetFlag: BRTM_JSPTracing
+SetFlag: BRTM_HttpServletTypeSpecificServiceTracing
+SetFlag: BRTM_HttpServletTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: BRTMTracing JSPTracing BRTM_JSPTracing 
+IdentifyTwoFlagIntersectionAsAggregateFlag: BRTMTracing HttpServletTypeSpecificServiceTracing BRTM_HttpServletTypeSpecificServiceTracing  
+IdentifyTwoFlagIntersectionAsAggregateFlag: BRTMTracing HttpServletTracing BRTM_HttpServletTracing  
+
+SkipClassForFlag: weblogic.servlet.FutureResponseServlet BRTM_HttpServletTracing
+SkipClassForFlag: weblogic.servlet.FutureResponseServlet BRTM_HttpServletTypeSpecificServiceTracing
+
+SkipClass: com.wily.introscope.agent.brtm.wrapper.BRTHttpServletResponseWrapperBase
+SkipClass: com.wily.introscope.agent.brtm.wrapper.BRTHttpServletResponseWrapper
+
+SetFlag: BRTM_ServletFilterTracing
+TurnOn: BRTM_ServletFilterTracing
+IdentifyInheritedAs: javax.servlet.Filter BRTM_ServletFilterTracing
+
+SetFlag: BRTM_WASStaticServletTracing
+TurnOn: BRTM_WASStaticServletTracing
+IdentifyInheritedAs: com.ibm.ws.webcontainer.servlet.FileServletWrapper BRTM_WASStaticServletTracing
+IdentifyClassAs: com.ibm.ws.webcontainer.servlet.FileServletWrapper BRTM_WASStaticServletTracing
+TraceOneMethodWithParametersIfFlagged: BRTM_WASStaticServletTracing handleRequest BrtmTracer Servlets
+TraceOneMethodWithParametersIfFlagged: BRTM_WASStaticServletTracing handleRequest BRTMHelperTracing Servlets
+
+SetTracerClassMapping: BrtmTracer com.wily.introscope.agent.brtm.trace.BrtmTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: BrtmTracer -9000000
+SetTracerParameter: BrtmTracer stubbing true
+
+TraceOneMethodWithParametersIfFlagged: BRTM_JSPTracing _jspService BrtmTracer JSP
+TraceOneMethodWithParametersIfFlagged: BRTM_HttpServletTypeSpecificServiceTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V BrtmTracer Servlets
+TraceOneMethodWithParametersIfFlagged: BRTM_HttpServletTracing service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V BrtmTracer Servlets
+TraceOneMethodWithParametersIfFlagged: BRTM_ServletFilterTracing doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V BrtmTracer Servlets
+
+######################################################
+## BRTMHelperTracer
+######################################################
+SetTracerClassMapping: BRTMHelperTracing com.wily.introscope.agent.external.biz.trace.BRTMHelperTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: BRTMHelperTracing reentrancy methodname
+SetTracerOrdering: BRTMHelperTracing 100
+TraceOneMethodWithParametersIfFlagged: BRTM_HttpServletTypeSpecificServiceTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V BRTMHelperTracing Servlets
+TraceOneMethodWithParametersIfFlagged: BRTM_HttpServletTracing service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V BRTMHelperTracing Servlets
+TraceOneMethodWithParametersIfFlagged: BRTM_JSPTracing _jspService BRTMHelperTracing JSP
+TraceOneMethodWithParametersIfFlagged: BRTM_ServletFilterTracing doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V BRTMHelperTracing Servlets

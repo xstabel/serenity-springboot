@@ -1,0 +1,44 @@
+#Spring JMS
+# Backend Tracing
+
+SetTracerClassMapping: JMSBackendSummaryTracer com.wily.introscope.agent.trace.hc2.BlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JMSBackendSummaryTracer nameformatter com.wily.field.spring.jms.SpringJmsBackendNameFormatter
+SetTracerOrdering: JMSBackendSummaryTracer -400
+ 
+SetTracerClassMapping: JMSBackendTracer com.wily.introscope.agent.trace.hc2.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JMSBackendTracer nameformatter com.wily.field.spring.jms.SpringJmsBackendNameFormatter
+SetTracerOrdering: JMSBackendTracer -300
+
+SetTracerClassMapping: JMSBackendErrorTracer com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JMSBackendErrorTracer nameformatter com.wily.field.spring.jms.SpringJmsBackendNameFormatter
+SetTracerOrdering: JMSBackendErrorTracer -200
+
+SetTracerClassMapping: JMSBackendCorrelationTracer com.wily.field.spring.jms.SpringJmsBackendCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: JMSBackendCorrelationTracer -100
+
+# Frontend Tracing
+SetTracerClassMapping: JMSFrontendTracer com.wily.introscope.agent.trace.hc2.FrontendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JMSFrontendTracer nameformatter com.wily.field.spring.jms.SpringJmsFrontendNameFormatter
+SetTracerOrdering: JMSFrontendTracer -100
+
+SetTracerClassMapping: JMSFrontendCorrelationTracer com.wily.field.spring.jms.SpringJmsFrontendCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: JMSFrontendCorrelationTracer -200
+
+SetTracerClassMapping: JMSFrontendErrorTracer com.wily.introscope.agent.trace.hc2.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JMSFrontendErrorTracer nameformatter com.wily.field.spring.jms.SpringJmsFrontendNameFormatter
+SetTracerOrdering: JMSFrontendErrorTracer -40
+
+SetFlag: SpringJMSFrontendTracing
+IdentifyClassAs: org.springframework.jms.listener.AbstractMessageListenerContainer SpringJMSFrontendTracing
+IdentifyInheritedAs: org.springframework.jms.listener.AbstractMessageListenerContainer SpringJMSFrontendTracing
+TraceOneMethodWithParametersIfFlagged: SpringJMSFrontendTracing doExecuteListener JMSFrontendTracer "Apps|Spring-JMS|URLs|{destination}"
+TraceOneMethodWithParametersIfFlagged: SpringJMSFrontendTracing invokeListener JMSFrontendCorrelationTracer "correlation"
+TraceOneMethodWithParametersIfFlagged: SpringJMSFrontendTracing doExecuteListener JMSFrontendErrorTracer "Frontends|Apps|Spring-JMS|URLs|{destination}:Errors Per Interval"
+
+SetFlag: JMSSendTracing
+IdentifyInheritedAs: org.springframework.jms.core.JmsTemplate JMSSendTracing
+IdentifyClassAs: org.springframework.jms.core.JmsTemplate JMSSendTracing
+TraceOneMethodWithParametersIfFlagged: JMSSendTracing doSend(Ljavax/jms/MessageProducer;Ljavax/jms/Message;)V JMSBackendSummaryTracer "Backends|Spring-JMS"
+TraceOneMethodWithParametersIfFlagged: JMSSendTracing doSend(Ljavax/jms/MessageProducer;Ljavax/jms/Message;)V JMSBackendTracer "Backends|Spring-JMS|{destination}"
+TraceOneMethodWithParametersIfFlagged: JMSSendTracing doSend(Ljavax/jms/MessageProducer;Ljavax/jms/Message;)V JMSBackendErrorTracer "Backends|Spring-JMS|{destination}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: JMSSendTracing doSend(Ljavax/jms/MessageProducer;Ljavax/jms/Message;)V JMSBackendCorrelationTracer "correlation"

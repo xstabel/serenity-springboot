@@ -1,0 +1,92 @@
+########################################################################
+# Introscope Summary Metrics for pre-7.0 compatibility
+# ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+SetFlag: SummaryOldConfig
+
+SetFlag: HttpServletTypeSpecificServiceTracingSummaryOldConfig
+SetFlag: HttpServletTracingSummaryOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpServletTypeSpecificServiceTracing SummaryOldConfig HttpServletTypeSpecificServiceTracingSummaryOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpServletTracing SummaryOldConfig HttpServletTracingSummaryOldConfig
+
+SetFlag: JSPTracingOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: JSPTracing SummaryOldConfig JSPTracingOldConfig
+
+SetFlag: SessionBeanTracingOldConfig
+SetFlag: EntityBeanTracingOldConfig
+SetFlag: MessageDrivenBeanTracingOldConfig
+SetFlag: SessionBean3TracingOldConfig
+SetFlag: EntityBean3TracingOldConfig
+SetFlag: MessageDrivenBean3TracingOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBeanTracing SummaryOldConfig SessionBeanTracingOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBeanTracing SummaryOldConfig EntityBeanTracingOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBeanTracing SummaryOldConfig MessageDrivenBeanTracingOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: SessionBean3Tracing SummaryOldConfig SessionBean3TracingOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: EntityBean3Tracing SummaryOldConfig EntityBean3TracingOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: MessageDrivenBean3Tracing SummaryOldConfig MessageDrivenBean3TracingOldConfig
+
+SetFlag: ServletFilterTracingSummaryOldConfig
+IdentifyTwoFlagIntersectionAsAggregateFlag: ServletFilterTracing SummaryOldConfig ServletFilterTracingSummaryOldConfig
+
+#######################
+# JSP Tracer Group
+# ================
+# Defines the directives necessary for JSP tracing.
+
+TraceOneMethodIfFlagged: JSPTracingOldConfig _jspService MethodTimerDifferentInstances "JSP:Average Response Time (ms)"
+TraceOneMethodIfFlagged: JSPTracingOldConfig _jspService PerIntervalCounterDifferentInstances "JSP:Responses Per Interval"
+
+#######################
+# Servlet Tracer Group
+# ================
+# Defines the directives necessary for Servlet tracing.
+
+TraceOneMethodIfFlagged: HttpServletTypeSpecificServiceTracingSummaryOldConfig service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V MethodTimerDifferentInstances "Servlets:Average Response Time (ms)"
+TraceOneMethodIfFlagged: HttpServletTypeSpecificServiceTracingSummaryOldConfig service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V PerIntervalCounterDifferentInstances "Servlets:Responses Per Interval"
+
+TraceOneMethodIfFlagged: HttpServletTracingSummaryOldConfig service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V MethodTimerDifferentInstances "Servlets:Average Response Time (ms)"
+TraceOneMethodIfFlagged: HttpServletTracingSummaryOldConfig service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V PerIntervalCounterDifferentInstances "Servlets:Responses Per Interval"
+
+#############################
+# Servlet Filter Tracer Group
+# ===========================
+# Defines directives necessary for Servlet Filter tracing
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingSummaryOldConfig doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V MethodTimerDifferentInstances "ServletFilters:Average Response Time (ms)"
+TraceOneMethodWithParametersIfFlagged: ServletFilterTracingSummaryOldConfig doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V PerIntervalCounterDifferentInstances "ServletFilters:Responses Per Interval"
+
+#######################
+# EJB Tracer Group
+# ================
+# Defines the directives necessary for EJB tracing.
+
+# SessionBean
+TraceComplexMethodsIfFlagged: SessionBeanTracingOldConfig MethodTimerDifferentInstances "EJB|Session:Average Method Invocation Time (ms)"
+TraceComplexMethodsIfFlagged: SessionBeanTracingOldConfig PerIntervalCounterDifferentInstances "EJB|Session:Method Invocations Per Interval"
+# SessionBean3.0
+TraceComplexMethodsIfFlagged: SessionBean3TracingOldConfig MethodTimerDifferentInstances "EJB|Session:Average Method Invocation Time (ms)"
+TraceComplexMethodsIfFlagged: SessionBean3TracingOldConfig PerIntervalCounterDifferentInstances "EJB|Session:Method Invocations Per Interval"
+
+# EntityBean
+TraceComplexMethodsIfFlagged: EntityBeanTracingOldConfig MethodTimerDifferentInstances "EJB|Entity:Average Method Invocation Time (ms)"
+TraceComplexMethodsIfFlagged: EntityBeanTracingOldConfig PerIntervalCounterDifferentInstances "EJB|Entity:Method Invocations Per Interval"
+# EntityBean3.0
+TraceComplexMethodsIfFlagged: EntityBean3TracingOldConfig MethodTimerDifferentInstances "EJB|Entity:Average Method Invocation Time (ms)"
+TraceComplexMethodsIfFlagged: EntityBean3TracingOldConfig PerIntervalCounterDifferentInstances "EJB|Entity:Method Invocations Per Interval"
+
+
+# MessageDrivenBean
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingOldConfig MethodTimerDifferentInstances "EJB|Message-driven:Average Method Invocation Time (ms)"
+TraceComplexMethodsIfFlagged: MessageDrivenBeanTracingOldConfig PerIntervalCounterDifferentInstances "EJB|Message-driven:Method Invocations Per Interval"
+# MessageDrivenBean3.0
+TraceComplexMethodsIfFlagged: MessageDrivenBean3TracingOldConfig MethodTimerDifferentInstances "EJB|Message-driven:Average Method Invocation Time (ms)"
+TraceComplexMethodsIfFlagged: MessageDrivenBean3TracingOldConfig PerIntervalCounterDifferentInstances "EJB|Message-driven:Method Invocations Per Interval"
+
+

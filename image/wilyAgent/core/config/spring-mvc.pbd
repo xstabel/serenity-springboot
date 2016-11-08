@@ -1,0 +1,98 @@
+#########################################################
+#
+# Custom instrumentation for Spring 3.x release
+#
+# Andreas Reiss - APM Global SWAT Team - ca technologies
+##########################################################
+
+#Stereotype Tracing
+SetFlag: ControllerTracing
+IdentifyAnnotatedClassAs: org.springframework.stereotype.Controller ControllerTracing
+TraceComplexMethodsIfFlagged: ControllerTracing BlamePointTracer "Spring|MVC|Controller|{classname}|{method}"
+TraceAnnotatedMethodsWithParametersIfFlagged: ControllerTracing org.springframework.web.bind.annotation.ExceptionHandler ExceptionErrorReporter "Spring|MVC|Controller|{classname}|{method}:Errors Per Interval"
+
+SetFlag: ComponentTracing
+IdentifyAnnotatedClassAs: org.springframework.stereotype.Component ComponentTracing
+IdentifyAnnotatedClassAs: javax.inject.Named ComponentTracing
+TraceComplexMethodsIfFlagged: ComponentTracing BlamePointTracer "Spring|MVC|Component|{classname}|{method}"
+
+SetFlag: ServiceTracing
+IdentifyAnnotatedClassAs: org.springframework.stereotype.Service ServiceTracing
+TraceComplexMethodsIfFlagged: ServiceTracing BlamePointTracer "Spring|MVC|Service|{classname}|{method}"
+
+SetFlag: RepositoryTracing
+IdentifyAnnotatedClassAs: org.springframework.stereotype.Repository RepositoryTracing
+TraceComplexMethodsIfFlagged: RepositoryTracing BlamePointTracer "Spring|MVC|Repository|{classname}|{method}"
+
+SetFlag: ValidatorTracing
+
+IdentifyInheritedAs: org.springframework.validation.Validator ValidatorTracing
+TraceOneMethodIfFlagged: ValidatorTracing validate BlamePointTracer "Spring|Validator|{classname}"
+
+#AOP - Aspect
+SetFlag: AspectTracing
+IdentifyAnnotatedClassAs: org.aspectj.lang.annotation.Aspect AspectTracing
+TraceComplexMethodsIfFlagged: AspectTracing BlamePointTracer "Spring|Aspect|{classname}|{method}"
+
+#Transaction Monitoring
+SetFlag: TransactionTracing
+IdentifyInheritedAs: org.springframework.transaction.PlatformTransactionManager TransactionTracing
+TraceOneMethodIfFlagged: TransactionTracing commit BlamePointTracer "Spring|Transaction Management|{method}"
+TraceOneMethodIfFlagged: TransactionTracing rollback BlamePointTracer "Spring|Transaction Management|{method}"
+
+SetFlag: RequestMappingTracing
+IdentifyAnnotatedClassAs: org.springframework.web.bind.annotation.RequestMapping RequestMappingTracing
+TraceComplexMethodsIfFlagged: RequestMappingTracing BlamePointTracer "Spring|Web|RequestMapping|{classname}|{method}"
+
+#Portlet Tracing
+SetFlag: PortletControllerTracing
+IdentifyInheritedAs: org.springframework.web.portlet.mvc.Controller PortletControllerTracing
+TraceOneMethodIfFlagged: PortletControllerTracing handleRenderRequest BlamePointTracer "Spring|MVC|Portlet Controller|{classname}|Rendering"
+TraceOneMethodIfFlagged: PortletControllerTracing handleActionRequest BlamePointTracer "Spring|MVC|Portlet Controller|{classname}|Action"
+
+#RMI
+SetFlag: RMITracing
+IdentifyInheritedAs: org.springframework.remoting.rmi.RmiBasedExporter RMITracing
+IdentifyClassAs: org.springframework.remoting.rmi.RmiBasedExporter RMITracing
+IdentifyInheritedAs: org.springframework.remoting.rmi.RmiProxyFactoryBean RMITracing
+IdentifyClassAs: org.springframework.remoting.rmi.RmiProxyFactoryBean RMITracing
+TraceOneMethodIfFlagged: RMITracing invoke BlamePointTracer "Spring|Remoting|RMI|{classname}|{method}"
+
+#Hessian
+SetFlag: HessianTracing
+IdentifyInheritedAs: org.springframework.remoting.caucho.HessianServiceExporter HessianTracing
+IdentifyClassAs: org.springframework.remoting.caucho.HessianServiceExporter HessianTracing
+TraceOneMethodIfFlagged: HessianTracing handleRequest BlamePointTracer "Spring|Remoting|Hessian|{classname}|{method}"
+
+#HTTPInvoker
+SetFlag: HTTPInvokerTracing
+IdentifyInheritedAs: org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter HTTPInvokerTracing
+IdentifyClassAs: org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter HTTPInvokerTracing
+TraceOneMethodIfFlagged: HTTPInvokerTracing handleRequest BlamePointTracer "Spring|Remoting|HTTP Invoker|{classname}|{method}"
+
+#Web Service - JAX-RPC
+SetFlag: SpringJaxRPCTracing
+IdentifyClassAs: org.springframework.remoting.jaxrpc.JaxRpcPortProxyFactoryBean SpringJaxRPCTracing
+IdentifyClassAs: org.springframework.remoting.jaxrpc.ServletEndpointSupport SpringJaxRPCTracing
+IdentifyInheritedAs: org.springframework.remoting.jaxrpc.ServletEndpointSupport SpringJaxRPCTracing
+TraceComplexMethodsIfFlagged: SpringJaxRPCTracing BlamePointTracer "Spring|Remoting|Jax-RPC|{classname}|{method}"
+TraceOneMethodIfFlagged: SpringJaxRPCTracing invoke BlamePointTracer "Spring|Remoting|Jax-RPC|{classname}|{method}"
+
+#JAX-WS
+SetFlag: SpringJaxWSTracing
+IdentifyAnnotatedClassAs: javax.jws.WebService SpringJaxWSTracing
+TraceComplexMethodsIfFlagged: SpringJaxWSTracing BlamePointTracer "Spring|Web|JaxWS|{classname}|{method}"
+
+#Jasper Report Tracing
+SetFlag: JasperReportsTracing
+IdentifyClassAs: org.springframework.web.servlet.view.jasperreports.AbstractJasperReportsView JasperReportsTracing
+IdentifyInheritedAs: org.springframework.web.servlet.view.jasperreports.AbstractJasperReportsView JasperReportsTracing
+TraceOneMethodIfFlagged: JasperReportsTracing loadReport BlamePointTracer "Spring|Jasper Reports|Report Loading"
+TraceOneMethodIfFlagged: JasperReportsTracing fillReport BlamePointTracer "Spring|Jasper Reports|Report Filling"
+TraceOneMethodIfFlagged: JasperReportsTracing renderReport BlamePointTracer "Spring|Jasper Reports|Report Rendering"
+
+#HTTP Send
+SetFlag: RemoteInvocationTracing
+IdentifyInheritedAs: org.springframework.remoting.httpinvoker.HttpInvokerRequestExecutor RemoteInvocationTracing
+TraceOneMethodIfFlagged: RemoteInvocationTracing executeRequest BlamePointTracer "Spring|HTTP Invocation|{classname}"
+

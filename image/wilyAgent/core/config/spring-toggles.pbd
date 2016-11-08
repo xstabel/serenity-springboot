@@ -1,0 +1,102 @@
+################################################
+# Toggles for Spring Instrumentation features
+#
+# Andreas Reiss - APM Global SWAT Team
+# June 2014
+#################################################
+
+###############################################################
+# - Dynamic Spring Bean Detection -
+# This is a dynamic discovery for Spring Beans defined via XML.
+# This is an incubation feature with the costs of a startup bubble and heavy logging in the AutoProbe.log
+# file. Required Dynamic Instrumentation enabled.
+# Only enable when you really now what you are doing or somebody tells you to do so.
+
+#TurnOn: BeanFactoryTracing
+
+
+
+###############################################################
+# - Spring JMS -
+
+# Support for Queue Name Mappings as Frontend Node and inbound JMS correlation
+TurnOn: SpringJMSFrontendTracing
+
+# Support for Queue Name Mappings as Backend Node and outbound JMS correlation
+TurnOn: JMSSendTracing
+
+
+
+
+###############################################################
+# - Spring MVC Features -
+
+# Spring Stereotype Controllers
+TurnOn: ControllerTracing
+
+# Spring Stereotype Components
+TurnOn: ComponentTracing
+
+# Spring Stereotype Repositories
+TurnOn: RepositoryTracing
+
+# Spring Validation Framework
+TurnOn: ValidatorTracing
+
+# Spring Aspects (Annotation)
+TurnOn: AspectTracing
+
+#Spring Transaction Management
+TurnOn: TransactionTracing
+
+#Spring Service Tracing - Comment with the use of CEM because it will create a node in front of the BT Node
+#TurnOn: ServiceTracing
+
+
+
+###############################################################
+# - Spring WEB Features -
+
+#Spring - Request Mappings
+TurnOn: RequestMappingTracing
+
+#Spring - Portlet support
+TurnOn: PortletControllerTracing
+
+#Remoting protocol support
+TurnOn: RMITracing
+TurnOn: HessianTracing
+TurnOn: HTTPInvokerTracing
+TurnOn: SpringJaxRPCTracing
+TurnOn: SpringJaxWSTracing
+TurnOn: RemoteInvocationTracing
+
+
+
+###############################################################
+# - Jasper Reports -
+TurnOn: JasperReportsTracing
+
+
+
+###############################################################
+# - Spring Web Service support -
+
+# Web Service Client invocations based on HttpInvokerRequestExecutor (legacy)
+TurnOn: SpringClientTracing
+
+# Correlation for Web Service Remoting calls
+TurnOn: SpringRemotingCorrelationTracing
+
+# Web Service Client discover and correlation for Spring WebService Template usage
+TurnOn: SpringWSClientTemplateTracing
+
+# Additional Web Service Transport Tracers calculating server side transport times
+TurnOn: SpringWSConnectionTracing
+
+# Inbound Web Services detection and correlation
+TurnOn: SpringWSServerTracing
+
+# Support for Rest Web Service calls (discovery and correlation)
+TurnOn: RestServiceTracing
+TurnOn: ClientHttpRequestTracing

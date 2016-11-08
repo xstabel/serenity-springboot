@@ -1,0 +1,64 @@
+###############################################################################
+#
+# CA Wily Introscope(R)
+# PowerPack for WebSphere MQ Connectors and Messaging System(R)
+# Version: 10.1.0.15
+# Build: 990014
+#
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#                                                                  
+# Introscope Probe Builder Directive (PBD) file for
+#
+#             IBM MQSeries Java Classes:
+#			com.ibm.mq.jar
+#			com.ibm.mqjms.jar
+#
+#
+###############################################################################
+
+
+##  User Guidance:
+##  Enable InstanceCounts to suit your requirements
+### MQ Base Classes
+
+SetFlag: InstanceCounts
+TurnOn: InstanceCounts
+
+IdentifyClassAs:     	com.ibm.mq.MQQueue	        	InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.MQQueue	        	InstanceCounts
+IdentifyClassAs:     	com.ibm.mq.MQQueueManager		InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.MQQueueManager		InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.MQManagedConnectionJ11	InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.MQManagedConnectionJ11	InstanceCounts
+IdentifyClassAs:     	com.ibm.mq.MQDistributionList		InstanceCounts
+IdentifyClassAs:     	com.ibm.mq.MQProcess	        	InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.MQSESSIONClient		InstanceCounts
+
+IdentifyClassAs:     	com.ibm.mq.MQDestination	        			InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.MQDestination	       				InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.MQSESSION						InstanceCounts
+IdentifyClassAs:     	com.ibm.msg.client.wmq.v6.base.internal.MQQueue			InstanceCounts
+IdentifyInheritedAs: 	com.ibm.msg.client.wmq.v6.base.internal.MQQueue			InstanceCounts
+IdentifyClassAs:     	com.ibm.msg.client.wmq.v6.base.internal.MQQueueManager		InstanceCounts
+IdentifyInheritedAs: 	com.ibm.msg.client.wmq.v6.base.internal.MQQueueManager		InstanceCounts
+IdentifyClassAs:     	com.ibm.msg.client.wmq.v6.base.internal.MQManagedConnectionJ11	InstanceCounts
+IdentifyInheritedAs: 	com.ibm.msg.client.wmq.v6.base.internal.MQManagedConnectionJ11	InstanceCounts
+IdentifyClassAs: 	com.ibm.msg.client.wmq.v6.base.internal.MQSESSION		InstanceCounts
+
+IdentifyClassAs: 	com.ibm.mq.jms.MQSession				InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.jms.MQSession				InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.jms.MQMessageProducer			InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.jms.MQMessageProducer			InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.jms.MQMessageConsumer			InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.jms.MQMessageConsumer			InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.jms.MQSession$FacadeMessageListener		InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.jms.MQSession$FacadeMessageListener		InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.jms.MQMessageConsumer$FacadeMessageListener	InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.jms.MQMessageConsumer$FacadeMessageListener	InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.jms.MQConnectionConsumer			InstanceCounts
+IdentifyInheritedAs: 	com.ibm.mq.jms.MQQueueAgentThread			InstanceCounts
+IdentifyClassAs: 	com.ibm.mq.jms.MQQueueAgentThread			InstanceCounts
+IdentifyInheritedAs: 	com.ibm.msg.client.wmq.internal.WMQConsumerShadow			InstanceCounts
+IdentifyClassAs: 	com.ibm.msg.client.wmq.internal.WMQConsumerShadow			InstanceCounts

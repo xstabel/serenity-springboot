@@ -1,0 +1,2135 @@
+########################################################################
+# Introscope ProbeBuilder File for SOA Performance Manager                             
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0.15 Build 990014 
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+#########################################################
+# This file provides directives to support web services on
+# SPM supported java SOAP stacks
+#########################################################
+#############################################################
+# Dependency Map Client Tracing
+#
+# NOTES:
+# Trace sendClientFault, sendServerFault in the inserted JAX-RPC handler
+# 04/03/2008 WSDMFaultFormatter will format the metric path for :SOAP Faults Per Interval 
+#############################################################
+
+IdentifyClassAs: com.wily.powerpack.webservices.handlers.WsdmGenericHandler MapClientTracing
+IdentifyClassAs: com.wily.powerpack.webservices.handlers.weblogic10.WsdmJAXWSHandler MapClientTracing
+
+SetFlag: MapClientTracing
+#TurnOn: MapClientTracing
+
+SetTracerClassMapping: WS_ClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WS_ClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerParameter: WS_ClientMapTracer nodeType 2
+TraceOneMethodWithParametersIfFlagged: MapClientTracing mapDependency WS_ClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+
+IdentifyClassAs: com.wily.powerpack.webservices.handlers.weblogic8.WsdmWebLogicGenericHandler MapClientTracingWebLogic
+
+SetFlag: MapClientTracingWebLogic
+#TurnOn: MapClientTracingWebLogic
+
+SetTracerClassMapping: WS_ClientMapTracerWebLogic com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WS_ClientMapTracerWebLogic nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WLWSDMHandlerFormatter
+SetTracerParameter: WS_ClientMapTracerWebLogic nodeType 2
+TraceOneMethodWithParametersIfFlagged: MapClientTracingWebLogic mapDependency WS_ClientMapTracerWebLogic "WebServices|Client|{namespace}|{operationname}"
+
+
+
+#############################################################
+# Fault Tracing
+#
+# NOTES:
+# Trace sendClientFault, sendServerFault in the inserted JAX-RPC handler
+# 04/03/2008 WSDMFaultFormatter will format the metric path for :SOAP Faults Per Interval 
+#############################################################
+
+SetTracerClassMapping: SOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.WSDMServerFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: SOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMFaultFormatter
+SetTracerOrdering: SOAPFaultTracer 100
+SetTracerParameter: SOAPFaultTracer useblame true
+
+SetFlag: WSDMFaultTracing
+# turn tracer on and off
+TurnOn: WSDMFaultTracing
+IdentifyClassAs: com.wily.powerpack.webservices.handlers.WsdmHandlerUtil WSDMFaultTracing
+
+TraceOneMethodWithParametersIfFlagged: WSDMFaultTracing sendClientFault SOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WSDMFaultTracing sendClientFault SOAPFaultTracer "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WSDMFaultTracing sendServerFault SOAPFaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WSDMFaultTracing sendServerFault SOAPFaultTracer "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+
+#############################################################
+# Weblogic 9.0 WSDM Observer
+#
+# NOTES:
+# Modify handler chain for client and server dispatcher.
+# Insert WSDM handler into handler chain.
+#############################################################
+
+SetTracerClassMapping: WLS9DispatchTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.WLS9DispatchTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerClassMapping: WLS103DispatchTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.WLS103DispatchTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerClassMapping: WLS9NoHandlerDispatchTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.WLS9NoHandlerDispatchTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetFlag: Weblogic9SubbingTrace
+#TurnOn: Weblogic9SubbingTrace
+IdentifyClassAs: weblogic.wsee.ws.WsPort Weblogic9SubbingTrace
+SubstituteResultByNamedProxyIfFlagged: Weblogic9SubbingTrace  getInternalHandlerList()Lweblogic/wsee/handler/HandlerList; WL9Handler
+
+SetFlag: Weblogic103SubbingTrace
+#TurnOn: Weblogic103SubbingTrace
+IdentifyClassAs: weblogic.wsee.ws.WsPortImpl Weblogic103SubbingTrace
+SubstituteResultByNamedProxyIfFlagged: Weblogic103SubbingTrace  getInternalHandlerList()Lweblogic/wsee/handler/HandlerList; WL103Handler
+
+
+TurnOn: WLS9DispatchTracing
+SetFlag: WLS9DispatchTracing
+#IdentifyClassAs: weblogic.wsee.ws.dispatch.client.ClientDispatcher WLS9DispatchTracing
+#IdentifyClassAs: weblogic.wsee.ws.dispatch.server.ServerDispatcher WLS9DispatchTracing
+IdentifyInheritedAs: weblogic.wsee.ws.dispatch.Dispatcher WLS9DispatchTracing
+#TraceOneMethodWithParametersIfFlagged: WLS9DispatchTracing dispatch WLS9DispatchTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: WLS9DispatchTracing dispatch WLS9NoHandlerDispatchTracer "WEBSERVICE"
+
+TurnOn: WLS103DispatchTracing
+SetFlag: WLS103DispatchTracing
+IdentifyInheritedAs: weblogic.wsee.ws.dispatch.DispatcherImpl WLS103DispatchTracing
+#TraceOneMethodWithParametersIfFlagged: WLS103DispatchTracing dispatch WLS103DispatchTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: WLS103DispatchTracing dispatch WLS9NoHandlerDispatchTracer "WEBSERVICE"
+
+
+##################################################
+# WebSphere WSDM Observer
+#
+# NOTES:
+# Modify handler chain for client and server.
+# Insert WSDM handler into handler chain.
+####################################################
+
+SetTracerClassMapping: WASClientServerModeTracer com.wily.powerpack.webservices.extension.agent.trace.websphere.WASClientServerModeTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerClassMapping: WASHandlerTracer com.wily.powerpack.webservices.extension.agent.trace.websphere.WASHandlerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+TurnOn: WASHandlerTracing
+SetFlag: WASHandlerTracing
+IdentifyClassAs: com.ibm.ws.webservices.engine.deployment.wsdd.WSDDTargetedChain WASHandlerTracing
+TraceoneMethodWithParametersIfFlagged: WASHandlerTracing makeNewInstance WASHandlerTracer "WEBSERVICE"
+SkipClassForFlag: com.ibm.ws.webservices.engine.deployment.wsdd.WSDDPort WASHandlerTracing 
+
+SetFlag: WASSubbingTrace
+TurnOn: WASSubbingTrace
+IdentifyClassAs: com.ibm.ws.webservices.engine.deployment.wsdd.WSDDTargetedChain WASSubbingTrace
+SubstituteResultByNamedProxyIfFlagged: WASSubbingTrace getHandlerChain()Lcom/ibm/ws/webservices/engine/handlers/jaxrpc/HandlerChain; WASSubTrace
+
+
+TurnOn: WASClientServerModeTracing
+SetFlag: WASClientServerModeTracing
+IdentifyClassAs: com.ibm.ws.webservices.engine.WebServicesEngine WASClientServerModeTracing
+TraceoneMethodWithParametersIfFlagged: WASClientServerModeTracing invoke WASClientServerModeTracer "WEBSERVICE"
+
+##################################################################################################
+#
+# Generic server-side web service tracers
+#
+# NOTES:
+# BlamePoint tracer using WSDM handler name formatting.
+#
+##################################################################################################
+
+SetTracerClassMapping: WSServerBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WSServerBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerParameter: WSServerBlamePointTracer1 service true
+SetTracerOrdering: WSServerBlamePointTracer1 100
+
+SetTracerClassMapping: WSServerBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WSServerBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WSServerBlamePointTracer2 200
+
+#Specifically for Weblogic
+
+SetTracerClassMapping: WL_WSServerBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_WSServerBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9ServerFormatter
+SetTracerParameter: WL_WSServerBlamePointTracer1 service true
+SetTracerOrdering: WL_WSServerBlamePointTracer1 100
+SetTracerClassMapping: WL_WSServerBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_WSServerBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9ServerFormatter 
+SetTracerOrdering: WL_WSServerBlamePointTracer2 200
+
+
+#################################################################################################
+#
+# JAX-RPC client-side web service tracers
+#
+# Notes:
+# Tracers for implementations javax.xml.rpc.Call interface.
+# Supported platforms: Websphere 5.1/6.0
+#
+# classes and their associated jar files:
+# ===============================================================================================
+# com.ibm.wsspi.webservices.rpc.Call                     webservices.jar (Websphere 5.1/6.0)
+# com.ibm.ws.webservices.multiprotocol.models.ModelCall  webservices.jar (Websphere 5.1/6.0)
+# com.ibm.ws.webservices.multiprotocol.AgnosticCall      webservices.jar (Websphere 5.1/6.0)
+#
+#################################################################################################
+
+SetTracerClassMapping: JaxRpcCallBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JaxRpcCallBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: JaxRpcCallBlamePointTracer1 service true
+SetTracerOrdering: JaxRpcCallBlamePointTracer1 100
+
+SetTracerClassMapping: JaxRpcCallBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JaxRpcCallBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: JaxRpcCallBlamePointTracer2 101
+
+SetTracerClassMapping: JaxRpcCallBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JaxRpcCallBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+
+SetTracerClassMapping: JaxRpcCallBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JaxRpcCallBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: JaxRpcCallBlamedFaultTracer 1000
+
+SetTracerClassMapping: JaxRpcCallBlamedFaultTracer2 com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JaxRpcCallBlamedFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: JaxRpcCallBlamedFaultTracer2 1001
+
+SetTracerClassMapping: JaxRpcCallWSEndPointURLTracer com.wily.powerpack.webservices.extension.agent.trace.axis.AxisWSEndPointURLTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: JaxRpcCallWSEndPointURLTracer 200000
+
+SetTracerClassMapping: JaxRpcClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JaxRpcClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: JaxRpcClientMapTracer nodeType 2
+
+SetTracerClassMapping: ClientSOAPFaultTracer5 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer5 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: ClientSOAPFaultTracer5 102
+
+SetTracerClassMapping: ClientSOAPFaultTracer6 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer6 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: ClientSOAPFaultTracer6 103
+
+
+
+#IdentifyInheritedAs: com.ibm.wsspi.webservices.rpc.Call JaxRpcCallTracing
+#IdentifyClassAs: com.ibm.ws.webservices.multiprotocol.models.ModelCall JaxRpcCallTracing
+#IdentifyClassAs: com.ibm.ws.webservices.multiprotocol.AgnosticCall JaxRpcCallTracing
+IdentifyClassAs: com.sun.xml.rpc.client.dii.BasicCall JaxRpcCallTracing
+
+SetFlag: JaxRpcCallTracing
+TurnOn: JaxRpcCallTracing
+
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcCallBackendTracer "WebService at {namespace}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcCallBlamePointTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcCallBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcCallBlamedFaultTracer "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcCallBlamedFaultTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcCallWSEndPointURLTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; ClientSOAPFaultTracer5 "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; ClientSOAPFaultTracer6 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcCallBackendTracer "WebService at {namespace}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcCallBlamePointTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcCallBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcCallBlamedFaultTracer "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcCallBlamedFaultTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcCallWSEndPointURLTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodIfFlagged: JaxRpcCallTracing invokeOneWay ClientSOAPFaultTracer5 "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodIfFlagged: JaxRpcCallTracing invokeOneWay  ClientSOAPFaultTracer6 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+#################################################################################################
+#
+# JAX-RPC client-side web service tracers
+#
+# Notes:
+# Tracers for implementations javax.xml.rpc.Call interface.
+# Supported platforms: Weblogic 9.0
+#
+# classes and their associated jar files:
+# ===============================================================================================
+# weblogic.wsee.jaxrpc.WLCall				  	         weblogic.jar (Weblogic 9.0)
+#
+#################################################################################################
+
+SetTracerClassMapping: WL_JaxRpcCallBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_JaxRpcCallBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: WL_JaxRpcCallBlamePointTracer1 service true
+SetTracerOrdering: WL_JaxRpcCallBlamePointTracer1 100
+
+SetTracerClassMapping: WL_JaxRpcCallBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_JaxRpcCallBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: WL_JaxRpcCallBlamePointTracer2 200
+
+SetTracerClassMapping: WL_JaxRpcCallBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_JaxRpcCallBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+
+SetTracerClassMapping: WL_JaxRpcCallBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_JaxRpcCallBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: WL_JaxRpcCallBlamedFaultTracer 1000
+
+SetTracerClassMapping: WL_JaxRpcCallWSEndPointURLTracer com.wily.powerpack.webservices.extension.agent.trace.axis.AxisWSEndPointURLTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_JaxRpcCallWSEndPointURLTracer 200000
+
+IdentifyInheritedAs: weblogic.webservice.extensions.WLCall WL_JaxRpcCallTracing
+IdentifyInheritedAs: weblogic.wsee.jaxrpc.WLCall WL_JaxRpcCallTracing
+
+SetFlag: WL_JaxRpcCallTracing
+TurnOn: WL_JaxRpcCallTracing
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; WL_JaxRpcCallBackendTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; WL_JaxRpcCallBlamePointTracer1 "WebServices|Client|{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; WL_JaxRpcCallBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; WL_JaxRpcCallBlamedFaultTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; WL_JaxRpcCallWSEndPointURLTracer "WEBSERVICE"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invokeOneWay WL_JaxRpcCallBackendTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invokeOneWay WL_JaxRpcCallBlamePointTracer1 "WebServices|Client|{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invokeOneWay WL_JaxRpcCallBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invokeOneWay WL_JaxRpcCallBlamedFaultTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invokeOneWay WL_JaxRpcCallWSEndPointURLTracer "WEBSERVICE"
+
+#dependency map
+SetTracerClassMapping: WL_JaxRpcCallMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_JaxRpcCallMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: WL_JaxRpcCallMapTracer nodeType 2
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; WL_JaxRpcCallMapTracer "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invokeOneWay WL_JaxRpcCallMapTracer "WebServices|Client|{namespace}|{operationname}"
+#SetTracerClassMapping: WL_JaxRpcClientCorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WL9CorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: WL_JaxRpcClientCorrelationTracer 201
+SetTracerClassMapping: WL_JaxRpcDebugTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WL9DebugTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetFlag: WL_ClientCorrelationTracing2
+TurnOn: WL_ClientCorrelationTracing2
+IdentifyClassAs: weblogic.wsee.ws.dispatch.server.JaxrpcChainHandler WL_ClientCorrelationTracing2
+#TraceOneMethodWithParametersIfFlagged: WL_ClientCorrelationTracing2 handleRequest WL_JaxRpcClientCorrelationTracer "WebServices"
+
+
+#############################################################
+# Websphere 6.1 HTTP correlation Tracing
+#
+# NOTES:
+#############################################################
+
+#SetTracerClassMapping: SOAPHTTPTestTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WAS61WSOutboundHTTPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+#SetFlag: SOAPHTTPTestTracing
+# turn tracer on and off
+#TurnOn: SOAPHTTPTestTracing
+#IdentifyClassAs: com.ibm.ws.webservices.engine.transport.http.HttpOutboundChannelConnection SOAPHTTPTestTracing
+
+#TraceOneMethodWithParametersIfFlagged: SOAPHTTPTestTracing prepareHttpRequestHeaders SOAPHTTPTestTracer "WEBSERVICE"
+
+
+##################################################################
+#
+# Weblogic 9.0 client-side tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ==========================================================
+# weblogic.wsee.jaxrpc.StubImpl			weblogic.jar (9.0)
+#
+##################################################################
+
+SetTracerClassMapping: WLS9WSClientBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS9WSClientBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerParameter: WLS9WSClientBlamePointTracer1 service true
+SetTracerOrdering: WLS9WSClientBlamePointTracer1 100
+
+SetTracerClassMapping: WLS9WSClientBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS9WSClientBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerOrdering: WLS9WSClientBlamePointTracer2 101
+
+SetTracerClassMapping: WLS9WSClientBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS9WSClientBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+
+SetTracerClassMapping: ClientSOAPFaultTracer3 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer3 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerOrdering: ClientSOAPFaultTracer3 102
+
+SetTracerClassMapping: ClientSOAPFaultTracer4 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer4 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerOrdering: ClientSOAPFaultTracer4 103
+
+SetTracerClassMapping: WLS9WSClientBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS9WSClientBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerOrdering: WLS9WSClientBlamedFaultTracer 104
+
+SetTracerClassMapping: WLS9WSClientBlamedFaultTracer2 com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS9WSClientBlamedFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerOrdering: WLS9WSClientBlamedFaultTracer2 105
+
+SetTracerClassMapping: WLS9WSEndPointURLTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.WLS9WSEndPointURLTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WLS9WSEndPointURLTracer 200000
+
+SetTracerClassMapping: WLS9WSClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS9WSClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerParameter: WLS9WSClientMapTracer nodeType 2
+
+IdentifyClassAs: weblogic.wsee.jaxrpc.StubImpl WLS9WSClientTracing
+
+SetFlag: WLS9WSClientTracing
+TurnOn: WLS9WSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSClientBackendTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSClientBlamePointTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodIfFlagged: WLS9WSClientTracing _invoke ClientSOAPFaultTracer4 "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSClientBlamedFaultTracer "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSClientBlamedFaultTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodIfFlagged: WLS9WSClientTracing _invoke ClientSOAPFaultTracer3 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSEndPointURLTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+
+
+###############################################################################################
+#
+# Weblogic 9.0 server-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ============================================================================
+# weblogic.wsee.ws.dispatch.server.ComponentHandler	   weblogic.jar
+#
+#
+###############################################################################################
+
+SetTracerClassMapping: WLS9WSServerBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS9WSServerBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WLS9WSServerBlamedFaultTracer 200
+
+SetTracerClassMapping: WLS9WSServerBlamedSoapFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS9WSServerBlamedSoapFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WLS9WSServerBlamedSoapFaultTracer 201
+
+SetTracerClassMapping: WLS9WSServerBlamedSoapFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS9WSServerBlamedSoapFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WLS9WSServerBlamedSoapFaultTracer2 202
+
+IdentifyClassAs: weblogic.wsee.ws.dispatch.server.ComponentHandler WLS9WSServerTracing
+
+SetFlag: WLS9WSServerTracing
+TurnOn: WLS9WSServerTracing
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WL_WSServerBlamePointTracer1 "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WLS9WSServerBlamedSoapFaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WL_WSServerBlamePointTracer2 "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WLS9WSServerBlamedFaultTracer "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WLS9WSServerBlamedSoapFaultTracer2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+
+#dependency map
+SetTracerClassMapping: WLS9ServerMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:  WLS9ServerMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerParameter:  WLS9ServerMapTracer nodeType 1
+SetTracerOrdering: WLS9ServerMapTracer 410
+#SetTracerClassMapping: WLS9ServerCorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WL9ServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: WLS9ServerCorrelationTracer -400
+TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WLS9ServerMapTracer "WebServices|Server|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: WLS9WSServerTracing handleRequest(Ljavax/xml/rpc/handler/MessageContext;)Z WLS9ServerCorrelationTracer "WebServices"
+
+
+####################################################################################
+#
+#  WSDMHandlerTracer : Refreshes log levels in the agent extension
+#                     
+#
+###################################################################################
+SetTracerClassMapping: WSDMHandlerTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WSDMHandlerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetFlag: WSDMHandlerTracing
+TurnOn: WSDMHandlerTracing
+
+IdentifyClassAs: com.ca.wsdm.handlers.WsdmJaxRpcHandler WSDMHandlerTracing
+#IdentifyClassAs: com.wily.powerpack.webservices.handlers.websphere.WsdmWebSphereHandler WSDMHandlerTracing
+IdentifyClassAs: com.ca.wsdm.handlers.WsdmWebLogicHandler WSDMHandlerTracing
+IdentifyClassAs: com.ca.wsdm.handlers.WsdmWebLogic90Handler WSDMHandlerTracing
+
+
+TraceOneMethodIfFlagged: WSDMHandlerTracing handleRequest WSDMHandlerTracer "7.1"
+
+####################################################################################
+#
+#  Logging Tracers
+#
+###################################################################################
+
+SetTracerClassMapping: WSDMLoggingTracer com.wily.powerpack.webservices.extension.agent.trace.log.WSDMLoggerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetFlag: WSDMLoggingTracing
+TurnOn: WSDMLoggingTracing
+IdentifyClassAs: com.wily.powerpack.webservices.handlers.WsdmLogger WSDMLoggingTracing
+TraceOneMethodWithParametersIfFlagged: WSDMLoggingTracing debug WSDMLoggingTracer "7.1"
+TraceOneMethodWithParametersIfFlagged: WSDMLoggingTracing info WSDMLoggingTracer "7.1"
+TraceOneMethodWithParametersIfFlagged: WSDMLoggingTracing warn WSDMLoggingTracer "7.1"
+TraceOneMethodWithParametersIfFlagged: WSDMLoggingTracing error WSDMLoggingTracer "7.1"
+
+
+SetFlag: LoggingDebugSubbingTrace
+TurnOn: LoggingDebugSubbingTrace
+IdentifyClassAs: com.wily.powerpack.webservices.handlers.WsdmLogger LoggingDebugSubbingTrace
+SubstituteResultByNamedProxyIfFlagged: LoggingDebugSubbingTrace isDebugLogging()Ljava/lang/Boolean; isDebugEnabled
+
+SetFlag: LoggingInfoSubbingTrace
+TurnOn: LoggingInfoSubbingTrace
+IdentifyClassAs: com.wily.powerpack.webservices.handlers.WsdmLogger LoggingInfoSubbingTrace
+SubstituteResultByNamedProxyIfFlagged: LoggingInfoSubbingTrace isInfoLogging()Ljava/lang/Boolean; isInfoEnabled
+
+
+#########################################################
+#
+# Axis2 Webservices  and Weblogic 7.0 Client Tracing
+#
+#########################################################
+
+SetTracerClassMapping: ClientAxi2Tracer com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ClientAxi2Tracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerParameter: ClientAxi2Tracer service true
+SetTracerOrdering: ClientAxi2Tracer 1
+
+SetTracerClassMapping: ClientAxi2Tracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ClientAxi2Tracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerOrdering: ClientAxi2Tracer2 2
+
+SetTracerClassMapping: ClientAxis2FaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientAxis2FaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerOrdering: ClientAxis2FaultTracer 50
+
+SetTracerClassMapping: ClientSOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerOrdering: ClientSOAPFaultTracer 100
+
+SetTracerClassMapping: ClientSOAPFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerOrdering: ClientSOAPFaultTracer2 101
+
+SetTracerClassMapping: Axis2ClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis2ClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerParameter: Axis2ClientMapTracer nodeType 2
+SetTracerOrdering: Axis2ClientMapTracer 200
+
+SetTracerClassMapping: ClientAxis2CorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2ClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ClientAxis2CorrTracer 201
+
+SetTracerClassMapping: ClientAxis2StackTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2StackTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ClientAxis2StackTracer 201
+
+SetTracerClassMapping: ClientAxis2BackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ClientAxis2BackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerOrdering: ClientAxis2BackendTracer -1
+
+SetFlag: Axis2ClientTracing
+TurnOn: Axis2ClientTracing
+
+SetFlag: Axis2ClientCorrTracing
+TurnOn: Axis2ClientCorrTracing
+
+# ADB Client Classes
+IdentifyClassAs: org.apache.axis2.client.OperationClient Axis2ClientTracing
+IdentifyClassAs: org.apache.axis2.description.OutOnlyAxisOperationClient Axis2ClientTracing
+IdentifyClassAs: org.apache.axis2.description.OutInAxisOperationClient Axis2ClientTracing
+IdentifyClassAs: org.apache.axis2.client.OperationClient Axis2ClientCorrTracing
+IdentifyClassAs: org.apache.axis2.description.OutOnlyAxisOperationClient Axis2ClientCorrTracing
+IdentifyClassAs: org.apache.axis2.description.OutInAxisOperationClient Axis2ClientCorrTracing
+
+# XMLBeans Client Classes
+
+# JiBX Client Classes
+
+#SERVICE LEVEL
+TraceOneMethodIfFlagged: Axis2ClientTracing execute ClientAxi2Tracer "WebServices|Client|{namespace}"
+TraceOneMethodIfFlagged: Axis2ClientTracing execute ClientSOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodIfFlagged: Axis2ClientTracing execute ClientAxis2BackendTracer "WebService at {namespace}"
+
+#OPERATION LEVEL
+TraceOneMethodIfFlagged: Axis2ClientTracing execute ClientAxi2Tracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodIfFlagged: Axis2ClientTracing execute ClientAxis2FaultTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodIfFlagged: Axis2ClientTracing execute ClientSOAPFaultTracer2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracing execute Axis2ClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracing execute ClientAxis2CorrTracer "WebServices"
+
+
+# Previous code is shared between Axis2 and Webloguic 7, only difference is below
+
+
+# Axis 2 JAXWS HTTP Correlation
+
+#SetTracerClassMapping: ClientAxis2HTTPCorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2ClientHTTPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: ClientAxis2HTTPCorrTracer 201
+
+#SetFlag: Axis2ClientTracing2
+#TurnOn: Axis2ClientTracing2
+
+#IdentifyClassAs: org.apache.axis2.transport.http.AbstractHTTPSender Axis2ClientTracing2
+#IdentifyClassAs: org.apache.axis2.transport.http.HTTPSender Axis2ClientTracing2
+
+#TraceOneMethodWithParametersIfFlagged: Axis2ClientTracing2 executeMethod ClientAxis2HTTPCorrTracer "WebServices"
+
+# WebsphereJaxWS HTTP Correlation
+
+#SetTracerClassMapping: WebsphereJaxWSCorrTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.WebsphereJAXWSClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: WebsphereJaxWSCorrTracer 201
+
+#SetFlag: WebsphereJaxWSClientCorrTracing
+#TurnOn: WebsphereJaxWSClientCorrTracing
+
+#IdentifyClassAs: com.ibm.ws.websvcs.transport.http.SOAPOverHTTPSender WebsphereJaxWSClientCorrTracing
+#TraceOneMethodWithParametersIfFlagged: WebsphereJaxWSClientCorrTracing send WebsphereJaxWSCorrTracer "WebServices"
+
+
+#########################################################
+# 
+# Axis2 Webservices Server Tracing
+#
+#########################################################
+
+SetTracerClassMapping: ServerAxis2Tracer com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ServerAxis2Tracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ServerNameFormatter
+SetTracerParameter: ServerAxis2Tracer service true
+SetTracerOrdering: ServerAxis2Tracer 1
+
+SetTracerClassMapping: ServerAxis2Tracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ServerAxis2Tracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ServerNameFormatter
+SetTracerOrdering: ServerAxis2Tracer2 2
+
+SetTracerClassMapping: ServerAxis2FaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ServerAxis2FaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ServerNameFormatter
+SetTracerOrdering: ServerAxis2FaultTracer 52
+
+SetTracerClassMapping: ServerSOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ServerSOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ServerNameFormatter
+SetTracerOrdering: ServerSOAPFaultTracer 100
+
+SetTracerClassMapping: ServerSOAPFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ServerSOAPFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ServerNameFormatter
+SetTracerOrdering: ServerSOAPFaultTracer2 101
+
+
+# The ServerAxis2CorrTracer  tracer definition has been moved to the spm-correlation.pbd. Please include the spm-correlation.pbd in your directives to perform server axis2 correlations
+SetTracerClassMapping: ServerAxis2CorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2ServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ServerAxis2CorrTracer -200000
+
+#SetTracerClassMapping: ServerAxis2CorrHTTPTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis2ServerHTTPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: ServerAxis2CorrHTTPTracer -200000
+
+
+#dependency map
+SetTracerClassMapping: Axis2ServerMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis2ServerMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ServerNameFormatter
+SetTracerParameter: Axis2ServerMapTracer nodeType 1
+SetTracerOrdering: Axis2ServerMapTracer 200001
+
+SetFlag: Axis2ServerTracing
+TurnOn: Axis2ServerTracing
+
+IdentifyInheritedAs: org.apache.axis2.receivers.AbstractMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.receivers.AbstractInMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.receivers.AbstractInOutMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.receivers.AbstractRobustInMessageReceiver Axis2ServerTracing
+
+IdentifyInheritedAs: org.apache.axis2.receivers.RawXMLINOutMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.receivers.RawXMLINOutAsyncMessageReceiver Axis2ServerTracing
+
+IdentifyInheritedAs: org.apache.axis2.rpc.receivers.RPCMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.rpc.receivers.RPCInOnlyAsyncMessageReceiver Axis2ServerTracing
+
+IdentifyInheritedAs: org.apache.axis2.rpc.receivers.ejb.EJBMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.rpc.receivers.ejb.EJBInOnlyMessageReceiver Axis2ServerTracing
+IdentifyInheritedAs: org.apache.axis2.rpc.receivers.ejb.EJBInOnlyAsyncMessageReceiver Axis2ServerTracing
+
+#SERVICE LEVEL
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V ServerAxis2Tracer "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V ServerSOAPFaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+
+#TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;Lorg/apache/axis2/context/MessageContext;)V ServerAxis2Tracer "WebServices|Server|{namespace}"
+
+#OPERATION LEVEL
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V ServerAxis2Tracer2 "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V ServerAxis2FaultTracer "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V ServerSOAPFaultTracer2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+#TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;Lorg/apache/axis2/context/MessageContext;)V ServerAxis2Tracer "WebServices|Server|{namespace}|{operationname}"
+
+# Correlation Tracing
+#TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V ServerAxis2CorrTracer "WebServices"
+
+#dependency map
+TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing invokeBusinessLogic(Lorg/apache/axis2/context/MessageContext;)V Axis2ServerMapTracer "WebServices|Server|{namespace}|{operationname}"
+
+IdentifyClassAs: org.apache.axis2.transport.http.AxisServlet Axis2ServerTracing
+
+# HTTP Correlation Tracing
+#TraceOneMethodWithParametersIfFlagged: Axis2ServerTracing doPost ServerAxis2CorrHTTPTracer  "WebServices"
+##########################################
+# Websphere JAXWS Client/Consumer Tracing
+##########################################
+
+SetTracerClassMapping: JAXWSBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWSBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JAXWSProxyHandlerNameFormatter
+
+SetTracerOrdering: JAXWSBackendTracer 199
+
+
+SetTracerClassMapping: JAXWSBlamePointTracer com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWSBlamePointTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.InvocationContextNameformatter
+SetTracerOrdering: JAXWSBlamePointTracer 200
+SetTracerParameter: JAXWSBlamePointTracer service true
+ 
+
+SetTracerClassMapping: JAXWSBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWSBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.InvocationContextNameformatter
+SetTracerOrdering: JAXWSBlamePointTracer2 201
+
+SetTracerClassMapping: JAXWSBlamePointTracer_ERROR1  com.wily.powerpack.webservices.extension.agent.trace.ErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JAXWSBlamePointTracer_ERROR1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.InvocationContextNameformatter
+SetTracerOrdering: JAXWSBlamePointTracer_ERROR1 101 
+
+SetTracerClassMapping: JAXWSBlamePointTracer_ERROR2  com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JAXWSBlamePointTracer_ERROR2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.InvocationContextNameformatter
+SetTracerOrdering: JAXWSBlamePointTracer_ERROR2 100
+
+SetTracerClassMapping: ClientCorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.websphere.JAXWSProxyHandlerTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ClientCorrelationTracer 2000
+
+###############################################################
+#Dependency Map(CLIENT)
+###############################################################
+SetTracerClassMapping: JAXWS_AXIS2_PROXY_CONSUMER_MAPTRACER com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWS_AXIS2_PROXY_CONSUMER_MAPTRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JAXWSProxyHandlerNameFormatter
+SetTracerParameter:  JAXWS_AXIS2_PROXY_CONSUMER_MAPTRACER nodeType 2
+
+SetFlag: JAXWS_AXIS2_PROXY_CONSUMER
+#TurnOn: JAXWS_AXIS2_PROXY_CONSUMER
+
+IdentifyClassAs: org.apache.axis2.jaxws.client.proxy.JAXWSProxyHandler JAXWS_AXIS2_PROXY_CONSUMER
+IdentifyInheritedAs: org.apache.axis2.jaxws.core.controller.InvocationController JAXWS_AXIS2_PROXY_CONSUMER
+
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeSEIMethod  JAXWS_AXIS2_PROXY_CONSUMER_# "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeSEIMethod  ClientCorrelationTracer "WebServices"
+
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeSEIMethod  JAXWSBackendTracer "WebService at {namespace}"
+
+###############################################################
+#Websphere70 JAXWS Client Synchronous Tracing
+###############################################################
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invoke(Lorg/apache/axis2/jaxws/core/InvocationContext;)Lorg/apache/axis2/jaxws/core/InvocationContext;  JAXWSBlamePointTracer "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invoke(Lorg/apache/axis2/jaxws/core/InvocationContext;)Lorg/apache/axis2/jaxws/core/InvocationContext;  JAXWSBlamePointTracer_ERROR1 "WebServices|Client|{namespace}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invoke(Lorg/apache/axis2/jaxws/core/InvocationContext;)Lorg/apache/axis2/jaxws/core/InvocationContext;  JAXWSBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invoke(Lorg/apache/axis2/jaxws/core/InvocationContext;)Lorg/apache/axis2/jaxws/core/InvocationContext;  JAXWSBlamePointTracer_ERROR2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+###############################################################
+#Websphere70 JAXWS Client Oneway  Tracing
+###############################################################
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeOneWay(Lorg/apache/axis2/jaxws/core/InvocationContext;)V  JAXWSBlamePointTracer "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeOneWay(Lorg/apache/axis2/jaxws/core/InvocationContext;)V  JAXWSBlamePointTracer_ERROR1 "WebServices|Client|{namespace}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeOneWay(Lorg/apache/axis2/jaxws/core/InvocationContext;)V  JAXWSBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeOneWay(Lorg/apache/axis2/jaxws/core/InvocationContext;)V  JAXWSBlamePointTracer_ERROR2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+###############################################################
+#Websphere70 JAXWS Client Async(Concurrent Invocations)
+###############################################################
+SetTracerClassMapping: WAS_CLIENT_JAXWS_CON_INV_TRACER com.wily.introscope.agent.trace.ConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WAS_CLIENT_JAXWS_CON_INV_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.InvocationContextNameformatter
+SetTracerOrdering: WAS_CLIENT_JAXWS_CON_INV_TRACER  101
+
+SetTracerClassMapping: WAS_CLIENT_JAXWS_CON_INV_TRACER2 com.wily.introscope.agent.trace.ConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WAS_CLIENT_JAXWS_CON_INV_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.InvocationContextNameformatter
+SetTracerOrdering: WAS_CLIENT_JAXWS_CON_INV_TRACER2  102
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeAsync(Lorg/apache/axis2/jaxws/core/InvocationContext;)Ljavax/xml/ws/Response;  WAS_CLIENT_JAXWS_CON_INV_TRACER "WebServices|Client|{namespace}:Concurrent Invocations"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeAsync(Lorg/apache/axis2/jaxws/core/InvocationContext;)Ljavax/xml/ws/Response;  WAS_CLIENT_JAXWS_CON_INV_TRACER2 "WebServices|Client|{namespace}|{operationname}:Concurrent Invocations"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeAsync(Lorg/apache/axis2/jaxws/core/InvocationContext;Ljavax/xml/ws/AsyncHandler;)Ljava/util/concurrent/Future;  WAS_CLIENT_JAXWS_CON_INV_TRACER "WebServices|Client|{namespace}:Concurrent Invocations"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PROXY_CONSUMER invokeAsync(Lorg/apache/axis2/jaxws/core/InvocationContext;Ljavax/xml/ws/AsyncHandler;)Ljava/util/concurrent/Future;  WAS_CLIENT_JAXWS_CON_INV_TRACER2 "WebServices|Client|{namespace}|{operationname}:Concurrent Invocations"
+
+
+####################################################
+# Websphere70 JAXWS Client Async Response Tracing
+####################################################
+SetTracerClassMapping: JAXWS_AXIS2_CLIENT_ASYNC_RESP  com.wily.powerpack.webservices.extension.agent.trace.websphere.ClientAsyncResponseTimeTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWS_AXIS2_CLIENT_ASYNC_RESP nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JAXWSAsynchClientFormatter
+SetTracerOrdering: JAXWS_AXIS2_CLIENT_ASYNC_RESP   200
+
+SetTracerClassMapping: JAXWS_AXIS2_CLIENT_ASYNC_RESP2  com.wily.powerpack.webservices.extension.agent.trace.websphere.ClientAsyncResponseTimeTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWS_AXIS2_CLIENT_ASYNC_RESP2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JAXWSAsynchClientFormatter
+SetTracerOrdering: JAXWS_AXIS2_CLIENT_ASYNC_RESP2   201
+
+SetTracerClassMapping: JAXWS_AXIS2_CLIENT_ASYNC_ERR com.wily.introscope.agent.trace.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JAXWS_AXIS2_CLIENT_ASYNC_ERR nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JAXWSAsynchClientFormatter
+SetTracerOrdering: JAXWS_AXIS2_CLIENT_ASYNC_ERR 100
+
+SetTracerClassMapping: JAXWS_AXIS2_CLIENT_ASYNC_ERR2 com.wily.powerpack.webservices.extension.agent.trace.websphere.ClientAsyncFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JAXWS_AXIS2_CLIENT_ASYNC_ERR2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JAXWSAsynchClientFormatter
+SetTracerOrdering: JAXWS_AXIS2_CLIENT_ASYNC_ERR2 101
+
+SetFlag: JAXWS_AXIS2_CLIENT_ASYNC
+#TurnOn: JAXWS_AXIS2_CLIENT_ASYNC
+
+IdentifyClassAs: org.apache.axis2.jaxws.client.async.AsyncResponse JAXWS_AXIS2_CLIENT_ASYNC
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_CLIENT_ASYNC onComplete(Lorg/apache/axis2/jaxws/core/MessageContext;)V JAXWS_AXIS2_CLIENT_ASYNC_RESP "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_CLIENT_ASYNC onComplete(Lorg/apache/axis2/jaxws/core/MessageContext;)V JAXWS_AXIS2_CLIENT_ASYNC_RESP2 "WebServices|Client|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_CLIENT_ASYNC onError(Ljava/lang/Throwable;Lorg/apache/axis2/jaxws/core/MessageContext;)V JAXWS_AXIS2_CLIENT_ASYNC_RESP "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_CLIENT_ASYNC onError(Ljava/lang/Throwable;Lorg/apache/axis2/jaxws/core/MessageContext;)V JAXWS_AXIS2_CLIENT_ASYNC_RESP2 "WebServices|Client|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_CLIENT_ASYNC onError(Ljava/lang/Throwable;Lorg/apache/axis2/jaxws/core/MessageContext;)V JAXWS_AXIS2_CLIENT_ASYNC_ERR "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_CLIENT_ASYNC onError(Ljava/lang/Throwable;Lorg/apache/axis2/jaxws/core/MessageContext;)V JAXWS_AXIS2_CLIENT_ASYNC_ERR2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+#####################################################################################################
+# Websphere JAXWS Server/Producer Tracing
+######################################################################################################
+SetFlag: JAXWS_AXIS2_PRODUCER
+TurnOn: JAXWS_AXIS2_PRODUCER
+
+
+
+SetTracerClassMapping: JAXWSServerMetricTracer com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWSServerMetricTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JaxWSAxis2ServerNameformatter
+SetTracerOrdering: JAXWSServerMetricTracer 1
+SetTracerParameter: JAXWSServerMetricTracer service true
+
+SetTracerClassMapping: JAXWSServerMetricTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWSServerMetricTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JaxWSAxis2ServerNameformatter
+SetTracerOrdering: JAXWSServerMetricTracer2 2
+
+SetTracerClassMapping: JAXWSServerMetricTracer_ERROR com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JAXWSServerMetricTracer_ERROR nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JaxWSAxis2ServerNameformatter
+SetTracerOrdering: JAXWSServerMetricTracer_ERROR 51
+
+#SetTracerClassMapping: ServerCorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.websphere.JAXWSServerEndpointCtrlTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: ServerCorrelationTracer -2000
+
+#Dependency Map(SERVER)
+SetTracerClassMapping: JAXWS_AXIS2_PRODUCER_MAPTRACER com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JAXWS_AXIS2_PRODUCER_MAPTRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.JAXWSServerEndpointCtrlNameformatter
+SetTracerParameter:  JAXWS_AXIS2_PRODUCER_MAPTRACER nodeType 1
+SetTracerOrdering: JAXWS_AXIS2_PRODUCER_MAPTRACER 200001
+
+IdentifyClassAs: org.apache.axis2.jaxws.server.JAXWSMessageReceiver JAXWS_AXIS2_PRODUCER
+IdentifyClassAs: org.apache.axis2.jaxws.server.EndpointController JAXWS_AXIS2_PRODUCER
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V JAXWSServerMetricTracer "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V JAXWSServerMetricTracer2 "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V JAXWSServerMetricTracer_ERROR "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V ServerSOAPFaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V ServerSOAPFaultTracer "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V JAXWSServerTracer_BP "WebServices|Server|{namespace}"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V JAXWSServerTracer_BP "WebServices|Server|{namespace}|{operationname}"
+
+
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invoke(Lorg/apache/axis2/jaxws/server/EndpointInvocationContext;)Lorg/apache/axis2/jaxws/server/EndpointInvocationContext; ServerCorrelationTracer "WebServices"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeAsync(Lorg/apache/axis2/jaxws/server/EndpointInvocationContext;)V ServerCorrelationTracer "WebServices"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeOneWay(Lorg/apache/axis2/jaxws/server/EndpointInvocationContext;)V ServerCorrelationTracer "WebServices"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invoke ServerCorrelationTracer "WebServices"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeAsync ServerCorrelationTracer "WebServices"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeOneWay ServerCorrelationTracer "WebServices"
+
+
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invoke(Lorg/apache/axis2/jaxws/server/EndpointInvocationContext;)Lorg/apache/axis2/jaxws/server/EndpointInvocationContext; JAXWS_AXIS2_PRODUCER_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeAsync(Lorg/apache/axis2/jaxws/server/EndpointInvocationContext;)V JAXWS_AXIS2_PRODUCER_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeOneWay(Lorg/apache/axis2/jaxws/server/EndpointInvocationContext;)V JAXWS_AXIS2_PRODUCER_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invoke JAXWS_AXIS2_PRODUCER_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeAsync JAXWS_AXIS2_PRODUCER_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER invokeOneWay JAXWS_AXIS2_PRODUCER_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+
+#TraceOneMethodWithParametersIfFlagged: JAXWS_AXIS2_PRODUCER receive(Lorg/apache/axis2/context/MessageContext;)V JAXWS_AXIS2_PRODUCER_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+
+
+#########################################################
+#
+# Weblogic 10.3 JAX-WS Client-side web service tracers
+#
+#########################################################
+SetTracerClassMapping: SEIStubInitTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.SEIStubInitTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerClassMapping: ClientMethodHandlerTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.SEIStubInvocationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_CON_INV_TRACER com.wily.introscope.agent.trace.ConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_CON_INV_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_BackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_BackendTracer  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_BlamePointTracer com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_BlamePointTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerOrdering: WL_CLIENT_JAXWS_BlamePointTracer 1
+SetTracerParameter: WL_CLIENT_JAXWS_BlamePointTracer service true
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_BlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_BlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerOrdering: WL_CLIENT_JAXWS_BlamePointTracer2 2
+
+#SetTracerClassMapping: WL_CLIENT_JAXWS_CORR_TRACER com.wily.powerpack.webservices.extension.agent.trace.correlation.WL10ClientJAXWSCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_ClientSOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_ClientSOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerOrdering: WL_CLIENT_JAXWS_ClientSOAPFaultTracer 100
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_ClientSOAPFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_ClientSOAPFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerOrdering: WL_CLIENT_JAXWS_ClientSOAPFaultTracer2 101
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_ClientErrorTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_ClientErrorTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerOrdering: WL_CLIENT_JAXWS_ClientErrorTracer 51
+
+#SetTracerClassMapping: WL_CLIENT_JAXWS_CorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.SEIStubCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: WL_CLIENT_JAXWS_CorrelationTracer  2000
+SetTracerClassMapping: WL_CLIENT_JAXWS_SOAP_CorrelationTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.SEIStubSOAPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_CLIENT_JAXWS_SOAP_CorrelationTracer  2000
+
+
+#Dependency Map(CLIENT)
+SetTracerClassMapping: WL_CLIENT_JAXWS_MAPTRACER com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_MAPTRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerParameter:  WL_CLIENT_JAXWS_MAPTRACER nodeType 2
+SetTracerOrdering: WL_CLIENT_JAXWS_MAPTRACER 201
+
+#Dependency Map(CLIENT)
+SetTracerClassMapping: WL_CLIENT_JAXWS_ASYNCMAPTRACER com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_ASYNCMAPTRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+SetTracerParameter:  WL_CLIENT_JAXWS_ASYNCMAPTRACER nodeType 2
+SetTracerOrdering: WL_CLIENT_JAXWS_ASYNCMAPTRACER 201
+
+SetTracerClassMapping: WL_CLIENT_JAXWS_ASYNC_BackEndTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_JAXWS_ASYNC_BackEndTracer  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+SetFlag: WL_CLIENT_SEI_JAXWS_TRACING
+TurnOn: WL_CLIENT_SEI_JAXWS_TRACING
+
+IdentifyClassAs: com.sun.xml.ws.client.sei.SEIStub WL_CLIENT_SEI_JAXWS_TRACING
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SEI_JAXWS_TRACING <init> SEIStubInitTracer "Webservices"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SEI_JAXWS_TRACING invoke ClientMethodHandlerTracer "Webservices"
+
+
+SetFlag: WL_CLIENT_JAXWS_TRACING
+TurnOn: WL_CLIENT_JAXWS_TRACING
+
+IdentifyClassAs: com.sun.xml.ws.client.sei.SEIStub  WL_CLIENT_JAXWS_TRACING
+
+#TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcess WL_CLIENT_JAXWS_CorrelationTracer "WebServices"
+
+#IdentifyClassAs: weblogic.wsee.jaxws.framework.jaxrpc.EnvironmentFactory WL_CLIENT_JAXWS_TRACING
+#IdentifyInheritedAs: weblogic.wsee.jaxws.framework.jaxrpc.client.ClientEnvironmentFactory WL_CLIENT_JAXWS_TRACING
+
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcess WL_CLIENT_JAXWS_SOAP_CorrelationTracer "WebServices"
+
+
+
+SetFlag: WL_CLIENT_SYNC_JAXWS_TRACING
+TurnOn: WL_CLIENT_SYNC_JAXWS_TRACING
+
+IdentifyClassAs: com.sun.xml.ws.client.sei.SyncMethodHandler WL_CLIENT_SYNC_JAXWS_TRACING
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACING invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object; WL_CLIENT_JAXWS_MAPTRACER "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACING invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object; WL_CLIENT_JAXWS_BlamePointTracer "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACING invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object; WL_CLIENT_JAXWS_BlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACING invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object; WL_CLIENT_JAXWS_ClientSOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACING invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object; WL_CLIENT_JAXWS_ClientSOAPFaultTracer2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACING invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object; WL_CLIENT_JAXWS_ClientErrorTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACING invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object; WL_CLIENT_JAXWS_BackendTracer "WebService at {namespace}"
+
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcessAsync WL_CLIENT_JAXWS_ASYNCMAPTRACER "WebServices|Client|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcessAsync WL_CLIENT_JAXWS_CorrelationTracer "WebServices"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcessAsync WL_CLIENT_JAXWS_SOAP_CorrelationTracer "WebServices"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcessAsync WL_CLIENT_JAXWS_ASYNC_BackEndTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcessAsync WL_CLIENT_JAXWS_CON_INV_TRACER "WebServices|Client|{namespace}:Concurrent Invocations"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACING doProcessAsync WL_CLIENT_JAXWS_CON_INV_TRACER "WebServices|Client|{namespace}|{operationname}:Concurrent Invocations"
+
+
+
+SetTracerClassMapping: WL_CLIENT_ASYNC_CALLBACK_TRACER com.wily.powerpack.webservices.extension.agent.trace.weblogic.AsyncCallbackTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_ASYNC_CALLBACK_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.AsynCallbackNameFormatter
+SetTracerOrdering: WL_CLIENT_ASYNC_CALLBACK_TRACER 200
+SetTracerClassMapping: WL_CLIENT_ASYNC_CALLBACK_TRACER2 com.wily.powerpack.webservices.extension.agent.trace.weblogic.AsyncCallbackTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_ASYNC_CALLBACK_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.AsynCallbackNameFormatter
+SetTracerOrdering: WL_CLIENT_ASYNC_CALLBACK_TRACER2 201
+
+SetTracerClassMapping: WL_CLIENT_ASYNC_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.trace.weblogic.AsyncFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_CLIENT_ASYNC_FAULT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.AsynCallbackNameFormatter
+SetTracerOrdering: WL_CLIENT_ASYNC_FAULT_TRACER 200
+
+SetTracerClassMapping: WL_CLIENT_ASYNC_FAULT_TRACER2 com.wily.powerpack.webservices.extension.agent.trace.weblogic.AsyncFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_CLIENT_ASYNC_FAULT_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.AsynCallbackNameFormatter
+SetTracerOrdering: WL_CLIENT_ASYNC_FAULT_TRACER2 201
+ 
+SetTracerClassMapping: WL_CLIENT_ASYNC_ClientErrorTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_CLIENT_ASYNC_ClientErrorTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.AsynCallbackNameFormatter
+SetTracerOrdering: WL_CLIENT_ASYNC_ClientErrorTracer 102
+
+SetTracerClassMapping: WL_CLIENT_ASYNC_NonBlockingTxnMarker com.wily.introscope.agent.trace.NonBlockingTxnMarker com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_CLIENT_ASYNC_NonBlockingTxnMarker nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.AsynCallbackNameFormatter
+SetTracerOrdering: WL_CLIENT_ASYNC_NonBlockingTxnMarker 110
+
+
+SetTracerClassMapping: WL_PACKET_PROPS_TRACER com.wily.powerpack.webservices.extension.agent.trace.weblogic.PacketInvocationPropsDumpTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetFlag: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING
+TurnOn: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING
+
+IdentifyClassAs: com.sun.xml.ws.client.AsyncResponseImpl  WL_JAXWS_CLIENT_ASYNC_RESP_TRACING
+IdentifyInheritedAs: com.sun.xml.ws.api.pipe.Fiber$CompletionCallback WL_JAXWS_CLIENT_ASYNC_RESP_TRACING
+TraceOneMethodWithParametersIfFlagged: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING onCompletion(Lcom/sun/xml/ws/api/message/Packet;)V WL_PACKET_PROPS_TRACER "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING set(Ljava/lang/Object;Ljava/lang/Throwable;)V WL_CLIENT_ASYNC_CALLBACK_TRACER "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING set(Ljava/lang/Object;Ljava/lang/Throwable;)V WL_CLIENT_ASYNC_CALLBACK_TRACER2 "WebServices|Client|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING set(Ljava/lang/Object;Ljava/lang/Throwable;)V WL_CLIENT_ASYNC_FAULT_TRACER "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING set(Ljava/lang/Object;Ljava/lang/Throwable;)V WL_CLIENT_ASYNC_FAULT_TRACER2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING set(Ljava/lang/Object;Ljava/lang/Throwable;)V WL_CLIENT_ASYNC_ClientErrorTracer  "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_JAXWS_CLIENT_ASYNC_RESP_TRACING set(Ljava/lang/Object;Ljava/lang/Throwable;)V WL_CLIENT_ASYNC_NonBlockingTxnMarker   "WebServices|Client|{namespace}|{operationname}"
+
+
+###############################################################################################
+#
+# Weblogic 10.0 JAX-WS server-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ============================================================================
+# com.sun.xml.ws.api.server.WSEndpoint$PipeHead <jaxws-rt>
+# com.sun.xml.ws.api.pipe.Fiber                 <jaxws-rt>  
+# weblogic.wsee.jaxws.JAXWSServlet   	        weblogic.jar
+###############################################################################################
+
+#SetTracerClassMapping: WL_SERVER_JAXWS_CORR_TRACER com.wily.powerpack.webservices.extension.agent.trace.correlation.WL10ServerJAXWSCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerClassMapping: PacketPropertyModifyTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.PacketPropertyModifyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: WL_SERVER_JAXWS_CORR_TRACER  -2000
+
+SetTracerClassMapping: WL_SERVER_JAXWS_CORR_SOAP_TRACER com.wily.powerpack.webservices.extension.agent.trace.correlation.WL10ServerJAXWSSOAPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_SERVER_JAXWS_CORR_SOAP_TRACER  -2000
+SetTracerClassMapping: PacketPropertyModifyTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.PacketPropertyModifyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerClassMapping: WL_SERVER_JAXWS10_BlamePointTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSProcessBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_SERVER_JAXWS10_BlamePointTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.PipeProcessNameformatter
+SetTracerOrdering: WL_SERVER_JAXWS10_BlamePointTracer 1
+SetTracerParameter: WL_SERVER_JAXWS10_BlamePointTracer service true
+
+SetTracerClassMapping: WL_SERVER_JAXWS10_BlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSProcessBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_SERVER_JAXWS10_BlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.PipeProcessNameformatter
+SetTracerOrdering: WL_SERVER_JAXWS10_BlamePointTracer2 2
+
+SetTracerClassMapping: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSProcessFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.PipeProcessNameformatter
+SetTracerOrdering: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER 100
+SetTracerParameter: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER useblame true
+
+SetTracerClassMapping: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER2 com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSProcessFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.PipeProcessNameformatter
+SetTracerOrdering: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER2 101
+SetTracerParameter: WL_SERVER_JAXWS10_SYNC_FAULT_TRACER useblame true
+
+SetTracerClassMapping: WL_SERVER_JAXWS10_ERROR_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS10_ERROR_FAULT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.PipeProcessNameformatter
+SetTracerOrdering: WL_SERVER_JAXWS10_ERROR_FAULT_TRACER  51
+
+
+#Dependency Map(SERVER)
+SetTracerClassMapping: WL_SERVER_JAXWS10_MAPTRACER com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_SERVER_JAXWS10_MAPTRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.PipeProcessNameformatter
+SetTracerParameter:  WL_SERVER_JAXWS10_MAPTRACER nodeType 1
+SetTracerOrdering: WL_SERVER_JAXWS10_MAPTRACER  200001
+
+SetFlag: WL_SERVER_JAXWS10_TRACING
+TurnOn: WL_SERVER_JAXWS10_TRACING
+
+IdentifyInheritedAs: com.sun.xml.ws.api.server.WSEndpoint$PipeHead WL_SERVER_JAXWS10_TRACING
+IdentifyClassAs: weblogic.wsee.jaxws.JAXWSServlet  WL_SERVER_JAXWS10_TRACING 
+IdentifyClassAs: com.sun.xml.ws.protocol.soap.ServerMUPipe WL_SERVER_JAXWS10_TRACING
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;Lcom/sun/xml/ws/api/server/WebServiceContextDelegate;Lcom/sun/xml/ws/api/server/TransportBackChannel;)Lcom/sun/xml/ws/api/message/Packet; PacketPropertyModifyTracer "WebServices"
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; WL_SERVER_JAXWS10_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; WL_SERVER_JAXWS10_SYNC_FAULT_TRACER "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; WL_SERVER_JAXWS10_SYNC_FAULT_TRACER2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; WL_SERVER_JAXWS10_ERROR_FAULT_TRACER  "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; WL_SERVER_JAXWS10_BlamePointTracer "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; WL_SERVER_JAXWS10_BlamePointTracer2 "WebServices|Server|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING doPost WL_SERVER_JAXWS_CORR_TRACER "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS10_TRACING process(Lcom/sun/xml/ws/api/message/Packet;)Lcom/sun/xml/ws/api/message/Packet; WL_SERVER_JAXWS_CORR_SOAP_TRACER "WEBSERVICE"
+
+
+
+###############################################################################################
+#
+# Weblogic 10.3 JAX-WS server-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ============================================================================
+# com.sun.xml.ws.api.server.WSEndpoint$PipeHead <jaxws-rt>
+# com.sun.xml.ws.api.pipe.Fiber                 <jaxws-rt>  
+# weblogic.wsee.jaxws.JAXWSServlet   	        weblogic.jar
+###############################################################################################
+SetTracerClassMapping: WL_SERVER_JAXWS103_CORR_SOAP_TRACER com.wily.powerpack.webservices.extension.agent.trace.correlation.WL103ServerJAXWSSOAPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_SERVER_JAXWS103_CORR_SOAP_TRACER  -2000
+
+SetTracerClassMapping: PacketPropertyModifyTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.PacketPropertyModifyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+
+SetTracerClassMapping: WL_SERVER_JAXWS_BlamePointTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSServerBlamepointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_SERVER_JAXWS_BlamePointTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerOrdering:  WL_SERVER_JAXWS_BlamePointTracer 1
+
+SetTracerClassMapping: WL_SERVER_JAXWS_BlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSServerBlamepointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_SERVER_JAXWS_BlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerOrdering:  WL_SERVER_JAXWS_BlamePointTracer2 2
+
+SetTracerClassMapping: WL_SERVER_JAXWS_SYNC_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSServerFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS_SYNC_FAULT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerOrdering: WL_SERVER_JAXWS_SYNC_FAULT_TRACER 100
+SetTracerParameter: WL_SERVER_JAXWS_SYNC_FAULT_TRACER useblame true
+
+SetTracerClassMapping: WL_SERVER_JAXWS_SYNC_FAULT_TRACER2 com.wily.powerpack.webservices.extension.agent.trace.weblogic.JaxWSServerFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS_SYNC_FAULT_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerOrdering: WL_SERVER_JAXWS_SYNC_FAULT_TRACER2 101
+SetTracerParameter: WL_SERVER_JAXWS_SYNC_FAULT_TRACER2 useblame true
+											 
+SetTracerClassMapping: WL_SERVER_JAXWS103_ServerSOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS103_ServerSOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerOrdering: WL_SERVER_JAXWS103_ServerSOAPFaultTracer 100
+
+SetTracerClassMapping: WL_SERVER_JAXWS103_ServerSOAPFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS103_ServerSOAPFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerOrdering: WL_SERVER_JAXWS103_ServerSOAPFaultTracer2 101
+
+SetTracerClassMapping: WL_SERVER_JAXWS103_ERROR_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WL_SERVER_JAXWS103_ERROR_FAULT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerOrdering: WL_SERVER_JAXWS103_ERROR_FAULT_TRACER  50
+
+
+#Dependency Map(SERVER)
+SetTracerClassMapping: WL_SERVER_JAXWS_MAPTRACER com.wily.introscope.agent.extensions.trace.ServerMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WL_SERVER_JAXWS_MAPTRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WSEndpointNameFormatter
+SetTracerParameter:  WL_SERVER_JAXWS_MAPTRACER nodeType 1
+SetTracerOrdering: WL_SERVER_JAXWS_MAPTRACER  200001
+
+SetFlag: WL_SERVER_JAXWS_TRACING
+TurnOn: WL_SERVER_JAXWS_TRACING
+
+IdentifyInheritedAs: com.sun.xml.ws.api.server.WSEndpoint$PipeHead WL_SERVER_JAXWS_TRACING
+IdentifyClassAs: com.sun.xml.ws.api.pipe.Fiber  WL_SERVER_JAXWS_TRACING
+IdentifyClassAs: weblogic.wsee.jaxws.JAXWSServlet  WL_SERVER_JAXWS_TRACING 
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING process(Lcom/sun/xml/ws/api/message/Packet;Lcom/sun/xml/ws/api/server/WebServiceContextDelegate;Lcom/sun/xml/ws/api/server/TransportBackChannel;)Lcom/sun/xml/ws/api/message/Packet; PacketPropertyModifyTracer "WebServices"
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING runSync WL_SERVER_JAXWS_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING runSync WL_SERVER_JAXWS_BlamePointTracer "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING runSync WL_SERVER_JAXWS_BlamePointTracer2 "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING runSync WL_SERVER_JAXWS_SYNC_FAULT_TRACER "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING runSync WL_SERVER_JAXWS_SYNC_FAULT_TRACER2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING runSync WL_SERVER_JAXWS103_ERROR_FAULT_TRACER  "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+
+
+TraceOneMethodWithParametersIfFlagged: WL_SERVER_JAXWS_TRACING runSync WL_SERVER_JAXWS103_CORR_SOAP_TRACER "WEBSERVICE"
+
+
+SetTracerClassMapping: WL_INVOKER_SERVER_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.trace.weblogic.InvokerFaultTracer  com.wily.introscope.probebuilder.validate.MetricNameValidator
+
+SetFlag: WL_INVOKER_FAULT_TRACING
+TurnOn: WL_INVOKER_FAULT_TRACING
+IdentifyInheritedAs: com.sun.xml.ws.api.server.Invoker WL_INVOKER_FAULT_TRACING
+TraceOneMethodWithParametersIfFlagged: WL_INVOKER_FAULT_TRACING invoke(Lcom/sun/xml/ws/api/message/Packet;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object; WL_INVOKER_SERVER_FAULT_TRACER "WEBSERVICE"
+
+
+#############################################################################
+#
+# Websphere 6.1 client-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ======================================================================
+# com.ibm.ws.webservices.engine.client.Connection	webservices.jar
+#
+#############################################################################
+
+SetTracerClassMapping: WASWSClientBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WASWSClientBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerParameter: WASWSClientBlamePointTracer1 service true
+SetTracerOrdering: WASWSClientBlamePointTracer1 100
+
+SetTracerClassMapping: WASWSClientBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WASWSClientBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerOrdering: WASWSClientBlamePointTracer2 101
+
+SetTracerClassMapping: WASWSClientBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WASWSClientBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerOrdering: WASWSClientBlamedFaultTracer 1000
+
+SetTracerClassMapping: WASWSClientBlamedFaultTracer2 com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WASWSClientBlamedFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerOrdering: WASWSClientBlamedFaultTracer2 1001
+
+SetTracerClassMapping: WASWSClientBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WASWSClientBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+
+SetTracerClassMapping: WASWSEndPointURLTracer com.wily.powerpack.webservices.extension.agent.trace.websphere.WASWSEndPointURLTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WASWSEndPointURLTracer 200000
+
+SetTracerClassMapping: WASWSClientMapTracer  com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WASWSClientMapTracer  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerParameter: WASWSClientMapTracer  nodeType 2
+IdentifyClassAs: com.ibm.ws.webservices.engine.client.Connection WASWSClientTracing
+
+SetTracerClassMapping: ClientSOAPFaultTracer7 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer7 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerOrdering: ClientSOAPFaultTracer7 102
+
+SetTracerClassMapping: ClientSOAPFaultTracer8 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ClientSOAPFaultTracer8 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerOrdering: ClientSOAPFaultTracer8 103
+
+SetFlag: WASWSClientTracing
+TurnOn: WASWSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSClientBackendTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSClientBlamePointTracer1 "WebServices|Client|{namespace}"
+#TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSClientBlamedFaultTracer "WebServices|Client|{namespace}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSClientBlamedFaultTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSEndPointURLTracer "WEBSERVICE"
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+
+#TraceOneMethodIfFlagged:  WASWSClientTracing invokeEngine ClientSOAPFaultTracer7 "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+#TraceOneMethodIfFlagged:  WASWSClientTracing invokeEngine  ClientSOAPFaultTracer8 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+###########################################################################################
+#
+# Websphere 6.1 server-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ==============================================================================
+# com.ibm.ws.webservices.engine.handlers.jaxrpc.JAXRPCHandler	webservices.jar
+#
+###########################################################################################
+
+SetTracerClassMapping: WAS6WSServerBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WAS6WSServerBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WAS6WSServerBlamedFaultTracer 1000
+SetTracerClassMapping: WAS6WSServerBlamedFaultTracer2 com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WAS6WSServerBlamedFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WAS6WSServerBlamedFaultTracer2 1001
+
+SetTracerClassMapping: WAS6WSServerSOAPFaultTracer9 com.wily.powerpack.webservices.extension.agent.trace.fault.websphere.WAS61ServerFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WAS6WSServerSOAPFaultTracer9 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WAS6WSServerSOAPFaultTracer9 100
+
+SetTracerClassMapping: WAS6WSServerSOAPFaultTracer10 com.wily.powerpack.webservices.extension.agent.trace.fault.websphere.WAS61ServerFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WAS6WSServerSOAPFaultTracer10 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WAS6WSServerSOAPFaultTracer10 101
+
+IdentifyClassAs: com.ibm.ws.webservices.engine.handlers.WrappedHandler WAS6WSServerTracing
+
+SetFlag: WAS6WSServerTracing
+TurnOn: WAS6WSServerTracing
+
+TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracing invoke WSServerBlamePointTracer1 "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracing invoke WSServerBlamePointTracer2 "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracing invoke WAS6WSServerBlamedFaultTracer "WebServices|Server|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracing invoke WAS6WSServerBlamedFaultTracer2 "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+
+#TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracing invoke WAS6WSServerSOAPFaultTracer9 "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+#TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracing invoke WAS6WSServerSOAPFaultTracer10 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+
+#dependency map
+SetTracerClassMapping: WAS6ServerMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:  WAS6ServerMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerParameter:  WAS6ServerMapTracer nodeType 1
+TraceOneMethodWithParametersIfFlagged: WAS6WSServerTracing invoke WAS6ServerMapTracer "WebServices|Server|{namespace}|{operationname}"
+
+######################################################################################################
+#
+# SAP NetWeaver 7.1
+#
+# This is completely based on Tracers and does not insert any handlers.
+# SAP71DeploymentTracer :This wil create the actual WSDMProviderProtocol and NW71JAXWSClientProtocol
+# SOAPTransportBindingTracer:  A tracer that invokes the appropriate method in the handler like class.
+#
+#
+######################################################################################################
+
+TurnOn: NWS71CLTracing
+SetFlag: NWS71CLTracing
+SetTracerClassMapping: NW71CLTracer com.wily.powerpack.webservices.extension.agent.trace.SAP71DeploymentTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+IdentifyClassAs: com.sap.engine.services.webservices.espbase.server.runtime.RuntimeProcessingEnvironment NWS71CLTracing
+TraceOneMethodWithParametersIfFlagged: NWS71CLTracing <init> NW71CLTracer "SAP71"
+
+######################################################################################################
+#
+# SAP NetWeaver 7.1 client-side tracers
+#
+# Notes:Clientside JAXWS
+# This is completely based on Tracers and does not insert any handlers.
+# NW71JAXWSClientProtocol :    A client handler like class implemented that is loaded
+#                              in the RuntimeProcessingEnvironment constructor. 
+#                              This is done instead of the handler insertion
+#
+######################################################################################################
+
+SetTracerClassMapping: NWS71WSClientBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NWS71WSClientBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerParameter: NWS71WSClientBlamePointTracer1 service true
+SetTracerOrdering: NWS71WSClientBlamePointTracer1 100
+
+SetTracerClassMapping: NWS71WSClientBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NWS71WSClientBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerOrdering: NWS71WSClientBlamePointTracer2 200
+
+SetTracerClassMapping: NWS71WSClientBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NWS71WSClientBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerOrdering: NWS71WSClientBlamedFaultTracer 1000
+
+IdentifyClassAs: com.sap.engine.services.webservices.espbase.client.bindings.impl.SOAPTransportBinding NWS71WSClientTracing
+
+SetFlag: NWS71WSClientTracing
+TurnOn: NWS71WSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing call NWS71WSClientBlamePointTracer1 "WebServices|Client|{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing call NWS71WSClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing call NWS71WSClientBlamedFaultTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+#TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing call NWS6WSEndPointURLTracer "WEBSERVICE"
+
+#TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing call CorrelationIncTracer "WEBSERVICE"
+
+SetTracerClassMapping: NW71InvokeHandlerTracer com.wily.powerpack.webservices.extension.agent.trace.SOAPTransportBindingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing invokeHandlerRequest NW71InvokeHandlerTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing invokeHandleSOAPResponse NW71InvokeHandlerTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing invokeHandleFault NW71InvokeHandlerTracer "WEBSERVICE"
+
+SetTracerClassMapping: NW_CLIENT_SOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.WSDMNW71ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NW_CLIENT_SOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMNW71ClientFaultFormatter
+SetTracerOrdering: NW_CLIENT_SOAPFaultTracer 1000
+
+SetFlag: NW_CLIENT_FaultTracing
+# turn tracer on and off
+TurnOn: NW_CLIENT_FaultTracing
+IdentifyClassAs: com.sap.engine.services.webservices.espbase.client.bindings.impl.SOAPTransportBinding NW_CLIENT_FaultTracing
+
+TraceOneMethodWithParametersIfFlagged: NW_CLIENT_FaultTracing invokeHandleFault NW_CLIENT_SOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_CLIENT_FaultTracing invokeHandleFault NW_CLIENT_SOAPFaultTracer "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+
+######################################################################################################
+#
+# Dependency Map
+#
+######################################################################################################
+
+SetTracerClassMapping: NW6ClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:  NW6ClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerParameter:  NW6ClientMapTracer nodeType 2
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracing call NW6ClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+
+################################################################################
+#
+# SAP NetWeaver 7.1 server-side tracers
+#
+# WSDMProviderProtocol    :    A handler like class implemented that is loaded by the 
+#                              in the RuntimeProcessingEnvironment constructor. 
+#                              This is done instead of the handler insertion
+#
+################################################################################
+SetTracerClassMapping: NWWSServerBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NWWSServerBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NW71NameCacheFormatter
+SetTracerParameter: NWWSServerBlamePointTracer1 service true
+SetTracerOrdering: NWWSServerBlamePointTracer1 100
+
+SetTracerClassMapping: NWWSServerBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NWWSServerBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NW71NameCacheFormatter
+SetTracerOrdering: NWWSServerBlamePointTracer2 200
+
+SetTracerClassMapping: NWS6WSServerBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NWS6WSServerBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NW71NameCacheFormatter
+SetTracerOrdering: NWS6WSServerBlamedFaultTracer 1000
+
+IdentifyInheritedAs: com.sap.engine.interfaces.webservices.esp.ImplementationContainer NWS6WSServerTracing
+## Weird ;) the above class is not working.. though the next one does, so using this for now.
+#IdentifyClassAs: com.sap.engine.services.webservices.espbase.server.runtime.RuntimeProcessingEnvironment NWS6WSServerTracing
+
+SetFlag: NWS6WSServerTracing
+TurnOn: NWS6WSServerTracing
+
+#TraceOneMethodWithParametersIfFlagged: NWS6WSServerTracing invokeMethod NWWSServerBlamePointTracer1 "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: NWS6WSServerTracing invokeMethod NWWSServerBlamePointTracer1 "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: NWS6WSServerTracing invokeMethod NWWSServerBlamePointTracer2 "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: NWS6WSServerTracing invokeMethod NWS6WSServerBlamedFaultTracer "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+
+TurnOn: NWS71PPTracing
+SetFlag: NWS71PPTracing
+SetTracerClassMapping: NW71PPTracer com.wily.powerpack.webservices.extension.agent.trace.SAP71ProtocolProcessorTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: NW71PPTracer 3000
+IdentifyClassAs: com.sap.engine.services.webservices.espbase.server.runtime.ProtocolProcessor NWS71PPTracing
+TraceOneMethodWithParametersIfFlagged: NWS71PPTracing protocolsHandleRequest NW71PPTracer "SAP71"
+TraceOneMethodWithParametersIfFlagged: NWS71PPTracing protocolsHandleResponse NW71PPTracer "SAP71"
+TraceOneMethodWithParametersIfFlagged: NWS71PPTracing invokeFault NW71PPTracer "SAP71"
+
+SetTracerClassMapping: NW_SVR_SOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.WSDMNW71ServerFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NW_SVR_SOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMNW71ServerFaultFormatter
+SetTracerOrdering: NW_SVR_SOAPFaultTracer 2000
+
+
+SetFlag: NW_SVR_FaultTracing
+# turn tracer on and off
+TurnOn: NW_SVR_FaultTracing
+IdentifyClassAs: com.sap.engine.services.webservices.espbase.server.runtime.ProtocolProcessor NW_SVR_FaultTracing
+
+TraceOneMethodWithParametersIfFlagged: NW_SVR_FaultTracing invokeFault NW_SVR_SOAPFaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_SVR_FaultTracing invokeFault NW_SVR_SOAPFaultTracer "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_SVR_FaultTracing protocolsHandleResponse NW_SVR_SOAPFaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_SVR_FaultTracing protocolsHandleResponse NW_SVR_SOAPFaultTracer "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+# Server side we will also trace the handleResponse for any faults
+
+
+### SOAP faults that don't result in the handlers handleResponse or handleFault being called.
+## Resuing a class that has a "Client " in its name but used for Server Faults here
+SetTracerClassMapping: NW_SVR_SOAPFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NW_SVR_SOAPFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NW71NameCacheFormatter
+SetTracerOrdering: NW_SVR_SOAPFaultTracer2 100
+
+SetFlag: NW_SVR_SOAPFaultTracing2
+# turn tracer on and off
+TurnOn: NW_SVR_SOAPFaultTracing2
+IdentifyClassAs: com.sap.engine.services.webservices.espbase.server.runtime.RuntimeProcessingEnvironment NW_SVR_SOAPFaultTracing2
+TraceOneMethodWithParametersIfFlagged: NW_SVR_SOAPFaultTracing2 process0 NW_SVR_SOAPFaultTracer2 "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_SVR_SOAPFaultTracing2 process0 NW_SVR_SOAPFaultTracer2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+
+
+
+#dependency map
+SetTracerClassMapping: NW6ServerMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:  NW6ServerMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NW71NameCacheFormatter
+SetTracerParameter:  NW6ServerMapTracer nodeType 1
+TraceOneMethodWithParametersIfFlagged: NWS6WSServerTracing invokeMethod NW6ServerMapTracer "WebServices|Server|{namespace}|{operationname}"
+
+##############################
+# SAP 7.1 JAX-RPC support
+##############################
+SetTracerClassMapping: NWS71_JAXRPC_WSClientBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NWS71_JAXRPC_WSClientBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerParameter: NWS71_JAXRPC_WSClientBlamePointTracer1 service true
+SetTracerOrdering: NWS71_JAXRPC_WSClientBlamePointTracer1 100
+
+SetTracerClassMapping: NWS71_JAXRPC_WSClientBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NWS71_JAXRPC_WSClientBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerOrdering: NWS71_JAXRPC_WSClientBlamePointTracer2 200
+
+SetTracerClassMapping: NWS71_JAXRPC_WSClientBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: NWS71_JAXRPC_WSClientBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+
+SetTracerClassMapping: NWS71_JAXRPC_WSClientBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NWS71_JAXRPC_WSClientBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerOrdering: NWS71_JAXRPC_WSClientBlamedFaultTracer 1000
+
+SetTracerClassMapping: NWS71_JAXRPC_WSEndPointURLTracer com.wily.powerpack.webservices.extension.agent.trace.netweaver.NWS6WSEndPointURLTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: NWS71_JAXRPC_WSEndPointURLTracer 200000
+
+
+
+IdentifyInheritedAs: com.sap.engine.services.webservices.jaxrpc.wsdl2java.ClientTransportBinding NWS71_JAXRPC_WSClientTracing
+
+SetFlag: NWS71_JAXRPC_WSClientTracing
+TurnOn: NWS71_JAXRPC_WSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracing call NWS71_JAXRPC_WSClientBackendTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracing call NWS71_JAXRPC_WSClientBlamePointTracer1 "WebServices|Client|{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracing call NWS71_JAXRPC_WSClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracing call NWS71_JAXRPC_WSClientBlamedFaultTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracing call NWS71_JAXRPC_WSEndPointURLTracer "WEBSERVICE"
+
+#TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracing call CorrelationIncTracer "WEBSERVICE"
+
+SetFlag: NWS71_JAXRPC_ProtocolTracing
+TurnOn: NWS71_JAXRPC_ProtocolTracing
+SetTracerClassMapping: NW71_JAXRPC_ClientTracer com.wily.powerpack.webservices.extension.agent.trace.ProtocolListTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: NW71_JAXRPC_ClientTracer 3000
+IdentifyClassAs: com.sap.engine.services.webservices.jaxrpc.wsdl2java.ProtocolList NWS71_JAXRPC_ProtocolTracing
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_ProtocolTracing handleRequest NW71_JAXRPC_ClientTracer "SAP71"
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_ProtocolTracing handleResponse NW71_JAXRPC_ClientTracer "SAP71"
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_ProtocolTracing handleFault NW71_JAXRPC_ClientTracer "SAP71"
+
+SetTracerClassMapping: NW_RPC_CLIENT_SOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.NW71JAXRPCClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: NW_RPC_CLIENT_SOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.NW71JAXRPCFaultFormatter
+SetTracerOrdering: NW_RPC_CLIENT_SOAPFaultTracer 1000
+
+SetFlag: NW_RPC_CLIENT_FaultTracing
+# turn tracer on and off
+TurnOn: NW_RPC_CLIENT_FaultTracing
+IdentifyClassAs: com.sap.engine.services.webservices.jaxrpc.wsdl2java.ProtocolList NW_RPC_CLIENT_FaultTracing
+
+TraceOneMethodWithParametersIfFlagged: NW_RPC_CLIENT_FaultTracing handleFault NW_RPC_CLIENT_SOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_RPC_CLIENT_FaultTracing handleFault NW_RPC_CLIENT_SOAPFaultTracer "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_RPC_CLIENT_FaultTracing handleResponse NW_RPC_CLIENT_SOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: NW_RPC_CLIENT_FaultTracing handleResponse NW_RPC_CLIENT_SOAPFaultTracer "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+#Dependency Map
+SetTracerClassMapping: NW71_JAXRPC_ClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:  NW71_JAXRPC_ClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerParameter:  NW71_JAXRPC_ClientMapTracer nodeType 2
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracing call NW71_JAXRPC_ClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+
+
+###############################################################################################
+#
+# JBOSS JAX-WS and JAX-RPC client-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+#
+# org.jboss.ws.core.CommonClient
+# ============================================================================
+# 
+###############################################################################################
+
+SetTracerClassMapping: JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER  com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER  nameformatter  com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossInitialClientNameFormatter
+SetTracerParameter: JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER service true
+SetTracerOrdering: JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER  2
+
+SetTracerClassMapping: JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER2  com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER2  nameformatter  com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerOrdering: JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER2 3
+
+SetTracerClassMapping: JBOSS_CLIENT_JAXWS_ERROR_TRACER  com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JBOSS_CLIENT_JAXWS_ERROR_TRACER  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerOrdering: JBOSS_CLIENT_JAXWS_ERROR_TRACER  51
+
+SetTracerClassMapping: JBOSS_CLIENT_JAXWS_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JBOSS_CLIENT_JAXWS_FAULT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerOrdering: JBOSS_CLIENT_JAXWS_FAULT_TRACER 100
+
+SetTracerClassMapping: JBOSS_CLIENT_JAXWS_FAULT_TRACER2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JBOSS_CLIENT_JAXWS_FAULT_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerOrdering: JBOSS_CLIENT_JAXWS_FAULT_TRACER2 100
+
+SetTracerClassMapping:  JBOSS_CLIENT_JAX_WS_BACKEND_TRACER com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JBOSS_CLIENT_JAX_WS_BACKEND_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerOrdering: JBOSS_CLIENT_JAX_WS_BACKEND_TRACER 1
+
+SetTracerClassMapping: JBOSS_CLIENT_JAX_WS_MAP_TRACER com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JBOSS_CLIENT_JAX_WS_MAP_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerParameter: JBOSS_CLIENT_JAX_WS_MAP_TRACER nodeType 2
+SetTracerOrdering: JBOSS_CLIENT_JAX_WS_MAP_TRACER 200
+
+SetTracerClassMapping: JBOSS_CLIENT_JAX_WS_CORR_TRACER com.wily.powerpack.webservices.extension.agent.trace.jboss.JBossClientSOAPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: JBOSS_CLIENT_JAX_WS_CORR_TRACER 201
+
+SetFlag: JBOSS_CLIENT_JAXWS_TRACING
+TurnOn: JBOSS_CLIENT_JAXWS_TRACING
+
+IdentifyClassAs: org.jboss.ws.core.CommonClient JBOSS_CLIENT_JAXWS_TRACING
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING invoke JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING invoke JBOSS_CLIENT_JAXWS_BLAMEPOINT_TRACER2 "WebServices|Client|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING invoke JBOSS_CLIENT_JAXWS_ERROR_TRACER "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING invoke JBOSS_CLIENT_JAXWS_FAULT_TRACER  "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING invoke JBOSS_CLIENT_JAXWS_FAULT_TRACER2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING invoke JBOSS_CLIENT_JAX_WS_BACKEND_TRACER "WebService at {namespace}"
+
+#dependency map
+TraceOneMethodIfFlagged: JBOSS_CLIENT_JAXWS_TRACING invoke JBOSS_CLIENT_JAX_WS_MAP_TRACER "WebServices|Client|{namespace}|{operationname}"
+
+#TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING addAttachmentParts JBOSS_CLIENT_JAX_WS_CORR_TRACER "WebServices"
+
+SetFlag: JBOSS_CLIENT_JAXWS_TRACING_CORR	
+TurnOn: JBOSS_CLIENT_JAXWS_TRACING_CORR
+
+IdentifyClassAs: org.jboss.ws.core.client.RemoteConnection JBOSS_CLIENT_JAXWS_TRACING_CORR
+IdentifyClassAs: org.jboss.ws.core.client.SOAPProtocolConnectionJMS JBOSS_CLIENT_JAXWS_TRACING_CORR 
+IdentifyClassAs: org.jboss.ws.core.client.SOAPProtocolConnectionHTTP JBOSS_CLIENT_JAXWS_TRACING_CORR 
+IdentifyClassAs: org.jboss.ws.core.client.JsonConnection JBOSS_CLIENT_JAXWS_TRACING_CORR 
+IdentifyClassAs: org.jboss.ws.core.client.HTTPRemoteConnection JBOSS_CLIENT_JAXWS_TRACING_CORR 
+IdentifyClassAs: org.jboss.ws.core.client.HTTPProtocolConnection JBOSS_CLIENT_JAXWS_TRACING_CORR 
+IdentifyClassAs: org.jboss.ws.core.client.FastInfoSetConnection JBOSS_CLIENT_JAXWS_TRACING_CORR 
+# Only specific to jboss 6 & 7
+IdentifyClassAs: org.jboss.ws.core.client.FastInfosetConnectionHTTP JBOSS_CLIENT_JAXWS_TRACING_CORR 
+IdentifyClassAs: org.jboss.ws.core.client.HTTPRemotingConnection JBOSS_CLIENT_JAXWS_TRACING_CORR 
+IdentifyClassAs: org.jboss.ws.core.client.JsonConnectionHTTP JBOSS_CLIENT_JAXWS_TRACING_CORR 
+
+# Correlation 
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACING_CORR invoke JBOSS_CLIENT_JAX_WS_CORR_TRACER "WebServices"
+
+
+
+
+###############################################################################################
+#
+# JBOSS JAX-WS and JAX-RPC server-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+#
+# org.jboss.ws.core.server
+# ============================================================================
+# 
+###############################################################################################
+
+SetTracerClassMapping: JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossInitialServerNameFormatter
+SetTracerParameter: JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER service true
+SetTracerOrdering:  JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER 1
+
+SetTracerClassMapping: JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossServerNameFormatter
+SetTracerOrdering:  JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER2 2
+
+SetTracerClassMapping: JBOSS_SERVER_JAXWS_FAULT_TRACER com.wily.powerpack.webservices.extension.agent.trace.fault.ServerRenamingFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JBOSS_SERVER_JAXWS_FAULT_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossServerNameFormatter
+SetTracerOrdering: JBOSS_SERVER_JAXWS_FAULT_TRACER 100
+
+SetTracerClassMapping: JBOSS_SERVER_JAXWS_FAULT_TRACER2 com.wily.powerpack.webservices.extension.agent.trace.fault.ServerRenamingFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JBOSS_SERVER_JAXWS_FAULT_TRACER2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossServerNameFormatter
+SetTracerOrdering: JBOSS_SERVER_JAXWS_FAULT_TRACER2 101
+									 
+SetTracerClassMapping: JBOSS_SERVER_JAX_WS_ERROR_TRACER com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: JBOSS_SERVER_JAX_WS_ERROR_TRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossServerNameFormatter
+SetTracerOrdering: JBOSS_SERVER_JAX_WS_ERROR_TRACER 52
+
+
+#Dependency Map(SERVER)
+
+SetTracerClassMapping: JBOSS_SERVER_JAXWS_MAPTRACER com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: JBOSS_SERVER_JAXWS_MAPTRACER nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossServerNameFormatter
+SetTracerParameter:  JBOSS_SERVER_JAXWS_MAPTRACER nodeType 1
+SetTracerOrdering: JBOSS_SERVER_JAXWS_MAPTRACER 20001
+
+SetTracerClassMapping: JBOSS_SERVER_CORR_SOAP_TRACER com.wily.powerpack.webservices.extension.agent.trace.jboss.JBossServerSOAPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: JBOSS_SERVER_CORR_SOAP_TRACER -2000
+
+SetFlag: JBOSS_SERVER_JAXWS_TRACING
+TurnOn: JBOSS_SERVER_JAXWS_TRACING
+
+IdentifyClassAs: org.jboss.ws.core.CommonBinding JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.ws.core.CommonSOAPBinding JBOSS_SERVER_JAXWS_TRACING
+IdentifyInheritedAs: org.jboss.ws.core.HTTPBindingJAXWS JBOSS_SERVER_JAXWS_TRACING
+IdentifyInheritedAs: org.jboss.ws.core.MessageBinding  JBOSS_SERVER_JAXWS_TRACING
+IdentifyInheritedAs: org.jboss.ws.core.PayloadBinding  JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.ws.core.BindingProviderImpl  JBOSS_SERVER_JAXWS_TRACING
+IdentifyInheritedAs: org.jboss.ws.core.BindingProviderImpl  JBOSS_SERVER_JAXWS_TRACING
+
+#JBOSS 6 & 7
+IdentifyInheritedAs: org.jboss.ws.core.jaxws.binding.HTTPBindingJAXWS JBOSS_SERVER_JAXWS_TRACING
+IdentifyInheritedAs: org.jboss.ws.core.jaxws.binding.MessageBinding  JBOSS_SERVER_JAXWS_TRACING
+IdentifyInheritedAs: org.jboss.ws.core.jaxws.binding.PayloadBinding  JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.ws.core.jaxws.binding.BindingProviderImpl  JBOSS_SERVER_JAXWS_TRACING
+IdentifyInheritedAs: org.jboss.ws.core.jaxws.binding.BindingProviderImpl  JBOSS_SERVER_JAXWS_TRACING
+
+IdentifyClassAs: org.jboss.wsf.container.jboss50.invocation.InvocationHandlerEJB3 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss50.invocation.InvocationHandlerJAXWS JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss50.invocation.InvocationHandlerJSE JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss50.invocation.InvocationHandlerMDB21 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss50.invocation.InvocationHandlerMDB3 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss50.invocation.InvocationHandlerEJB21 JBOSS_SERVER_JAXWS_TRACING
+# Only specific to jboss 6
+IdentifyInheritedAs: org.jboss.wsf.common.invocation.AbstractInvocationHandler JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.webservices.integration.invocation.InvocationHandlerEJB3 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.common.invocation.InvocationHandlerJAXWS JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.common.invocation.AbstractInvocationHandlerJSE JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.webservices.integration.invocation.InvocationHandlerMDB21 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.webservices.integration.invocation.InvocationHandlerMDB3 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.webservices.integration.invocation.InvocationHandlerEJB21 JBOSS_SERVER_JAXWS_TRACING
+
+
+# Only specific to jboss 7
+#IdentifyInheritedAs: org.jboss.as.webservices.invocation.AbstractInvocationHandlerEJB JBOSS_SERVER_JAXWS_TRACING
+#IdentifyInheritedAs: org.jboss.ws.common.invocation.AbstractInvocationHandlerJSE JBOSS_SERVER_JAXWS_TRACING
+#IdentifyClassAs: org.jboss.ws.common.invocation.AbstractInvocationHandlerJSE JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.as.webservices.invocation.AbstractInvocationHandlerEJB JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.webservices.integration.invocation.InvocationHandlerEJB3 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.webservices.integration.invocation.InvocationHandlerEJB21 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.ws.common.invocation.AbstractInvocationHandlerJSE JBOSS_SERVER_JAXWS_TRACING
+#IdentifyClassAs: org.jboss.ws.common.invocation.InvocationHandlerJAXRPC JBOSS_SERVER_JAXWS_TRACING
+#IdentifyClassAs: org.jboss.ws.common.invocation.AbstractInvocationHandler JBOSS_SERVER_JAXWS_TRACING
+#IdentifyInheritedAs: org.jboss.ws.common.invocation.AbstractInvocationHandler JBOSS_SERVER_JAXWS_TRACING
+
+IdentifyClassAs: org.jboss.wsf.container.jboss42.InvocationHandlerEJB3 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss42.InvocationHandlerJAXWS JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss42.InvocationHandlerJSE JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss42.InvocationHandlerMDB21 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss42.InvocationHandlerMDB3 JBOSS_SERVER_JAXWS_TRACING
+IdentifyClassAs: org.jboss.wsf.container.jboss42.InvocationHandlerEJB21 JBOSS_SERVER_JAXWS_TRACING
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING invoke(Lorg/jboss/wsf/spi/deployment/Endpoint;Lorg/jboss/wsf/spi/invocation/Invocation;)V JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING invoke(Lorg/jboss/wsf/spi/deployment/Endpoint;Lorg/jboss/wsf/spi/invocation/Invocation;)V JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER2 "WebServices|Server|{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING invoke(Lorg/jboss/wsf/spi/deployment/Endpoint;Lorg/jboss/wsf/spi/invocation/Invocation;)V JBOSS_SERVER_JAXWS_FAULT_TRACER  "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING invoke(Lorg/jboss/wsf/spi/deployment/Endpoint;Lorg/jboss/wsf/spi/invocation/Invocation;)V JBOSS_SERVER_JAXWS_FAULT_TRACER2  "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING invoke(Lorg/jboss/wsf/spi/deployment/Endpoint;Lorg/jboss/wsf/spi/invocation/Invocation;)V JBOSS_SERVER_JAX_WS_ERROR_TRACER "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING invoke(Lorg/jboss/wsf/spi/deployment/Endpoint;Lorg/jboss/wsf/spi/invocation/Invocation;)V JBOSS_SERVER_JAXWS_MAPTRACER "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING invoke(Lorg/jboss/wsf/spi/deployment/Endpoint;Lorg/jboss/wsf/spi/invocation/Invocation;)V JBOSS_SERVER_CORR_SOAP_TRACER "WEBSERVICE"
+
+# Use this for finding invocationhandler
+#IdentifyClassAs: org.jboss.ws.core.server.ServiceEndpointInvoker JBOSS_SERVER_JAXWS_TRACING
+#TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING init JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER "WebServices|Server|{namespace}"
+#TraceOneMethodWithParametersIfFlagged: JBOSS_SERVER_JAXWS_TRACING init JBOSS_SERVER_JAXWS_BLAMEPOINT_TRACER2 "WebServices|Server|{namespace}|{operationname}"
+
+
+
+#################################################################################################
+#
+# Axis 1.x client-side web service tracers (tracer based correlation)
+#
+#
+#################################################################################################
+
+SetTracerClassMapping: Axis1ClientBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis1ClientBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: Axis1ClientBlamePointTracer1 service true
+SetTracerOrdering: Axis1ClientBlamePointTracer1 1
+
+SetTracerClassMapping: Axis1ClientBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis1ClientBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: Axis1ClientBlamePointTracer2 2
+
+SetTracerClassMapping: Axis1ClientBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis1ClientBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+
+SetTracerClassMapping: Axis1ClientBlamedFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: Axis1ClientBlamedFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: Axis1ClientBlamedFaultTracer 50
+
+SetTracerClassMapping: Axis1ClientSOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.axis.Axis1ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: Axis1ClientSOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: Axis1ClientSOAPFaultTracer 100
+
+SetTracerClassMapping: Axis1ClientSOAPFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.axis.Axis1ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: Axis1ClientSOAPFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: Axis1ClientSOAPFaultTracer2 101
+
+
+SetTracerClassMapping: Axis1ClientWSEndPointURLTracer com.wily.powerpack.webservices.extension.agent.trace.axis.AxisWSEndPointURLTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: Axis1ClientWSEndPointURLTracer 52
+
+SetTracerClassMapping: Axis1ClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis1ClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerOrdering: Axis1ClientMapTracer 200
+SetTracerParameter: Axis1ClientMapTracer nodeType 2
+
+#SetTracerClassMapping: Axis1ClientCorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis1ClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: Axis1ClientCorrTracer  201
+
+IdentifyClassAs: org.apache.axis.client.Call Axis1ClientTracing
+
+SetFlag: Axis1ClientTracing
+TurnOn: Axis1ClientTracing
+
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientBackendTracer "WebService at {namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientBlamePointTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientBlamedFaultTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientSOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientSOAPFaultTracer2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientWSEndPointURLTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngine Axis1ClientCorrTracer "WEBSERVICE"
+
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientBackendTracer "WebService at {namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientBlamePointTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientBlamedFaultTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientSOAPFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientSOAPFaultTracer2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientWSEndPointURLTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: Axis1ClientTracing invokeEngineOneWay Axis1ClientCorrTracer "WEBSERVICE"
+
+
+#########################################################
+# 
+# Axis 1.x Webservices Server Tracing
+#
+#########################################################
+
+SetTracerClassMapping: Axis1ServerTracer com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis1ServerTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis1.Axis1NameFormatter
+SetTracerParameter: Axis1ServerTracer service true
+SetTracerOrdering: Axis1ServerTracer 1
+
+SetTracerClassMapping: Axis1ServerTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis1ServerTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis1.Axis1NameFormatter
+SetTracerOrdering: Axis1ServerTracer2 2
+
+SetTracerClassMapping: Axis1ServerFaultTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: Axis1ServerFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis1.Axis1NameFormatter
+SetTracerOrdering: Axis1ServerFaultTracer 52
+
+SetTracerClassMapping: Axis1ServerSOAPFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: Axis1ServerSOAPFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis1.Axis1NameFormatter
+SetTracerOrdering: Axis1ServerSOAPFaultTracer 100
+
+SetTracerClassMapping: Axis1ServerSOAPFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.ClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: Axis1ServerSOAPFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis1.Axis1NameFormatter
+SetTracerOrdering: Axis1ServerSOAPFaultTracer2 101
+
+
+#SetTracerClassMapping: Axis1ServerCorrTracer  com.wily.powerpack.webservices.extension.agent.trace.correlation.Axis1ServerCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerOrdering: Axis1ServerCorrTracer -200000
+
+
+#dependency map
+SetTracerClassMapping: Axis1ServerMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: Axis1ServerMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis1.Axis1NameFormatter
+SetTracerParameter: Axis1ServerMapTracer nodeType 1
+SetTracerOrdering: Axis1ServerMapTracer 200001
+
+SetFlag: Axis1ServerTracing
+TurnOn: Axis1ServerTracing
+
+IdentifyClassAs: org.apache.axis.handlers.soap.SOAPService Axis1ServerTracing
+
+
+#SERVICE LEVEL
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerTracer "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerSOAPFaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+
+#OPERATION LEVEL
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerTracer2 "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerFaultTracer "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerSOAPFaultTracer2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+# Correlation Tracing
+#TraceOneMethodWithParametersIfFlagged: Axis1ServerTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerCorrTracer "WebServices"
+#dependency map
+TraceOneMethodWithParametersIfFlagged: Axis1ServerTracing invoke(Lorg/apache/axis/MessageContext;)V Axis1ServerMapTracer "WebServices|Server|{namespace}|{operationname}"
+
+################################################
+## Apache CFX Client JAX-WS Instrumentation
+#######################################################
+
+SetFlag: ApacheCXFJaxWSClientTracing
+SetFlag: ApacheCXFJaxWSServerTracing
+
+TurnOn: ApacheCXFJaxWSServerTracing
+TurnOn: ApacheCXFJaxWSClientTracing
+
+
+# The ApacheCXFJaxWSSyncClientCorrTracer tracer definition has been moved to the spm-correlation.pbd. Please include the spm-correlation.pbd in your directives to perform jaxws apache cxf client correlations
+#SetTracerClassMapping:  ApacheCXFJaxWSSyncClientCorrTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.CXFClientProxyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter:     ApacheCXFJaxWSSyncClientCorrTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncClientTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncClientTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncClientTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncClientTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerParameter:     ApacheCXFJaxWSSyncClientTracer1 service true
+
+
+#SetTracerClassMapping:  AsyncJaxwsClientProxyTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.CXFAsyncJaxWSClientProxyTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerClassMapping:  AsyncResponseClientFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.cxf.CXFAsyncResponseClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter:     AsyncResponseClientFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping:  AsyncResponseClientFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.cxf.CXFAsyncResponseClientFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter:     AsyncResponseClientFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+#SetTracerClassMapping:  AsyncResponseBlamepointTracer com.wily.powerpack.webservices.extension.agent.trace.cxf.CXFAsyncResponseBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter:     AsyncResponseBlamepointTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+#SetTracerClassMapping:  AsyncResponseBlamepointTracer2 com.wily.powerpack.webservices.extension.agent.trace.cxf.CXFAsyncResponseBlamePointTracer  com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter:     AsyncResponseBlamepointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncClientErrorTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncClientErrorTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncClientErrorTracer2 com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncClientErrorTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping: ApacheCXFJaxWSSyncClientFaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.cxf.CXFClientSOAPFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ApacheCXFJaxWSSyncClientFaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping: ApacheCXFJaxWSSyncClientFaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.cxf.CXFClientSOAPFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ApacheCXFJaxWSSyncClientFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping: ApacheCXFJaxWSSyncClientMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheCXFJaxWSSyncClientMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerParameter: ApacheCXFJaxWSSyncClientMapTracer nodeType 2
+
+SetTracerClassMapping: ApacheCXFJaxWSSyncClientBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheCXFJaxWSSyncClientBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+
+SetTracerClassMapping: ApacheCXFNonBlockingTxnMarker com.wily.introscope.agent.trace.NonBlockingTxnMarker com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheCXFNonBlockingTxnMarker nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerOrdering: ApacheCXFNonBlockingTxnMarker 110
+
+
+SetTracerOrdering: ApacheCXFJaxWSSyncClientTracer1 100
+SetTracerOrdering: ApacheCXFJaxWSSyncClientTracer2 105
+SetTracerOrdering: ApacheCXFJaxWSSyncClientFaultTracer 110
+SetTracerOrdering: ApacheCXFJaxWSSyncClientFaultTracer2 120
+SetTracerOrdering: ApacheCXFJaxWSSyncClientErrorTracer 130
+SetTracerOrdering: ApacheCXFJaxWSSyncClientErrorTracer2 135
+SetTracerOrdering: ApacheCXFJaxWSSyncClientMapTracer 150
+#SetTracerOrdering: ApacheCXFJaxWSSyncClientCorrTracer 160
+
+
+
+SetTracerOrdering: AsyncResponseClientFaultTracer 110
+SetTracerOrdering: AsyncResponseClientFaultTracer2 120
+#SetTracerOrdering: AsyncJaxwsClientProxyTracer 160
+#SetTracerOrdering: AsyncResponseBlamepointTracer 190
+#SetTracerOrdering: AsyncResponseBlamepointTracer2 191
+
+
+SetTracerOrdering:  ApacheCXFJaxWSSyncClientBackendTracer 240
+
+IdentifyClassAs: org.apache.cxf.frontend.ClientProxy ApacheCXFJaxWSClientTracing
+IdentifyClassAs: org.apache.cxf.jaxws.JaxWsClientProxy ApacheCXFJaxWSClientTracing
+IdentifyClassAs: org.apache.cxf.endpoint.ClientImpl ApacheCXFJaxWSClientTracing
+IdentifyClassAs: org.apache.cxf.transport.http.HTTPConduit$WrappedOutputStream ApacheCXFJaxWSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync(Ljava/lang/reflect/Method;Lorg/apache/cxf/service/model/BindingOperationInfo;[Ljava/lang/Object;)Ljava/lang/Object; ApacheCXFJaxWSSyncClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync(Ljava/lang/reflect/Method;Lorg/apache/cxf/service/model/BindingOperationInfo;[Ljava/lang/Object;)Ljava/lang/Object; ApacheCXFJaxWSSyncClientCorrTracer "WebServices"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync(Ljava/lang/reflect/Method;Lorg/apache/cxf/service/model/BindingOperationInfo;[Ljava/lang/Object;)Ljava/lang/Object; ApacheCXFJaxWSSyncClientTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync(Ljava/lang/reflect/Method;Lorg/apache/cxf/service/model/BindingOperationInfo;[Ljava/lang/Object;)Ljava/lang/Object; ApacheCXFJaxWSSyncClientTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync(Ljava/lang/reflect/Method;Lorg/apache/cxf/service/model/BindingOperationInfo;[Ljava/lang/Object;)Ljava/lang/Object; ApacheCXFJaxWSSyncClientErrorTracer "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync  ApacheCXFJaxWSSyncClientFaultTracer2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync  ApacheCXFJaxWSSyncClientFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeSync  ApacheCXFJaxWSSyncClientBackendTracer "WebService at {namespace}"
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeAsync  ApacheCXFJaxWSSyncClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+#TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeAsync  AsyncJaxwsClientProxyTracer "WebServicesAsync"
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing onMessage  AsyncResponseClientFaultTracer "WebServices|Client|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing onMessage  AsyncResponseClientFaultTracer2 "WebServices|Client|{namespace}|{operationname}:SOAP Faults Per Interval"
+ 
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeAsync  ApacheCXFJaxWSSyncClientTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeAsync  ApacheCXFJaxWSSyncClientTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeAsync  ApacheCXFJaxWSSyncClientErrorTracer "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracing invokeAsync  ApacheCXFJaxWSSyncClientErrorTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+
+###########################################################
+## Apache CFX Server JAX-WS Instrumentation
+############################################################
+
+
+#SetTracerClassMapping:  ApacheCXFJaxWSSyncServerCorrTracer com.wily.powerpack.webservices.extension.agent.trace.correlation.CXFNameAndSOAPCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+#SetTracerParameter:     ApacheCXFJaxWSSyncServerCorrTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSServerSoapfaultTracer com.wily.powerpack.webservices.extension.agent.trace.fault.cxf.CXFServerSOAPFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ApacheCXFJaxWSServerSoapfaultTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncServerErrorTracer com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncServerErrorTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncServerErrorTracer2 com.wily.powerpack.webservices.extension.agent.errors.MethodThrewErrorOperationReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncServerErrorTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncServerTracer com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncServerTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+SetTracerParameter:     ApacheCXFJaxWSSyncServerTracer service true
+
+SetTracerClassMapping:  ApacheCXFJaxWSSyncServerTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:     ApacheCXFJaxWSSyncServerTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+
+SetTracerClassMapping:  ApacheCXFJaxWSServerSoapfaultTracer2 com.wily.powerpack.webservices.extension.agent.trace.fault.cxf.CXFServerSOAPFaultTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ApacheCXFJaxWSServerSoapfaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+
+SetTracerClassMapping: ApacheCXFJaxWSSyncServerMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: ApacheCXFJaxWSSyncServerMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFJaxWSServerNameFormatter
+SetTracerParameter: ApacheCXFJaxWSSyncServerMapTracer nodeType 1
+
+
+
+IdentifyClassAs: org.apache.cxf.jaxws.JAXWSMethodInvoker ApacheCXFJaxWSServerTracing
+
+#Corr tracer must come first for name formatter to work
+#SetTracerOrdering: ApacheCXFJaxWSSyncServerCorrTracer 90
+SetTracerOrdering: ApacheCXFJaxWSSyncServerTracer 100
+SetTracerOrdering: ApacheCXFJaxWSSyncServerTracer2 110
+SetTracerOrdering: ApacheCXFJaxWSServerSoapfaultTracer 120
+SetTracerOrdering: ApacheCXFJaxWSServerSoapfaultTracer2 130
+SetTracerOrdering: ApacheCXFJaxWSSyncServerErrorTracer 140
+SetTracerOrdering: ApacheCXFJaxWSSyncServerErrorTracer2 150
+SetTracerOrdering: ApacheCXFJaxWSSyncServerMapTracer 170
+
+#TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSSyncServerCorrTracer "WebServices"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSSyncServerMapTracer "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSSyncServerTracer "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSSyncServerTracer2 "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSSyncServerErrorTracer "WebServices|Server|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSSyncServerErrorTracer2 "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSServerSoapfaultTracer "WebServices|Server|{namespace}:SOAP Faults Per Interval"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing invoke ApacheCXFJaxWSServerSoapfaultTracer2 "WebServices|Server|{namespace}|{operationname}:SOAP Faults Per Interval"
+
+#TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSServerTracing service HttpServletCorIDTracer "WebServices"
+
+
+
+#############################################################
+# Weblogic 8.1 WSDM Observer
+#
+# NOTES:
+# Modify global handler chain for client and server.
+# Insert WSDM handler into handler chain
+#############################################################
+
+TurnOn: WLS8GlobalHandlerTracing
+SetFlag: WLS8GlobalHandlerTracing
+IdentifyClassAs: weblogic.webservice.dd.GlobalHandlerChainHelper WLS8GlobalHandlerTracing
+
+SetFlag: Weblogic8InSubbingTrace
+TurnOn: Weblogic8InSubbingTrace
+IdentifyClassAs: weblogic.webservice.dd.GlobalHandlerChainHelper Weblogic8InSubbingTrace
+SubstituteResultByNamedProxyIfFlagged: Weblogic8InSubbingTrace getInboundHandlerInfos()Ljava/util/List; WL8InHandler
+
+SetFlag: Weblogic8OutSubbingTrace
+TurnOn: Weblogic8OutSubbingTrace
+IdentifyClassAs: weblogic.webservice.dd.GlobalHandlerChainHelper Weblogic8OutSubbingTrace
+SubstituteResultByNamedProxyIfFlagged: Weblogic8OutSubbingTrace getOutboundHandlerInfos()Ljava/util/List; WL8OutHandler
+
+##################################################################################
+#
+# Weblogic 8.1 client-side web service tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ===============================================================
+# weblogic.webservice.core.rpc.StubImpl     webservices.jar (8.1)
+#
+##################################################################################
+
+SetTracerClassMapping: WLS8WSClientBlamePointTracer1 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS8WSClientBlamePointTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS8Formatter
+SetTracerOrdering: WLS8WSClientBlamePointTracer1 100
+SetTracerParameter: WLS8WSClientBlamePointTracer1 service true
+
+SetTracerClassMapping: WLS8WSClientBlamePointTracer2 com.wily.powerpack.webservices.extension.agent.trace.WebServiceBlamePointTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS8WSClientBlamePointTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS8Formatter
+SetTracerOrdering: WLS8WSClientBlamePointTracer2 200
+
+SetTracerClassMapping: WLS8WSClientBackendTracer com.wily.introscope.agent.trace.BackendTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS8WSClientBackendTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS8Formatter
+
+SetTracerOrdering: WLS8WSClientBackendTracer 99
+
+SetTracerClassMapping: WLS8WSClientBlamedFaultTracer1 com.wily.introscope.agent.errors.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS8WSClientBlamedFaultTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS8Formatter
+SetTracerOrdering: WLS8WSClientBlamedFaultTracer1 1000
+
+SetTracerClassMapping: WLS8WSClientBlamedFaultTracer2 com.wily.introscope.agent.errors.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS8WSClientBlamedFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS8Formatter
+
+SetTracerOrdering: WLS8WSClientBlamedFaultTracer2 201
+
+SetTracerClassMapping: WLS8WSClientStubTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.WLS8StubImplTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerClassMapping: WLS8WSEndPointURLTracer com.wily.powerpack.webservices.extension.agent.trace.weblogic.WLS8WSEndPointURLTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerOrdering: WLS8WSEndPointURLTracer 200000
+SetTracerClassMapping: WLS8WSClientMapTracer  com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: WLS8WSClientMapTracer  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WLS8Formatter
+SetTracerParameter: WLS8WSClientMapTracer  nodeType 2
+
+IdentifyClassAs: weblogic.webservice.core.rpc.StubImpl WLS8WSClientTracing
+
+SetFlag: WLS8WSClientTracing
+TurnOn: WLS8WSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracing <init>(Lweblogic/webservice/Port;)V WLS8WSClientStubTracer "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracing _invoke WLS8WSClientBackendTracer "WebService at {namespace}"
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracing _invoke WLS8WSClientBlamePointTracer1 "WebServices|Client|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracing _invoke WLS8WSClientBlamedFaultTracer1 "WebServices|Client|{namespace}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracing _invoke WLS8WSClientBlamePointTracer2 "WebServices|Client|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracing _invoke WLS8WSClientBlamedFaultTracer2 "WebServices|Client|{namespace}|{operationname}:Errors Per Interval"
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracing _invoke WLS8WSClientMapTracer "WebServices|Client|{namespace}|{operationname}"
+
+############################################################################################
+#
+# Weblogic 8.1 server-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ==========================================================================================
+# weblogic.webservice.InvocationHandler                                     webservices.jar
+# weblogic.webservice.component.javaclass.JavaClassInvocationHandler webservices.jar
+# weblogic.webservice.component.javaclass.StatefulInvocationHandler   webservices.jar
+# weblogic.webservice.component.jms.JMSQueueReceiveInvocationHandler webservices.jar
+# weblogic.webservice.component.jms.JMSSendInvocationHandler          webservices.jar
+# weblogic.webservice.component.jms.JMSTopicReceiveInvocationHandler webservices.jar
+# weblogic.webservice.component.slsb.SLSBInvocationHandler                  webservices.jar
+#
+############################################################################################
+
+SetTracerClassMapping: WLS8WSServerBlamedFaultTracer1 com.wily.introscope.agent.errors.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS8WSServerBlamedFaultTracer1 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WLS8WSServerBlamedFaultTracer1 1000
+
+SetTracerClassMapping: WLS8WSServerBlamedFaultTracer2 com.wily.introscope.agent.errors.MethodThrewErrorReportingTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: WLS8WSServerBlamedFaultTracer2 nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerOrdering: WLS8WSServerBlamedFaultTracer2 201
+
+IdentifyInheritedAs: weblogic.webservice.InvocationHandler WLS8WSServerTracing
+IdentifyClassAs: weblogic.webservice.component.javaclass.StatefulInvocationHandler WLS8WSServerTracing
+
+SetFlag: WLS8WSServerTracing
+TurnOn: WLS8WSServerTracing
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSServerTracing invoke(Ljava/lang/String;[Ljava/lang/Object;Lweblogic/webservice/WLMessageContext;)Ljava/lang/Object; WL_WSServerBlamePointTracer1 "WebServices|Server|{namespace}"
+TraceOneMethodWithParametersIfFlagged: WLS8WSServerTracing invoke(Ljava/lang/String;[Ljava/lang/Object;Lweblogic/webservice/WLMessageContext;)Ljava/lang/Object; WLS8WSServerBlamedFaultTracer1 "WebServices|Server|{namespace}:Errors Per Interval"
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSServerTracing invoke(Ljava/lang/String;[Ljava/lang/Object;Lweblogic/webservice/WLMessageContext;)Ljava/lang/Object; WL_WSServerBlamePointTracer2 "WebServices|Server|{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WLS8WSServerTracing invoke(Ljava/lang/String;[Ljava/lang/Object;Lweblogic/webservice/WLMessageContext;)Ljava/lang/Object; WLS8WSServerBlamedFaultTracer2 "WebServices|Server|{namespace}|{operationname}:Errors Per Interval"
+#dependency map
+SetTracerClassMapping: WLS8ServerMapTracer com.wily.introscope.agent.extensions.trace.MapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter:  WLS8ServerMapTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.WSDMHandlerFormatter
+SetTracerParameter:  WLS8ServerMapTracer nodeType 1
+TraceOneMethodWithParametersIfFlagged: WLS8WSServerTracing invoke(Ljava/lang/String;[Ljava/lang/Object;Lweblogic/webservice/WLMessageContext;)Ljava/lang/Object; WLS8ServerMapTracer "WebServices|Server|{namespace}|{operationname}"

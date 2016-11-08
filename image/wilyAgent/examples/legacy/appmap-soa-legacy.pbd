@@ -1,0 +1,653 @@
+########################################################################
+# Introscope ProbeBuilder File for SOA Performance Manager                             
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0.15 Build 990014 
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+SetFlag: Axis1ClientTracingMethodClass
+SetFlag: JaxRpcCallTracingMethodClass
+SetFlag: WL_JaxRpcCallTracingMethodClass
+SetFlag: WLS9WSClientTracingMethodClass
+SetFlag: WL_CLIENT_SYNC_JAXWS_TRACINGMethodClass
+SetFlag: WL_CLIENT_JAXWS_TRACINGMethodClass
+SetFlag: WASWSClientTracingMethodClass
+SetFlag: NWS71WSClientTracingMethodClass
+SetFlag: NWS71_JAXRPC_WSClientTracingMethodClass
+SetFlag: JBOSS_CLIENT_JAXWS_TRACINGMethodClass 
+SetFlag: ApacheCXFJaxWSClientTracingMethodClass 
+SetFlag: Axis2ClientTracingMethodClass 
+SetFlag: WLS8WSClientTracingMethodClass 
+
+SetFlag: Axis1ClientTracingClass
+SetFlag: JaxRpcCallTracingClass
+SetFlag: WL_JaxRpcCallTracingClass
+SetFlag: WLS9WSClientTracingClass
+SetFlag: WL_CLIENT_SYNC_JAXWS_TRACINGClass
+SetFlag: WL_CLIENT_JAXWS_TRACINGClass
+SetFlag: WASWSClientTracingClass
+SetFlag: NWS71WSClientTracingClass
+SetFlag: NWS71_JAXRPC_WSClientTracingClass
+SetFlag: JBOSS_CLIENT_JAXWS_TRACINGClass 
+SetFlag: ApacheCXFJaxWSClientTracingClass 
+SetFlag: Axis2ClientTracingClass 
+SetFlag: WLS8WSClientTracingClass 
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis1ClientTracing MethodClassLevelInstrument Axis1ClientTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: JaxRpcCallTracing MethodClassLevelInstrument JaxRpcCallTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_JaxRpcCallTracing MethodClassLevelInstrument WL_JaxRpcCallTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS9WSClientTracing MethodClassLevelInstrument WLS9WSClientTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_CLIENT_SYNC_JAXWS_TRACING MethodClassLevelInstrument WL_CLIENT_SYNC_JAXWS_TRACINGMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_CLIENT_JAXWS_TRACING MethodClassLevelInstrument WL_CLIENT_JAXWS_TRACINGMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WASWSClientTracing MethodClassLevelInstrument WASWSClientTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NWS71WSClientTracing MethodClassLevelInstrument NWS71WSClientTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NWS71_JAXRPC_WSClientTracing MethodClassLevelInstrument NWS71_JAXRPC_WSClientTracingMethodClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: JBOSS_CLIENT_JAXWS_TRACING MethodClassLevelInstrument JBOSS_CLIENT_JAXWS_TRACINGMethodClass 
+IdentifyTwoFlagIntersectionAsAggregateFlag: ApacheCXFJaxWSClientTracing MethodClassLevelInstrument ApacheCXFJaxWSClientTracingMethodClass 
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis2ClientTracing MethodClassLevelInstrument Axis2ClientTracingMethodClass 
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS8WSClientTracing MethodClassLevelInstrument WLS8WSClientTracingMethodClass 
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis1ClientTracing ClassLevelInstrument Axis1ClientTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: JaxRpcCallTracing ClassLevelInstrument JaxRpcCallTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_JaxRpcCallTracing ClassLevelInstrument WL_JaxRpcCallTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS9WSClientTracing ClassLevelInstrument WLS9WSClientTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_CLIENT_SYNC_JAXWS_TRACING ClassLevelInstrument WL_CLIENT_SYNC_JAXWS_TRACINGClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WL_CLIENT_JAXWS_TRACING ClassLevelInstrument WL_CLIENT_JAXWS_TRACINGClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: WASWSClientTracing ClassLevelInstrument WASWSClientTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NWS71WSClientTracing ClassLevelInstrument NWS71WSClientTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: NWS71_JAXRPC_WSClientTracing ClassLevelInstrument NWS71_JAXRPC_WSClientTracingClass
+IdentifyTwoFlagIntersectionAsAggregateFlag: JBOSS_CLIENT_JAXWS_TRACING ClassLevelInstrument JBOSS_CLIENT_JAXWS_TRACINGClass 
+IdentifyTwoFlagIntersectionAsAggregateFlag: ApacheCXFJaxWSClientTracing ClassLevelInstrument ApacheCXFJaxWSClientTracingClass 
+IdentifyTwoFlagIntersectionAsAggregateFlag: Axis2ClientTracing ClassLevelInstrument Axis2ClientTracingClass 
+IdentifyTwoFlagIntersectionAsAggregateFlag: WLS8WSClientTracing ClassLevelInstrument WLS8WSClientTracingClass 
+
+
+####################################################################################
+#
+# Axis 1 client-side web service tracers
+#
+# Notes: Axis1ClientTracing will take care of Client Side Metrics
+# 
+# Supports: Axis 1
+#
+####################################################################################
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingMethodClass invokeEngine AppMapJaxRpcCallTracer "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingMethodClass invokeEngineOneWay AppMapJaxRpcCallTracer "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingClass invokeEngine AppMapJaxRpcCallTracerClassLevel "{namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingClass invokeEngineOneWay AppMapJaxRpcCallTracerClassLevel "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingMethodClass invokeEngine AppMapJaxRpcCallTracerBT "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingMethodClass invokeEngineOneWay AppMapJaxRpcCallTracerBT "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingClass invokeEngine AppMapJaxRpcCallTracerClassLevelBT "{namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis1ClientTracingClass invokeEngineOneWay AppMapJaxRpcCallTracerClassLevelBT "{namespace}"
+
+####################################################################################
+#
+# JAX-RPC client-side web service tracers
+#
+# Notes: JaxRpcCallTracing will take care of Client Side Metrics
+# 
+# Supports: Axis 1.x
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingMethodClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracer "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingMethodClass invokeOneWay AppMapJaxRpcCallTracer "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerClassLevel "{namespace}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingClass invokeOneWay AppMapJaxRpcCallTracerClassLevel "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingMethodClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerBT "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingMethodClass invokeOneWay AppMapJaxRpcCallTracerBT "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerClassLevelBT "{namespace}"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracingClass invokeOneWay AppMapJaxRpcCallTracerClassLevelBT "{namespace}"
+
+SetTracerClassMapping: AppMapJaxRpcCallTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJaxRpcCallTracer nodeType WebService
+SetTracerParameter: AppMapJaxRpcCallTracer nodeLevel MethodClass
+SetTracerParameter: AppMapJaxRpcCallTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: AppMapJaxRpcCallTracer ownerType Application
+SetTracerParameter: AppMapJaxRpcCallTracer boundaryType Backend
+
+SetTracerClassMapping: AppMapJaxRpcCallTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevel ownerType Application
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevel boundaryType Backend
+
+SetTracerClassMapping: AppMapJaxRpcCallTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJaxRpcCallTracerBT nodeType WebService
+SetTracerParameter: AppMapJaxRpcCallTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapJaxRpcCallTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: AppMapJaxRpcCallTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapJaxRpcCallTracerBT boundaryType Backend
+
+SetTracerClassMapping: AppMapJaxRpcCallTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.JaxRpcCallFormatter
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapJaxRpcCallTracerClassLevelBT boundaryType Backend
+
+
+#################################################################################################
+#
+# JAX-RPC client-side web service tracers
+#
+# Notes:
+# Tracers for implementations javax.xml.rpc.Call interface.
+# Supported platforms: Weblogic 9.0
+#
+# classe and its associated jar file:
+# ===============================================================================================
+# weblogic.wsee.jaxrpc.WLCall				  	         weblogic.jar (Weblogic 9.0)
+#
+#################################################################################################
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingMethodClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracer "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingMethodClass invokeOneWay AppMapJaxRpcCallTracer "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerClassLevel "{namespace}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingClass invokeOneWay AppMapJaxRpcCallTracerClassLevel "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingMethodClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerBT "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingMethodClass invokeOneWay AppMapJaxRpcCallTracerBT "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingClass invoke([Ljava/lang/Object;)Ljava/lang/Object; AppMapJaxRpcCallTracerClassLevelBT "{namespace}"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracingClass invokeOneWay AppMapJaxRpcCallTracerClassLevelBT "{namespace}"
+
+##################################################################
+#
+# Weblogic 9.0 client-side tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ==========================================================
+# weblogic.wsee.jaxrpc.StubImpl			weblogic.jar (9.0)
+#
+##################################################################
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracingMethodClass  _invoke AppMapWLS9WSClientTracer  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracingClass  _invoke AppMapWLS9WSClientTracerClassLevel  "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracingMethodClass  _invoke AppMapWLS9WSClientTracerBT  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracingClass  _invoke AppMapWLS9WSClientTracerClassLevelBT  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapWLS9WSClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS9WSClientTracer nodeType WebService
+SetTracerParameter: AppMapWLS9WSClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapWLS9WSClientTracer  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerParameter: AppMapWLS9WSClientTracer  ownerType Application
+SetTracerParameter: AppMapWLS9WSClientTracer  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS9WSClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevel  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevel  ownerType Application
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevel  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS9WSClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS9WSClientTracerBT nodeType WebService
+SetTracerParameter: AppMapWLS9WSClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapWLS9WSClientTracerBT  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerParameter: AppMapWLS9WSClientTracerBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS9WSClientTracerBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS9WSClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevelBT  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.WLS9Formatter
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevelBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS9WSClientTracerClassLevelBT  boundaryType Backend
+
+##################################################################
+#
+# Weblogic 10.0 client-side tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ==========================================================
+# com.sun.xml.ws.client.sei.SEIStub  			weblogic.jar (10.0)
+#
+##################################################################
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACINGMethodClass   invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object;  AppMapWLS10WSClientTracer  "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACINGMethodClass    doProcessAsync AppMapWLS10WSAsyncClientTracer  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACINGClass   invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object;  AppMapWLS10WSClientTracerClassLevel  "{namespace}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACINGClass    doProcessAsync   AppMapWLS10WSAsyncClientTracerClassLevel  "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACINGMethodClass   invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object;  AppMapWLS10WSClientTracerBT  "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACINGMethodClass    doProcessAsync   AppMapWLS10WSAsyncClientTracerBT  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_SYNC_JAXWS_TRACINGClass   invoke(Ljava/lang/Object;[Ljava/lang/Object;Lcom/sun/xml/ws/client/RequestContext;Lcom/sun/xml/ws/client/ResponseContextReceiver;)Ljava/lang/Object;  AppMapWLS10WSClientTracerClassLevelBT  "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: WL_CLIENT_JAXWS_TRACINGClass    doProcessAsync   AppMapWLS10WSAsyncClientTracerClassLevelBT  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapWLS10WSClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSClientTracer nodeType WebService
+SetTracerParameter: AppMapWLS10WSClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapWLS10WSClientTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerParameter: AppMapWLS10WSClientTracer  ownerType Application
+SetTracerParameter: AppMapWLS10WSClientTracer  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS10WSClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevel  ownerType Application
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevel  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS10WSClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSClientTracerBT nodeType WebService
+SetTracerParameter: AppMapWLS10WSClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapWLS10WSClientTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerParameter: AppMapWLS10WSClientTracerBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS10WSClientTracerBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS10WSClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SyncHandlerNameFormatter
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevelBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS10WSClientTracerClassLevelBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS10WSAsyncClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSAsyncClientTracer nodeType WebService
+SetTracerParameter: AppMapWLS10WSAsyncClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapWLS10WSAsyncClientTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+SetTracerParameter: AppMapWLS10WSAsyncClientTracer  ownerType Application
+SetTracerParameter: AppMapWLS10WSAsyncClientTracer  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS10WSAsyncClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevel  ownerType Application
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevel  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS10WSAsyncClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerBT nodeType WebService
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS10WSAsyncClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.weblogic.SEIStubNameFormatter
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevelBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS10WSAsyncClientTracerClassLevelBT  boundaryType Backend
+
+
+#############################################################################
+#
+# Websphere 6.1 client-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ======================================================================
+# com.ibm.ws.webservices.engine.client.Connection	webservices.jar
+#
+#############################################################################
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracingMethodClass  invokeEngine AppMapWASWSClientTracer  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracingClass  invokeEngine AppMapWASWSClientTracerClassLevel  "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracingMethodClass  invokeEngine AppMapWASWSClientTracerBT  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracingClass  invokeEngine AppMapWASWSClientTracerClassLevelBT  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapWASWSClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWASWSClientTracer nodeType WebService
+SetTracerParameter: AppMapWASWSClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapWASWSClientTracer  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerParameter: AppMapWASWSClientTracer  ownerType Application
+SetTracerParameter: AppMapWASWSClientTracer  boundaryType Backend
+
+SetTracerClassMapping: AppMapWASWSClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWASWSClientTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapWASWSClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapWASWSClientTracerClassLevel  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerParameter: AppMapWASWSClientTracerClassLevel  ownerType Application
+SetTracerParameter: AppMapWASWSClientTracerClassLevel  boundaryType Backend
+
+SetTracerClassMapping: AppMapWASWSClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWASWSClientTracerBT nodeType WebService
+SetTracerParameter: AppMapWASWSClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapWASWSClientTracerBT  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerParameter: AppMapWASWSClientTracerBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWASWSClientTracerBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapWASWSClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWASWSClientTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapWASWSClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapWASWSClientTracerClassLevelBT  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WASFormatter
+SetTracerParameter: AppMapWASWSClientTracerClassLevelBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWASWSClientTracerClassLevelBT  boundaryType Backend
+
+
+######################################################################################################
+#
+# SAP NetWeaver 7.1 client-side tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ===================================================================================================
+# com.sap.engine.services.webservices.espbase.client.bindings.impl.SOAPTransportBinding NWS71WSClientTracing
+#
+######################################################################################################
+
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracingMethodClass   call AppMapNWS7WSClientTracer  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracingClass   call AppMapNWS7WSClientTracerClassLevel  "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracingMethodClass   call AppMapNWS7WSClientTracerBT  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71WSClientTracingClass   call AppMapNWS7WSClientTracerClassLevelBT  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapNWS7WSClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7WSClientTracer nodeType WebService
+SetTracerParameter: AppMapNWS7WSClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapNWS7WSClientTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerParameter: AppMapNWS7WSClientTracer  ownerType Application
+SetTracerParameter: AppMapNWS7WSClientTracer  boundaryType Backend
+
+SetTracerClassMapping: AppMapNWS7WSClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevel  ownerType Application
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevel  boundaryType Backend
+
+SetTracerClassMapping: AppMapNWS7WSClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7WSClientTracerBT nodeType WebService
+SetTracerParameter: AppMapNWS7WSClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapNWS7WSClientTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerParameter: AppMapNWS7WSClientTracerBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNWS7WSClientTracerBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapNWS7WSClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS71Formatter
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevelBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNWS7WSClientTracerClassLevelBT  boundaryType Backend
+
+######################################################################################################
+#
+# SAP NetWeaver 7.1 JAX RPC client-side tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ===================================================================================================
+# com.sap.engine.services.webservices.jaxrpc.wsdl2java.ClientTransportBinding NWS71_JAXRPC_WSClientTracing
+#
+######################################################################################################
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracingMethodClass  call AppMapNWS7JAXRPCClientTracer  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracingClass  call AppMapNWS7JAXRPCClientTracerClassLevel  "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracingMethodClass  call AppMapNWS7JAXRPCClientTracerBT  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: NWS71_JAXRPC_WSClientTracingClass  call AppMapNWS7JAXRPCClientTracerClassLevelBT  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapNWS7JAXRPCClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7JAXRPCClientTracer nodeType WebService
+SetTracerParameter: AppMapNWS7JAXRPCClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapNWS7JAXRPCClientTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerParameter: AppMapNWS7JAXRPCClientTracer  ownerType Application
+SetTracerParameter: AppMapNWS7JAXRPCClientTracer  boundaryType Backend
+
+SetTracerClassMapping: AppMapNWS7JAXRPCClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevel  ownerType Application
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevel  boundaryType Backend
+
+SetTracerClassMapping: AppMapNWS7JAXRPCClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerBT nodeType WebService
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapNWS7JAXRPCClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.netweaver.NWS6Formatter
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevelBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapNWS7JAXRPCClientTracerClassLevelBT  boundaryType Backend
+
+####################################################################################
+#
+# Jboss client-side web service tracers
+#
+# 
+# Supports: JBoss 3.0 web services stack
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACINGMethodClass invoke AppMapJBOSSCallTracer "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACINGClass invoke AppMapJBOSSCallTracerClassLevel "{namespace}"
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACINGMethodClass invoke AppMapJBOSSCallTracerBT "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: JBOSS_CLIENT_JAXWS_TRACINGClass invoke AppMapJBOSSCallTracerClassLevelBT "{namespace}"
+
+SetTracerClassMapping: AppMapJBOSSCallTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJBOSSCallTracer nodeType WebService
+SetTracerParameter: AppMapJBOSSCallTracer nodeLevel MethodClass
+SetTracerParameter: AppMapJBOSSCallTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerParameter: AppMapJBOSSCallTracer ownerType Application
+SetTracerParameter: AppMapJBOSSCallTracer boundaryType Backend
+
+SetTracerClassMapping: AppMapJBOSSCallTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJBOSSCallTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapJBOSSCallTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapJBOSSCallTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerParameter: AppMapJBOSSCallTracerClassLevel ownerType Application
+SetTracerParameter: AppMapJBOSSCallTracerClassLevel boundaryType Backend
+
+SetTracerClassMapping: AppMapJBOSSCallTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJBOSSCallTracerBT nodeType WebService
+SetTracerParameter: AppMapJBOSSCallTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapJBOSSCallTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerParameter: AppMapJBOSSCallTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapJBOSSCallTracerBT boundaryType Backend
+
+SetTracerClassMapping: AppMapJBOSSCallTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapJBOSSCallTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapJBOSSCallTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapJBOSSCallTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.jboss.JBossClientNameFormatter
+SetTracerParameter: AppMapJBOSSCallTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapJBOSSCallTracerClassLevelBT boundaryType Backend
+
+####################################################################################
+#
+# Apache CXF client-side web service tracers
+#
+# 
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingMethodClass invokeSync AppMapCXFCallTracer "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingClass invokeSync AppMapCXFCallTracerClassLevel "{namespace}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingMethodClass invokeSync AppMapCXFCallTracerBT "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingClass invokeSync AppMapCXFCallTracerClassLevelBT "{namespace}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingMethodClass invokeASync AppMapCXFCallTracer "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingClass invokeASync AppMapCXFCallTracerClassLevel "{namespace}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingMethodClass invokeASync AppMapCXFCallTracerBT "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: ApacheCXFJaxWSClientTracingClass invokeASync AppMapCXFCallTracerClassLevelBT "{namespace}"
+
+
+SetTracerClassMapping: AppMapCXFCallTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapCXFCallTracer nodeType WebService
+SetTracerParameter: AppMapCXFCallTracer nodeLevel MethodClass
+SetTracerParameter: AppMapCXFCallTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerParameter: AppMapCXFCallTracer ownerType Application
+SetTracerParameter: AppMapCXFCallTracer boundaryType Backend
+
+SetTracerClassMapping: AppMapCXFCallTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapCXFCallTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapCXFCallTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapCXFCallTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerParameter: AppMapCXFCallTracerClassLevel ownerType Application
+SetTracerParameter: AppMapCXFCallTracerClassLevel boundaryType Backend
+
+SetTracerClassMapping: AppMapCXFCallTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapCXFCallTracerBT nodeType WebService
+SetTracerParameter: AppMapCXFCallTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapCXFCallTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerParameter: AppMapCXFCallTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapCXFCallTracerBT boundaryType Backend
+
+SetTracerClassMapping: AppMapCXFCallTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapCXFCallTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapCXFCallTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapCXFCallTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.cxf.CXFClientProxyNameFormatter
+SetTracerParameter: AppMapCXFCallTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapCXFCallTracerClassLevelBT boundaryType Backend
+
+####################################################################################
+#
+# Axis 2 client-side web service tracers
+#
+#
+####################################################################################
+
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracingMethodClass execute  AppMapAxis2CallTracer "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracingClass execute  AppMapAxis2CallTracerClassLevel "{namespace}"
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracingMethodClass execute  AppMapAxis2CallTracerBT "{namespace}|{operationname}"
+TraceOneMethodWithParametersIfFlagged: Axis2ClientTracingClass execute  AppMapAxis2CallTracerClassLevelBT "{namespace}"
+
+SetTracerClassMapping: AppMapAxis2CallTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapAxis2CallTracer nodeType WebService
+SetTracerParameter: AppMapAxis2CallTracer nodeLevel MethodClass
+SetTracerParameter: AppMapAxis2CallTracer nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerParameter: AppMapAxis2CallTracer ownerType Application
+SetTracerParameter: AppMapAxis2CallTracer boundaryType Backend
+
+SetTracerClassMapping: AppMapAxis2CallTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapAxis2CallTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapAxis2CallTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapAxis2CallTracerClassLevel nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerParameter: AppMapAxis2CallTracerClassLevel ownerType Application
+SetTracerParameter: AppMapAxis2CallTracerClassLevel boundaryType Backend
+
+SetTracerClassMapping: AppMapAxis2CallTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapAxis2CallTracerBT nodeType WebService
+SetTracerParameter: AppMapAxis2CallTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapAxis2CallTracerBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerParameter: AppMapAxis2CallTracerBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapAxis2CallTracerBT boundaryType Backend
+
+SetTracerClassMapping: AppMapAxis2CallTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapAxis2CallTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapAxis2CallTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapAxis2CallTracerClassLevelBT nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.axis2.Axis2ClientNameFormatter
+SetTracerParameter: AppMapAxis2CallTracerClassLevelBT ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapAxis2CallTracerClassLevelBT boundaryType Backend
+
+##################################################################################
+#
+# Weblogic 8.1 client-side web service tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ===============================================================
+# weblogic.webservice.core.rpc.StubImpl     webservices.jar (8.1)
+#
+##################################################################################
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracingMethodClass _invoke AppMapWLS8WSClientTracer  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracingClass _invoke AppMapWLS8WSClientTracerClassLevel  "{namespace}"
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracingMethodClass _invoke AppMapWLS8WSClientTracerBT  "{namespace}|{operationname}"
+
+TraceOneMethodWithParametersIfFlagged: WLS8WSClientTracingClass _invoke AppMapWLS8WSClientTracerClassLevelBT  "{namespace}|{operationname}"
+
+SetTracerClassMapping: AppMapWLS8WSClientTracer com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS8WSClientTracer nodeType WebService
+SetTracerParameter: AppMapWLS8WSClientTracer nodeLevel MethodClass
+SetTracerParameter: AppMapWLS8WSClientTracer  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WLS8Formatter
+SetTracerParameter: AppMapWLS8WSClientTracer  ownerType Application
+SetTracerParameter: AppMapWLS8WSClientTracer  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS8WSClientTracerClassLevel com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevel nodeType WebService
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevel nodeLevel Class
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevel  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WLS8Formatter
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevel  ownerType Application
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevel  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS8WSClientTracerBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS8WSClientTracerBT nodeType WebService
+SetTracerParameter: AppMapWLS8WSClientTracerBT nodeLevel MethodClass
+SetTracerParameter: AppMapWLS8WSClientTracerBT  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WLS8Formatter
+SetTracerParameter: AppMapWLS8WSClientTracerBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS8WSClientTracerBT  boundaryType Backend
+
+SetTracerClassMapping: AppMapWLS8WSClientTracerClassLevelBT com.wily.introscope.appmap.agent.trace.AppMapEnablingTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevelBT nodeType WebService
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevelBT nodeLevel Class
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevelBT  nameformatter com.wily.powerpack.webservices.extension.agent.trace.nameformatter.websphere.WLS8Formatter
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevelBT  ownerType BusinessTransactionComponent
+SetTracerParameter: AppMapWLS8WSClientTracerClassLevelBT  boundaryType Backend
+
+##################################################################
+
+SetTracerOrdering: AppMapJaxRpcCallTracerClassLevelBT -4003
+SetTracerOrdering: AppMapWLS9WSClientTracerClassLevelBT -4003
+SetTracerOrdering: AppMapWLS10WSClientTracerClassLevelBT -4003
+SetTracerOrdering: AppMapWLS10WSAsyncClientTracerClassLevelBT -4003
+SetTracerOrdering: AppMapWASWSClientTracerClassLevelBT -4003
+SetTracerOrdering: AppMapNWS7WSClientTracerClassLevelBT -4003
+SetTracerOrdering: AppMapJBOSSCallTracerClassLevelBT -4003
+SetTracerOrdering: AppMapCXFCallTracerClassLevelBT -4003
+SetTracerOrdering: AppMapAxis2CallTracerClassLevelBT -4003
+SetTracerOrdering: AppMapJaxRpcCallTracerBT -4002
+SetTracerOrdering: AppMapWLS9WSClientTracerBT -4002
+SetTracerOrdering: AppMapWLS10WSClientTracerBT -4002
+SetTracerOrdering: AppMapWLS10WSAsyncClientTracerBT -4002
+SetTracerOrdering: AppMapWASWSClientTracerBT -4002
+SetTracerOrdering: AppMapNWS7WSClientTracerBT -4002
+SetTracerOrdering: AppMapJBOSSCallTracerBT -4002
+SetTracerOrdering: AppMapCXFCallTracerBT -4002
+SetTracerOrdering: AppMapAxis2CallTracerBT -4002
+SetTracerOrdering: AppMapJaxRpcCallTracerClassLevel -4001
+SetTracerOrdering: AppMapWLS9WSClientTracerClassLevel -4001
+SetTracerOrdering: AppMapWLS10WSClientTracerClassLevel -4001
+SetTracerOrdering: AppMapWLS10WSAsyncClientTracerClassLevel -4001
+SetTracerOrdering: AppMapWASWSClientTracerClassLevel -4001
+SetTracerOrdering: AppMapNWS7WSClientTracerClassLevel -4001
+SetTracerOrdering: AppMapJBOSSCallTracerClassLevel -4001
+SetTracerOrdering: AppMapCXFCallTracerClassLevel -4001
+SetTracerOrdering: AppMapAxis2CallTracerClassLevel -4001
+SetTracerOrdering: AppMapJaxRpcCallTracer -4000
+SetTracerOrdering: AppMapWLS9WSClientTracer -4000
+SetTracerOrdering: AppMapWLS10WSClientTracer -4000
+SetTracerOrdering: AppMapWLS10WSAsyncClientTracer -4000
+SetTracerOrdering: AppMapWASWSClientTracer -4000
+SetTracerOrdering: AppMapNWS7WSClientTracer -4000
+SetTracerOrdering: AppMapJBOSSCallTracer -4000
+SetTracerOrdering: AppMapCXFCallTracer -4000
+SetTracerOrdering: AppMapAxis2CallTracer -4000

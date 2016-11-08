@@ -1,0 +1,43 @@
+#######################################################################
+# Introscope ProbeBuilder List File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                   
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+
+#############################################################
+# This file provides tracer directives for End User Endpoints Monitoring.
+#############################################################
+
+#############
+# Flag intersection
+#############
+TurnOn: ExternalBTAttributeNNewMode
+SetFlag: ExternalBTAttributeNNewMode
+SetFlag: HttpServletTypeSpecificServiceExternalbtSingleTracing
+SetFlag: HttpServletExternalbtSingleTracing
+SetFlag: JSPServletExternalbtSingleTracing
+SetFlag: ServletFilterExternalbtSingleTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpServletTypeSpecificServiceTracing ExternalBTAttributeNNewMode HttpServletTypeSpecificServiceExternalbtSingleTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: HTTPServletTracing ExternalBTAttributeNNewMode HttpServletExternalbtSingleTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: JSPServletTracing ExternalBTAttributeNNewMode JSPServletExternalbtSingleTracing
+IdentifyTwoFlagIntersectionAsAggregateFlag: ServletFilterTracing ExternalBTAttributeNNewMode ServletFilterExternalbtSingleTracing
+
+#############################################################
+# Network Provider-based Response Counter
+#
+# NOTES:
+# When available, the HTTP header attribute 'x-apm-bt' is parsed and AttributePerIntervalCounterDifferentInstances uses the network provider attribute (n) to create an additional response counter.
+#############################################################
+SetTracerClassMapping: AttributePerIntervalCounterDifferentInstances com.wily.introscope.agent.external.biz.trace.SinglePerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: AttributePerIntervalCounterDifferentInstances nameformatter com.wily.introscope.agent.external.biz.util.HTTPSinglePerIntervalCounterFormatter
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceExternalbtSingleTracing service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V AttributePerIntervalCounterDifferentInstances "Responses Per Interval for {value}"
+TraceOneMethodWithParametersIfFlagged: HttpServletExternalbtSingleTracing service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V AttributePerIntervalCounterDifferentInstances "Responses Per Interval for {value}"
+TraceOneMethodWithParametersIfFlagged: JSPServletExternalbtSingleTracing _jspService AttributePerIntervalCounterDifferentInstances "Responses Per Interval for {value}"
+TraceOneMethodWithParametersIfFlagged: ServletFilterExternalbtSingleTracing doFilter(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;Ljavax/servlet/FilterChain;)V AttributePerIntervalCounterDifferentInstances "Responses Per Interval for {value}"
+SetTracerParameter: AttributePerIntervalCounterDifferentInstances attributeKey n

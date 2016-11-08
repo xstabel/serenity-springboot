@@ -1,0 +1,146 @@
+########################################################################
+# Introscope ProbeBuilder Directives File                              
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#                                                                      
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+########################################################################
+# This file provides directives which implement
+# correlation tracing for Apache HTTP Client,
+# Spring HTTP Client and 
+# Java HTTP URLConnection.
+########################################################################
+
+###This flag controls overall HTTPCorrelation feature across the http clients (Apache/URLConnection/Spring)
+SetFlag: HTTPCorrelation
+TurnOn: HTTPCorrelation
+
+
+#####################################################
+#
+# ApacheHTTPCommonsClient
+#####################################################
+
+
+# Correlation :: CLIENT
+#=================================
+
+SetFlag: ApacheHTTPClientCorrelationTracing
+SetFlag: ApacheHTTPClientCorrelation
+IdentifyTwoFlagIntersectionAsAggregateFlag: ApacheHTTPClientCorrelationTracing HTTPCorrelation ApacheHTTPClientCorrelation
+
+SetTracerClassMapping: ApacheHTTPCommonsClientCorrelationTracer com.wily.introscope.agent.trace.correlation.http.ApacheHttpCommonsClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+IdentifyClassAs: org.apache.commons.httpclient.HttpClient ApacheHTTPClientCorrelation
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientCorrelation executeMethod(Lorg/apache/commons/httpclient/HostConfiguration;Lorg/apache/commons/httpclient/HttpMethod;Lorg/apache/commons/httpclient/HttpState;)I; ApacheHTTPCommonsClientCorrelationTracer "HttpCommonsClient"
+
+
+#####################################################
+#
+# ApacheHTTPComponentClient 4.0 to 4.2
+#####################################################
+
+
+# Correlation :: CLIENT
+#=================================
+
+SetTracerClassMapping: ApacheHTTPComponentsClientCorrelationTracer com.wily.introscope.agent.trace.correlation.http.ApacheHttpComponentsClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+IdentifyClassAs: org.apache.http.impl.client.AbstractHttpClient ApacheHTTPClientCorrelation
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientCorrelation execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/HttpResponse; ApacheHTTPComponentsClientCorrelationTracer "HttpComponentsClient"
+
+#####################################################
+#
+# ApacheHTTPComponentClient 4.3
+#####################################################
+
+# Correlation :: CLIENT
+#=================================
+
+IdentifyClassAs: org.apache.http.impl.client.CloseableHttpClient ApacheHTTPClientCorrelation
+
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientCorrelation execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientCorrelationTracer "HttpComponentsClient"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientCorrelation execute(Lorg/apache/http/HttpHost;Lorg/apache/http/HttpRequest;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientCorrelationTracer "HttpComponentsClient"
+TraceOneMethodWithParametersIfFlagged: ApacheHTTPClientCorrelation execute(Lorg/apache/http/client/methods/HttpUriRequest;Lorg/apache/http/protocol/HttpContext;)Lorg/apache/http/client/methods/CloseableHttpResponse; ApacheHTTPComponentsClientCorrelationTracer "HttpComponentsClient"
+
+
+# Toggles
+#=================================
+
+TurnOn: ApacheHTTPClientCorrelationTracing
+
+
+#####################################################
+#
+# Spring HTTP Client
+#####################################################
+
+# Correlation
+#=================================
+
+SetFlag: SpringHTTPClientCorrelationTracing
+SetFlag: SpringHTTPClientCorrelation
+IdentifyTwoFlagIntersectionAsAggregateFlag: SpringHTTPClientCorrelationTracing HTTPCorrelation SpringHTTPClientCorrelation
+SetTracerClassMapping: SpringHTTPClientCorrelationTracer com.wily.introscope.agent.trace.correlation.http.GenericSpringClientCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+IdentifyDeepInheritedAs: org.springframework.http.client.ClientHttpRequest  SpringHTTPClientCorrelation
+IdentifyClassAs: org.springframework.http.client.ClientHttpRequest SpringHTTPClientCorrelation
+TraceOneMethodWithParametersIfFlagged: SpringHTTPClientCorrelation execute SpringHTTPClientCorrelationTracer "SpringSimpleHTTPClient"
+
+
+# Toggles
+#=================================
+
+TurnOn: SpringHTTPClientCorrelationTracing
+
+
+#####################################################
+#
+# Http URL Connection (Sun)
+#####################################################
+
+
+# Correlation
+#=================================
+SetFlag: HttpURLConnectionCorrelationTracing
+SetFlag: HttpURLConnectionCorrelation
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpURLConnectionCorrelationTracing HTTPCorrelation HttpURLConnectionCorrelation
+SetTracerClassMapping: URLConnectionCorrelationTracer com.wily.introscope.agent.trace.correlation.http.HttpURLConnectionCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: URLConnectionCorrelationTracer 300
+
+InstrumentBootstrapClass: java.net.HttpURLConnection true
+IdentifyDeepInheritedAs: java.net.HttpURLConnection HttpURLConnectionCorrelation
+InstrumentBootstrapClass: sun.net.www.protocol.http.HttpURLConnection true
+
+TraceOneMethodIfFlagged: HttpURLConnectionCorrelation connect()V URLConnectionCorrelationTracer "THIS STRING IS NOT USED"
+TraceOneMethodIfFlagged: HttpURLConnectionCorrelation getInputStream URLConnectionCorrelationTracer "THIS STRING IS NOT USED"
+TraceOneMethodIfFlagged: HttpURLConnectionCorrelation getOutputStream URLConnectionCorrelationTracer "THIS STRING IS NOT USED"
+
+# Toggles
+#=================================
+
+TurnOn: HttpURLConnectionCorrelationTracing
+
+#####################################################
+#
+# Server Side Servelet Correlation Tracing
+# =======================================
+# HttpServletTypeSpecificServiceTracing and HTTPServletTracing are defined in j2ee.pbd
+SetFlag: HttpServletTypeSpecificServiceCorrelation
+SetFlag: HTTPServletCorrelation
+
+IdentifyTwoFlagIntersectionAsAggregateFlag: HttpServletTypeSpecificServiceTracing HTTPCorrelation HttpServletTypeSpecificServiceCorrelation
+IdentifyTwoFlagIntersectionAsAggregateFlag: HTTPServletTracing HTTPCorrelation HTTPServletCorrelation
+
+SetTracerClassMapping: ServletServerCorrelationTracer com.wily.introscope.agent.trace.correlation.http.HttpServletCorrelationTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: ServletServerCorrelationTracer 10
+TraceOneMethodWithParametersIfFlagged: HttpServletTypeSpecificServiceCorrelation service(Ljavax/servlet/http/HttpServletRequest;Ljavax/servlet/http/HttpServletResponse;)V ServletServerCorrelationTracer "ServletCorrelation"
+# Tracing the generic service method only if it is overridden
+TraceOneMethodWithParametersIfFlagged: HTTPServletCorrelation service(Ljavax/servlet/ServletRequest;Ljavax/servlet/ServletResponse;)V ServletServerCorrelationTracer "ServletCorrelation"

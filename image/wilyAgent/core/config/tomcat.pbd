@@ -1,0 +1,325 @@
+########################################################################
+# Introscope ProbeBuilder Directives File
+# 
+# Version: 10.1.0.15
+# Build: 990014
+#
+# CA Wily Introscope(R) Version 10.1.0 Release 10.1.0.15
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+########################################################################
+
+########################################################################
+# This file provides directives which implement support for Apache     #
+# Tomcat 6.x and 7.0                                                   #
+#                                                                      #
+# It is intended to be used with the Introscope default files.         #       
+########################################################################
+
+
+#########################
+# HttpSession Support
+# ===================
+
+# In the "HTTP Session Configuration" section 
+# above, enable this directive set if the
+# org.apache.catalina.session.StandardSession 
+# interface is used.
+
+### Apache Standard Sessions
+### Superpages Sessions 
+
+
+### These two test statements can be used to figure out what the app is doing.
+#IdentifyMatchingClassesAs: "javax.servlet.http.HttpSession.*" HTTPSessionTracing
+#TraceAllMethodsIfFlagged: HTTPSessionTracing BlamedMethodTimer "Tomcat|HTTP Sessions|javax.servlet.http.HttpSession|{classname}|{method}:Average Method Invocation Time (ms)" 
+#IdentifyMatchingClassesAs: "com.superpages.share.session.*" SuperpagesSessionTracing
+#TraceAllMethodsIfFlagged: SuperpagesSessionTracing BlamedMethodTimer "Tomcat|HTTP Sessions|com.superpages.share.session|{classname}|{method}:Average Method Invocation Time (ms)" 
+
+IdentifyClassAs: com.superpages.share.session.ProxyServletRequest SuperpagesSessionTracing
+IdentifyInheritedAs: com.superpages.share.session.ProxyServletRequest SuperpagesSessionTracing
+
+## Choose blame or no blame
+#TraceOneMethodIfFlagged: SuperpagesSessionTracing getSession BlamedMethodTimer "Tomcat|HTTP Sessions|getSession:Average Response Time (ms)"
+TraceOneMethodIfFlagged: SuperpagesSessionTracing getSession MethodTimer "Tomcat|HTTP Sessions|getSession:Average Response Time (ms)"
+TraceOneMethodIfFlagged: SuperpagesSessionTracing getSession PerIntervalCounter	"Tomcat|HTTP Sessions|getSession:Invocations Per Interval"
+TraceOneMethodIfFlagged: SuperpagesSessionTracing getSession ConcurrentInvocationCounter "Tomcat|HTTP Sessions|getSession:Concurrent Invocations"
+
+## Choose blame or no blame
+#TraceOneMethodIfFlagged: SuperpagesSessionTracing commit BlamedMethodTimer "Tomcat|HTTP Sessions|commit:Average Response Time (ms)"
+TraceOneMethodIfFlagged: SuperpagesSessionTracing commit MethodTimer "Tomcat|HTTP Sessions|commit:Average Response Time (ms)"
+TraceOneMethodIfFlagged: SuperpagesSessionTracing commit PerIntervalCounter "Tomcat|HTTP Sessions|commit:Invocations Per Interval"
+TraceOneMethodIfFlagged: SuperpagesSessionTracing commit ConcurrentInvocationCounter "Tomcat|HTTP Sessions|commit:Concurrent Invocations"
+
+IdentifyClassAs: javax.servlet.http.HttpSession.StandardSession	ApacheStandardSessionTracing
+IdentifyInheritedAs: javax.servlet.http.HttpSession.StandardSession ApacheStandardSessionTracing
+
+TraceOneMethodWithParametersIfFlagged: ApacheStandardSessionTracing <init> MethodTraceIncrementor "Tomcat|HTTP Sessions:Created Sessions"
+TraceOneMethodWithParametersIfFlagged: ApacheStandardSessionTracing isNew MethodTraceIncrementor "Tomcat|HTTP Sessions:isNew Sessions"
+TraceOneMethodWithParametersIfFlagged: ApacheStandardSessionTracing invalidate	MethodTraceIncrementor "Tomcat|HTTP Sessions:Invalidated Sessions"
+
+TraceOneMethodWithParametersIfFlagged: ApacheStandardSessionTracing activate MethodTraceIncrementor "Tomcat|HTTP Sessions:Activated Sessions"
+TraceOneMethodWithParametersIfFlagged: ApacheStandardSessionTracing expire MethodTraceIncrementor "Tomcat|HTTP Sessions:Expired Sessions"
+TraceOneMethodWithParametersIfFlagged: ApacheStandardSessionTracing getSession MethodTraceIncrementor "Tomcat|HTTP Sessions:getSession Count"
+
+
+
+##  Standard Session
+IdentifyClassAs: org.apache.catalina.session.StandardSession FormattedSessionTracing
+IdentifyInheritedAs: org.apache.catalina.session.StandardSession FormattedSessionTracing
+IdentifyClassAs: org.apache.catalina.session.StandardSession UnformattedSessionTracing
+IdentifyInheritedAs: org.apache.catalina.session.StandardSession UnformattedSessionTracing
+
+##  Bypass TCSession formatter 
+TraceOneMethodWithParametersIfFlagged: UnformattedSessionTracing <init> MethodTraceIncrementor "Tomcat|HTTP Sessions:Created Sessions"
+TraceOneMethodWithParametersIfFlagged: UnformattedSessionTracing activate MethodTraceIncrementor "Tomcat|HTTP Sessions:Activated Sessions"
+TraceOneMethodWithParametersIfFlagged: UnformattedSessionTracing passivate MethodTraceIncrementor "Tomcat|HTTP Sessions:Passivated Sessions"
+TraceOneMethodWithParametersIfFlagged: UnformattedSessionTracing expire MethodTraceIncrementor "Tomcat|HTTP Sessions:Expired Sessions"
+TraceOneMethodWithParametersIfFlagged: UnformattedSessionTracing recycle MethodTraceIncrementor "Tomcat|HTTP Sessions:Recycled Sessions"
+TraceOneMethodWithParametersIfFlagged: UnformattedSessionTracing invalidate MethodTraceIncrementor "Tomcat|HTTP Sessions:Invalidated Sessions"
+TraceOneMethodWithParametersIfFlagged: UnformattedSessionTracing writeObjectData PerIntervalCounter "Tomcat|HTTP Sessions:Serialized Sessions Per Interval"
+
+## Use TCSession formatter
+TraceOneMethodWithParametersIfFlagged: FormattedSessionTracing <init> MethodTraceIncrementor_TCSession "Tomcat|HTTP Sessions|{ContextName}:Created Sessions"
+TraceOneMethodWithParametersIfFlagged: FormattedSessionTracing activate MethodTraceIncrementor_TCSession "Tomcat|HTTP Sessions|{ContextName}:Activated Sessions"
+TraceOneMethodWithParametersIfFlagged: FormattedSessionTracing passivate MethodTraceIncrementor_TCSession "Tomcat|HTTP Sessions|{ContextName}:Passivated Sessions"
+TraceOneMethodWithParametersIfFlagged: FormattedSessionTracing expire MethodTraceIncrementor_TCSession "Tomcat|HTTP Sessions|{ContextName}:Expired Sessions"
+TraceOneMethodWithParametersIfFlagged: FormattedSessionTracing recycle MethodTraceIncrementor_TCSession "Tomcat|HTTP Sessions|{ContextName}:Recycled Sessions"
+TraceOneMethodWithParametersIfFlagged: FormattedSessionTracing invalidate MethodTraceIncrementor_TCSession "Tomcat|HTTP Sessions|{ContextName}:Invalidated Sessions"
+TraceOneMethodWithParametersIfFlagged: FormattedSessionTracing writeObjectData PerIntervalCounter_TCSession "Tomcat|HTTP Sessions|{ContextName}:Serialized Sessions Per Interval"
+
+
+# In the "HTTP Session Configuration" section 
+# above, enable this directive set if the
+# org.apache.catalina.session.StandardSession  
+# interface is not used and javax.servlet.http.HttpSession 
+# is used instead.
+
+### HTTP Sessions
+
+
+IdentifyMatchingClassesAs: "javax.servlet.http.HttpSession.*" HTTPSessionTracing
+TraceAllMethodsIfFlagged: HTTPSessionTracing BlamedMethodTimer "Tomcat|HTTP Sessions|javax.servlet.http.HttpSession|{classname}|{method}:Average Method Invocation Time (ms)" 
+
+IdentifyClassAs: javax.servlet.http.HttpSession HTTPSessionTracing
+IdentifyInheritedAs: javax.servlet.http.HttpSession HTTPSessionTracing
+
+TraceOneMethodWithParametersIfFlagged: HTTPSessionTracing <init> MethodTraceIncrementor "Tomcat|HTTP Sessions:Created Sessions"
+TraceOneMethodWithParametersIfFlagged: HTTPSessionTracing isNew	MethodTraceIncrementor "Tomcat|HTTP Sessions:activated sessions"
+TraceOneMethodWithParametersIfFlagged: HTTPSessionTracing invalidate MethodTraceIncrementor "Tomcat|HTTP Sessions:invalidated sessions"
+
+
+## Persistent Sessions:
+## total, via all persistence methods
+IdentifyClassAs: org.apache.catalina.session.PersistentManager	PersistentSessionTracing
+IdentifyInheritedAs: org.apache.catalina.session.PersistentManager PersistentSessionTracing
+
+TraceOneMethodIfFlagged: PersistentSessionTracing createSession MethodTraceIncrementor "Tomcat|HTTP Session:Total Persistent Session Count"
+TraceOneMethodIfFlagged: PersistentSessionTracing remove MethodTraceDecrementor "Tomcat|HTTP Session:Total Persistent Session Count"
+
+## JDBC Persisted Sessions:
+## Sessions persisted to DB
+IdentifyClassAs: org.apache.catalina.session.JDBCStore	PersistentSessionTracing
+IdentifyInheritedAs: org.apache.catalina.session.JDBCStore PersistentSessionTracing
+
+TraceOneMethodIfFlagged: PersistentSessionTracing save MethodTraceIncrementor "Tomcat|HTTP Session:JDBC Persisted Session Count"
+TraceOneMethodIfFlagged: PersistentSessionTracing remove MethodTraceDecrementor "Tomcat|HTTP Session:JDBC Persisted Session Count"
+
+## File Persisted Sessions:
+## Sessions persisted to files
+IdentifyClassAs: org.apache.catalina.session.FileStore PersistentSessionTracing
+IdentifyInheritedAs: org.apache.catalina.session.FileStore PersistentSessionTracing
+
+TraceOneMethodIfFlagged: PersistentSessionTracing save MethodTraceIncrementor "Tomcat|HTTP Session:File Persisted Session Count"
+TraceOneMethodIfFlagged: PersistentSessionTracing remove MethodTraceDecrementor "Tomcat|HTTP Session:File Persisted Session Count"
+
+## Replicated Sessions
+IdentifyClassAs: org.apache.catalina.session.DistributedManager	PersistentSessionTracing
+IdentifyInheritedAs: org.apache.catalina.session.DistributedManager PersistentSessionTracing
+
+TraceOneMethodIfFlagged: PersistentSessionTracing createSession MethodTraceIncrementor "Tomcat|HTTP Session:Replicated Session Count"
+
+
+#########################
+# Authentication Support
+# ======================
+
+
+IdentifyClassAs: org.apache.catalina.authenticator.AuthenticatorBase AuthenticationTracing
+IdentifyInheritedAs: org.apache.catalina.authenticator.AuthenticatorBase AuthenticationTracing
+
+TraceOneMethodIfFlagged: AuthenticationTracing authenticate MethodTimer "Tomcat|Authentication|Authenticate (all types):Average Response Time (ms)"
+TraceOneMethodIfFlagged: AuthenticationTracing authenticate PerIntervalCounter "Tomcat|Authentication|Authenticate (all types):Invocations Per Interval"
+TraceOneMethodIfFlagged: AuthenticationTracing authenticate ConcurrentInvocationCounter "Tomcat|Authentication|Authenticate (all types):Concurrent Invocations"
+
+
+#########################
+# DBCP Support
+# ================
+
+### With Tomcat V5.5 the DBCP classes have been refactored
+### and repackaged into naming-factory-dbcp.jar
+
+### The following directives are specific to tomcat 5.5x and later versions
+IdentifyClassAs: org.apache.tomcat.dbcp.dbcp.PoolableConnectionFactory DBCPv55Tracing
+
+TraceOneMethodIfFlagged: DBCPv55Tracing makeObject MethodTraceIncrementor "Tomcat|DBCP|Connection Pool:Pool Size"
+TraceOneMethodIfFlagged: DBCPv55Tracing destroyObject MethodTraceDecrementor "Tomcat|DBCP|Connection Pool:Pool Size"
+TraceOneMethodIfFlagged: DBCPv55Tracing activateObject MethodTraceIncrementor "Tomcat|DBCP|Connection Pool:Objects In Use"
+TraceOneMethodIfFlagged: DBCPv55Tracing passivateObject MethodTraceDecrementor "Tomcat|DBCP|Connection Pool:Objects In Use"
+
+IdentifyClassAs: org.apache.tomcat.dbcp.pool.impl.GenericObjectPool DBCPv55Tracing
+TraceOneMethodIfFlagged: DBCPv55Tracing borrowObject MethodTraceIncrementor "Tomcat|DBCP|Connection Pool:Connections In Use"
+TraceOneMethodIfFlagged: DBCPv55Tracing returnObject MethodTraceDecrementor "Tomcat|DBCP|Connection Pool:Connections In Use"
+
+IdentifyClassAs: org.apache.tomcat.dbcp.dbcp.BasicDataSource DBCPv55Tracing
+## Choose blame or no blame
+#TraceOneMethodIfFlagged: DBCPv55Tracing getConnection BlamedMethodTimer "Tomcat|DBCP|getConnection:Average Response Time (ms)"
+TraceOneMethodIfFlagged: DBCPv55Tracing getConnection MethodTimer "Tomcat|DBCP|getConnection:Average Response Time (ms)"
+TraceOneMethodIfFlagged: DBCPv55Tracing getConnection PerIntervalCounter "Tomcat|DBCP|getConnection:Invocations Per Interval"
+TraceOneMethodIfFlagged: DBCPv55Tracing getConnection ConcurrentInvocationCounter "Tomcat|DBCP|getConnection:Concurrent Invocations"
+
+### End of the directives that are specific to tomcat 5.5x and later versions
+
+### Don't format the DBCP metric output.
+### Less readable metrics, but works on all Tomcat installs. 
+### Commented in by default.
+
+## JDBC Connection Pool via DBCP
+## See http://jakarta.apache.org/commons/dbcp/apidocs/org/apache/commons/dbcp/package-summary.html#package_description
+IdentifyClassAs: org.apache.commons.dbcp.PoolableConnectionFactory DBCPTracing
+IdentifyInheritedAs: org.apache.commons.dbcp.PoolableConnectionFactory	DBCPTracing
+
+TraceOneMethodIfFlagged: DBCPTracing makeObject()Ljava/lang/Object; MethodTraceIncrementor "Tomcat|DBCP:Connections In Pool (Drivers & DataSources)"
+TraceOneMethodIfFlagged: DBCPTracing destroyObject(Ljava/lang/Object;)V MethodTraceDecrementor "Tomcat|DBCP:Connections In Pool (Drivers & DataSources)"
+
+## http://jakarta.apache.org/commons/pool/
+### DataSource 
+# need wait time and increment for getConnection
+IdentifyClassAs: org.apache.commons.dbcp.PoolingDataSource DBCPTracing
+IdentifyInheritedAs: org.apache.commons.dbcp.PoolingDataSource DBCPTracing
+
+TraceOneMethodIfFlagged: DBCPTracing getConnection MethodTimer "Tomcat|DBCP|DataSource Pool:Average Wait to get a connection (ms)"
+TraceOneMethodIfFlagged: DBCPTracing getConnection MethodTraceIncrementor "Tomcat|DBCP|DataSource Pool:Connections in Use"
+TraceOneMethodIfFlagged: DBCPTracing returnObject MethodTraceDecrementor "Tomcat|DBCP|DataSource Pool:Connections in Use"
+TraceOneMethodIfFlagged: DBCPTracing evict MethodTraceDecrementor "Tomcat|DBCP|DataSource Pool:Connections in Use"
+
+### Pooling Driver
+IdentifyClassAs: org.apache.commons.dbcp.PoolingDriver DBCPTracing
+IdentifyInheritedAs: org.apache.commons.dbcp.PoolingDriver DBCPTracing
+
+TraceOneMethodIfFlagged: DBCPTracing getConnection MethodTimer "Tomcat|DBCP|Driver Pool:Average Wait For A Connection (ms)"
+TraceOneMethodIfFlagged: DBCPTracing getConnection MethodTraceIncrementor "Tomcat|DBCP|Driver Pool:Connections In Use"
+TraceOneMethodIfFlagged: DBCPTracing returnObject MethodTraceDecrementor "Tomcat|DBCP|Driver Pool:Connections In Use"
+TraceOneMethodIfFlagged: DBCPTracing evict MethodTraceDecrementor "Tomcat|DBCP|Driver Pool:Connections In Use"
+
+# ObjectPool  <http://nagoya.apache.org/gump/javadoc/jakarta-commons/pool/dist/docs/api/org/apache/commons/pool/ObjectPool.html>defines a trivially simple pooling interface: 
+#      public interface ObjectPool {
+#    Object borrowObject();
+#    void returnObject(Object borrowed);
+# }
+
+# This gets at the underlying implementation to the PoolingDataSource (and would therefore also get PoolingDriver)
+IdentifyClassAs: org.apache.commons.pool.impl.GenericObjectPool	DBCPTracing
+IdentifyInheritedAs: org.apache.commons.pool.impl.GenericObjectPool DBCPTracing
+
+TraceOneMethodIfFlagged: DBCPTracing borrowObject MethodTraceIncrementor "Tomcat|DBCP|Connection Pool:Connections In Use"
+TraceOneMethodIfFlagged: DBCPTracing returnObject MethodTraceDecrementor "Tomcat|DBCP|Connection Pool:Connections In Use"
+#TraceOneMethodIfFlagged: DBCPTracing evict MethodTraceDecrementor "Tomcat|DBCP|Connection Pool:Connections In Use"
+
+
+#########################
+# Server Info Support
+# ===================
+
+IdentifyClassAs: org.apache.catalina.util.ServerInfo ServerInfoTracing
+IdentifyInheritedAs: org.apache.catalina.util.ServerInfo ServerInfoTracing
+
+TraceOneMethodWithParametersIfFlagged: ServerInfoTracing getServerInfo()Ljava/lang/String; TomcatServerInfo "Tomcat:Server Information"
+
+
+#########################
+# Thread Pool Support
+# ===================
+
+
+IdentifyClassAs: org.apache.tomcat.util.threads.ThreadPool ThreadPoolTracing
+IdentifyInheritedAs: org.apache.tomcat.util.threads.ThreadPool ThreadPoolTracing
+
+##the following two directives in this section are specific to tomcat 7
+IdentifyClassAs: org.apache.tomcat.util.net.AbstractEndpoint ThreadPoolTracing
+IdentifyInheritedAs: org.apache.tomcat.util.net.AbstractEndpoint ThreadPoolTracing
+## End of directives specific to tomcat 7 threadpool metrics
+
+TraceOneMethodWithParametersIfFlagged: ThreadPoolTracing setName(Ljava/lang/String;)V MethodTimer_TCTP "Tomcat|ThreadPool|{ThreadPoolName}|Init:Response Time"
+TraceOneMethodIfFlagged: ThreadPoolTracing runIt MethodTraceIncrementor_TCTP "Tomcat|ThreadPool|{ThreadPoolName}|runIt:Total Calls"
+
+
+TraceOneMethodIfFlagged: ThreadPoolTracing runIt TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadsBusy}"
+TraceOneMethodIfFlagged: ThreadPoolTracing runIt TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadCount}"
+TraceOneMethodIfFlagged: ThreadPoolTracing returnController TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadCount}"
+TraceOneMethodIfFlagged: ThreadPoolTracing returnController TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadsBusy}"
+
+##the following directives in this section are specific to tomcat 7
+TraceOneMethodIfFlagged: ThreadPoolTracing start MethodTraceIncrementor_TCTP "Tomcat|ThreadPool|{ThreadPoolName}|runIt:Total Calls"
+TraceOneMethodIfFlagged: ThreadPoolTracing isRunning TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadsBusy}"
+TraceOneMethodIfFlagged: ThreadPoolTracing isRunning TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadCount}"
+TraceOneMethodIfFlagged: ThreadPoolTracing isPaused TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadsBusy}"
+TraceOneMethodIfFlagged: ThreadPoolTracing isPaused TomcatThreadPoolTracer "Tomcat|ThreadPool|{ThreadPoolName}:{TC_getCurrentThreadCount}"
+## End of directives specific to tomcat 7 threadpool metrics
+
+#####################################################################################
+### Custom Tracer Specifications
+#####################################################################################
+#------------------------------------------------------------------------------------
+# TracerClassMapping with TCSession Nameformatter
+#
+
+#MethodTraceIncrementor_TCSession
+SetTracerClassMapping: MethodTraceIncrementor_TCSession com.wily.introscope.agent.trace.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTraceIncrementor_TCSession delta 1
+SetTracerParameter: MethodTraceIncrementor_TCSession nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatSessionContextNameFormatter
+
+#MethodTraceDecrementor_TCSession
+SetTracerClassMapping: MethodTraceDecrementor_TCSession com.wily.introscope.agent.trace.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTraceDecrementor_TCSession delta -1
+SetTracerParameter: MethodTraceDecrementor_TCSession nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatSessionContextNameFormatter
+
+#MethodTimer_TCSession
+SetTracerClassMapping: MethodTimer_TCSession com.wily.introscope.agent.trace.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimer_TCSession nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatSessionContextNameFormatter
+
+#BlamedMethodTimer_TCSession
+SetTracerClassMapping: BlamedMethodTimer_TCSession com.wily.introscope.agent.trace.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: BlamedMethodTimer_TCSession useblame true
+SetTracerParameter: BlamedMethodTimer_TCSession nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatSessionContextNameFormatter
+
+#PerIntervalCounter_TCSession
+SetTracerClassMapping: PerIntervalCounter_TCSession com.wily.introscope.agent.trace.PerIntervalCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: PerIntervalCounter_TCSession nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatSessionContextNameFormatter
+
+#ConcurrentInvocationCounter_TCSession
+SetTracerClassMapping: ConcurrentInvocationCounter_TCSession com.wily.introscope.agent.trace.ConcurrentInvocationCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: ConcurrentInvocationCounter_TCSession nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatSessionContextNameFormatter
+
+#------------------------------------------------------------------------------------
+# TracerClassMapping for TomcatServerInfo
+#
+SetTracerClassMapping: TomcatServerInfo com.wily.introscope.agent.webappsupport.tomcat.trace.TomcatServerInfo  com.wily.introscope.probebuilder.validate.MetricNameValidator
+
+#-------------------------------------------------------------------------------------
+# TracerClassMapping for ThreadPools
+#
+SetTracerClassMapping: TomcatThreadPoolTracer com.wily.introscope.agent.webappsupport.tomcat.trace.TomcatThreadPoolTracer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: TomcatThreadPoolTracer nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatTPNameFormatter
+
+SetTracerClassMapping: MethodTimer_TCTP com.wily.introscope.agent.trace.MethodTimer com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTimer_TCTP nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatTPNameFormatter
+
+SetTracerClassMapping: MethodTraceIncrementor_TCTP com.wily.introscope.agent.trace.MethodFinishCounter com.wily.introscope.probebuilder.validate.MetricNameValidator
+SetTracerParameter: MethodTraceIncrementor_TCTP delta 1
+SetTracerParameter: MethodTraceIncrementor_TCTP nameformatter com.wily.introscope.agent.webappsupport.tomcat.nameformatter.TomcatTPNameFormatter
+
+# Skip wrapper class to avoid Unknown SQL
+SkipClass: org.apache.commons.dbcp.DelegatingCallableStatement
+SkipClass: org.apache.commons.dbcp.DelegatingPreparedStatement

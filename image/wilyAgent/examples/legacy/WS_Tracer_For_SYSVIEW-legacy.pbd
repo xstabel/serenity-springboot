@@ -1,0 +1,139 @@
+######################################################################################################
+#
+# Web Services SYSVIEW Tracer
+# 	
+# CA Wily Introscope(R) Version 10.1.0 Build 990014
+# Copyright (c) 2015 CA. All Rights Reserved.
+# Introscope(R) is a registered trademark of CA.
+#
+######################################################################################################
+
+#############################################################
+# Dependency Map Client Tracing
+#
+# NOTES:
+# Extra layer to work with SYSVIEW 
+#############################################################
+
+SetTracerClassMapping: JaxRpcCallWSEndPointURLTracer_SYSVIEW com.wily.powerpack.sysview.wstracer.SysviewWSTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: JaxRpcCallWSEndPointURLTracer_SYSVIEW 400000
+
+IdentifyInheritedAs: com.ibm.wsspi.webservices.rpc.Call JaxRpcCallTracing
+IdentifyClassAs: com.ibm.ws.webservices.multiprotocol.models.ModelCall JaxRpcCallTracing
+IdentifyClassAs: com.ibm.ws.webservices.multiprotocol.AgnosticCall JaxRpcCallTracing
+IdentifyClassAs: com.sun.xml.rpc.client.dii.BasicCall JaxRpcCallTracing
+IdentifyClassAs: org.apache.axis.client.Call JaxRpcCallTracing
+
+SetFlag: JaxRpcCallTracing
+TurnOn: JaxRpcCallTracing
+
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; JaxRpcCallWSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: JaxRpcCallTracing invokeOneWay JaxRpcCallWSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+
+
+SetTracerClassMapping: WL_JaxRpcCallWSEndPointURLTracer_SYSVIEW com.wily.powerpack.sysview.wstracer.SysviewWSTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WL_JaxRpcCallWSEndPointURLTracer_SYSVIEW 400000
+
+IdentifyInheritedAs: weblogic.webservice.extensions.WLCall WL_JaxRpcCallTracing
+IdentifyInheritedAs: weblogic.wsee.jaxrpc.WLCall WL_JaxRpcCallTracing
+
+SetFlag: WL_JaxRpcCallTracing
+TurnOn: WL_JaxRpcCallTracing
+
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invoke([Ljava/lang/Object;)Ljava/lang/Object; WL_JaxRpcCallWSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+TraceOneMethodWithParametersIfFlagged: WL_JaxRpcCallTracing invokeOneWay WL_JaxRpcCallWSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+
+SetTracerClassMapping: WLS8WSEndPointURLTracer_SYSVIEW com.wily.powerpack.sysview.wstracer.SysviewWSTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+
+SetTracerOrdering: WLS8WSEndPointURLTracer_SYSVIEW 400000
+
+IdentifyClassAs: weblogic.webservice.core.rpc.StubImpl WLS8WSClientTracing
+
+SetFlag: WLS8WSClientTracing
+TurnOn: WLS8WSClientTracing
+
+
+
+##################################################################
+#
+# Weblogic 9.0 client-side tracers
+#
+# Notes:
+# Tracers for client-stub based web service invocation.
+#
+# classes and their associated jar files:
+# ==========================================================
+# weblogic.wsee.jaxrpc.StubImpl			weblogic.jar (9.0)
+#
+##################################################################
+
+SetTracerClassMapping: WLS9WSEndPointURLTracer_SYSVIEW com.wily.powerpack.sysview.wstracer.SysviewWSTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WLS9WSEndPointURLTracer_SYSVIEW 400000
+
+IdentifyClassAs: weblogic.wsee.jaxrpc.StubImpl WLS9WSClientTracing
+
+SetFlag: WLS9WSClientTracing
+TurnOn: WLS9WSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: WLS9WSClientTracing _invoke WLS9WSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+
+
+SetTracerClassMapping: WLS10WSEndPointURLTracer_SYSVIEW com.wily.powerpack.sysview.wstracer.SysviewWSTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WLS10WSEndPointURLTracer_SYSVIEW 400000
+
+IdentifyClassAs: com.sun.xml.ws.client.sei.SEIStub  WLS10WSClientTracing
+
+# Pre compiled version of Weblogic 10 JAX-WS tracers
+SetFlag: WLS10WSClientTracing
+TurnOn: WLS10WSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: WLS10WSClientTracing doProcess WLS10WSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+
+IdentifyClassAs: com.sun.xml.ws.transport.http.client.HttpTransportPipe WLS10WSClientTracing 
+
+#############################################################################
+#
+# Websphere 5.1/6.0 client-side web service tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ======================================================================
+# com.ibm.ws.webservices.engine.client.Connection	webservices.jar
+#
+#############################################################################
+
+SetTracerClassMapping: WASWSEndPointURLTracer_SYSVIEW com.wily.powerpack.sysview.wstracer.SysviewWSTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: WASWSEndPointURLTracer_SYSVIEW 400000
+
+IdentifyClassAs: com.ibm.ws.webservices.engine.client.Connection WASWSClientTracing
+
+SetFlag: WASWSClientTracing
+TurnOn: WASWSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: WASWSClientTracing invokeEngine WASWSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+
+######################################################################################################
+#
+# SAP NetWeaver 6.40 client-side tracers
+#
+# Notes:
+#
+# classes and their associated jar files:
+# ===================================================================================================
+# com.sap.engine.services.webservices.jaxrpc.wsdl2java.ClientTransportBinding    webservices-lib.jar
+#
+######################################################################################################
+
+
+SetTracerClassMapping: NWS6WSEndPointURLTracer_SYSVIEW com.wily.powerpack.sysview.wstracer.SysviewWSTracer com.wily.introscope.probebuilder.validate.ResourceNameValidator
+SetTracerOrdering: NWS6WSEndPointURLTracer_SYSVIEW 400000
+
+IdentifyInheritedAs: com.sap.engine.services.webservices.jaxrpc.wsdl2java.ClientTransportBinding NWS6WSClientTracing
+
+SetFlag: NWS6WSClientTracing
+TurnOn: NWS6WSClientTracing
+
+TraceOneMethodWithParametersIfFlagged: NWS6WSClientTracing call NWS6WSEndPointURLTracer_SYSVIEW "WEBSERVICE"
+
+
