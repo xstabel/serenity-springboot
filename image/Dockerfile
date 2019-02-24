@@ -34,11 +34,11 @@ EXPOSE 8080
 #######################################################################
 ##### We have to expose image metada as label and ENV
 #######################################################################
-LABEL imageowner="Products and Services" \
+LABEL imageowner="Cristabel" \
       description="Java 8 runtime for Spring boot microservices" \
       components="java8"
 
-ENV imageowner="Products and Services" \
+ENV imageowner="Cristabel" \
     description="Java 8 runtime for Spring boot microservices" \
     components="java8"
 
