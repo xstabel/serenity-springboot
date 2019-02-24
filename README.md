@@ -1,6 +1,6 @@
 # Docker image for SpringBoot Microservice
 
-This image is based on Apline 3.x, contains the OpenJDK 1.8. This image is designed for Spring Boot but it could be used for any java daemon process.
+This image is based on Apline and contains the OpenJDK 1.8. This image is designed for Spring Boot but it could be used for any java daemon process.
 The image exposes the port 8080 and the java process is executed by the "java" user.
 
 ### How to use image
