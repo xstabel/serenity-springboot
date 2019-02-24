@@ -34,13 +34,13 @@ EXPOSE 8080
 #######################################################################
 ##### We have to expose image metada as label and ENV
 #######################################################################
-LABEL com.Serenity.imageowner="Products and Services" \
-      com.Serenity.description="Java 8 runtime for Spring boot microservices" \
-      com.Serenity.components="java8"
+LABEL imageowner="Products and Services" \
+      description="Java 8 runtime for Spring boot microservices" \
+      components="java8"
 
-ENV com.Serenity.imageowner="Products and Services" \
-    com.Serenity.description="Java 8 runtime for Spring boot microservices" \
-    com.Serenity.components="java8"
+ENV imageowner="Products and Services" \
+    description="Java 8 runtime for Spring boot microservices" \
+    components="java8"
 
 #USER java
 WORKDIR $IMAGE_SCRIPTS_HOME
