@@ -36,11 +36,11 @@ EXPOSE 8080
 #######################################################################
 LABEL imageowner="Cristabel" \
       description="Java 8 runtime for Spring boot microservices" \
-      components="java8"
+      components="development"
 
 ENV imageowner="Cristabel" \
     description="Java 8 runtime for Spring boot microservices" \
-    components="java8"
+    components="development"
 
 #USER java
 WORKDIR $IMAGE_SCRIPTS_HOME
